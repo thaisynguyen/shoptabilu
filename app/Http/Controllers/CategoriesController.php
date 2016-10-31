@@ -60,52 +60,36 @@ class CategoriesController extends AppController {
     public function unitCategories(Request $request){
         $this->clearSession();
         $data = self::selectAndSortDataFromTable($request, 'unit');
+//        print_r($data);die;
         return view('admin.categories.unit.unitCategories')->with('data',$data);
     }
 
     public function addUnit(){
-        return view('categories.addUnit');
+        return view('admin.categories.unit.addUnit');
     }
 
     public function saveUnit(createUnitRequest $request){
+        echo 1; die;
         $post = $request->all();
         $createdUser = Session::get('sid');
         $data = array(  'unit_name' 	    => $post['unit_name'],
                         'unit_code' 	    => $post['unit_code'],
-                        'unit_description' 	=> $post['unit_description'],
                         'created_user'      => $createdUser);
 
         $check = DB::table('unit')->where('unit_code', $post['unit_code'])->get();
         if(count($check) > 0){
             Session::flash('message-errors', 'Mã đơn vị đã bị trùng. Vui lòng thử lại.');
-            return redirect('addUnit');
+//            return redirect('addUnit');
         } else {
-            DB::beginTransaction();
-            try {
-                $unitId = DB::table('unit')->insertGetId($data);
-                if($unitId > 0) {
-                    $functionName = 'Thêm đơn vị (addUnit)';
-                    $value = 'Mã đơn vị: '.$post['unit_code']
-                            .', Tên đơn vị: '.$post['unit_name']
-                            .', Mô tả: '.$post['unit_description'];
-                    $dataLog = array('function_name' => $functionName,
-                                    'action'         => commonUtils::ACTION_INSERT,
-                                    'url'            => $_SERVER['REQUEST_URI'],
-                                    'id_row'         => $unitId,
-                                    'old_value'      => $value,
-                                    'new_value'      => $value,
-                                    'created_user'   => $createdUser,
-                                    'created_date'   => date("Y-m-d h:i:sa"));
-                    $log = DB::table('kpi_log')->insert($dataLog);
-                }
-            } catch (Exception $e) {
-                DB::rollback();
+            $unitId = DB::table('unit')->insertGetId($data);
+            if($unitId > 0) {
+                Session::flash('message-success', commonUtils::INSERT_SUCCESSFULLY);
+            } else {
                 Session::flash('message-errors', commonUtils::INSERT_UNSUCCESSFULLY);
-                return redirect('addUnit');
             }
-            DB::commit();
-            Session::flash('message-success', commonUtils::INSERT_SUCCESSFULLY);
-            return redirect('addUnit');
+
+//            return redirect('addUnit');
+
         }
     }
 
