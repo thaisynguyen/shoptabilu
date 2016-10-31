@@ -87,13 +87,15 @@
 	{{ HTML::script('public/assets/admintheme/global/plugins/flot/jquery.flot.categories.min.js') }}
 	{{ HTML::script('public/assets/admintheme/global/plugins/jquery-easypiechart/jquery.easypiechart.min.js') }}
 	{{ HTML::script('public/assets/admintheme/global/plugins/jquery.sparkline.min.js') }}
-	{{ HTML::script('public/assets/admintheme/global/plugins/jqvmap/jqvmap/jquery.vmap.js') }}
+
+
+	<!-- {{ HTML::script('public/assets/admintheme/global/plugins/jqvmap/jqvmap/jquery.vmap.js') }}
 	{{ HTML::script('public/assets/admintheme/global/plugins/jqvmap/jqvmap/maps/jquery.vmap.russia.js') }}
 	{{ HTML::script('public/assets/admintheme/global/plugins/jqvmap/jqvmap/maps/jquery.vmap.world.js') }}
 	{{ HTML::script('public/assets/admintheme/global/plugins/jqvmap/jqvmap/maps/jquery.vmap.europe.js') }}
 	{{ HTML::script('public/assets/admintheme/global/plugins/jqvmap/jqvmap/maps/jquery.vmap.germany.js') }}
 	{{ HTML::script('public/assets/admintheme/global/plugins/jqvmap/jqvmap/maps/jquery.vmap.usa.js') }}
-	{{ HTML::script('public/assets/admintheme/global/plugins/jqvmap/jqvmap/data/jquery.vmap.sampledata.js') }}
+	{{ HTML::script('public/assets/admintheme/global/plugins/jqvmap/jqvmap/data/jquery.vmap.sampledata.js') }}-->
 
 	<!-- END PAGE LEVEL PLUGINS -->
 	<!-- BEGIN THEME GLOBAL SCRIPTS -->

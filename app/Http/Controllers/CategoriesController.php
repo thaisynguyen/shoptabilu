@@ -69,7 +69,6 @@ class CategoriesController extends AppController {
     }
 
     public function saveUnit(createUnitRequest $request){
-        echo 1; die;
         $post = $request->all();
         $createdUser = Session::get('sid');
         $data = array(  'unit_name' 	    => $post['unit_name'],
