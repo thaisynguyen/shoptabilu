@@ -45,9 +45,9 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="btn-group">
-                                        <button id="sample_editable_1_new" class="btn green"> Thêm mới
+                                        <a  id="addGoal" class="btn green" href="<?= URL::to('addUnit');?>"> Thêm mới
                                             <i class="fa fa-plus"></i>
-                                        </button>
+                                        </a>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -70,17 +70,25 @@
                                 <th> STT </th>
                                 <th> Mã </th>
                                 <th> Tên </th>
-                                <th> Ghi Chú </th>
                                 <th> Sửa </th>
                                 <th> Xóa </th>
                             </tr>
                             </thead>
                             <tbody>
+
+                            <?php
+                            $i = 0;
+                            $stt = (($curpage-1) * CommonUtils::ITEM_PER_PAGE_DEFAULT) + 1;
+                            foreach($data as $row){
+                            $i++;
+                            ?>
+
+
+
                             <tr>
-                                <td> alex </td>
-                                <td> Alex Nilson </td>
-                                <td> 1234 </td>
-                                <td class="center"> power user </td>
+                                <td class="text-center"> <?php  echo $stt; $stt++; ?>  </td>
+                                <td> <?php echo $row->unit_code; ?> </td>
+                                <td> <?php echo $row->unit_name; ?> </td>
                                 <td>
                                     <a class="edit" href="javascript:;"> Edit </a>
                                 </td>
@@ -88,90 +96,9 @@
                                     <a class="delete" href="javascript:;"> Delete </a>
                                 </td>
                             </tr>
-                            <tr>
-                                <td> lisa </td>
-                                <td> Lisa Wong </td>
-                                <td> 434 </td>
-                                <td class="center"> new user </td>
-                                <td>
-                                    <a class="edit" href="javascript:;"> Edit </a>
-                                </td>
-                                <td>
-                                    <a class="delete" href="javascript:;"> Delete </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> nick12 </td>
-                                <td> Nick Roberts </td>
-                                <td> 232 </td>
-                                <td class="center"> power user </td>
-                                <td>
-                                    <a class="edit" href="javascript:;"> Edit </a>
-                                </td>
-                                <td>
-                                    <a class="delete" href="javascript:;"> Delete </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> goldweb </td>
-                                <td> Sergio Jackson </td>
-                                <td> 132 </td>
-                                <td class="center"> elite user </td>
-                                <td>
-                                    <a class="edit" href="javascript:;"> Edit </a>
-                                </td>
-                                <td>
-                                    <a class="delete" href="javascript:;"> Delete </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> alex </td>
-                                <td> Alex Nilson </td>
-                                <td> 1234 </td>
-                                <td class="center"> power user </td>
-                                <td>
-                                    <a class="edit" href="javascript:;"> Edit </a>
-                                </td>
-                                <td>
-                                    <a class="delete" href="javascript:;"> Delete </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> webriver </td>
-                                <td> Antonio Sanches </td>
-                                <td> 462 </td>
-                                <td class="center"> new user </td>
-                                <td>
-                                    <a class="edit" href="javascript:;"> Edit </a>
-                                </td>
-                                <td>
-                                    <a class="delete" href="javascript:;"> Delete </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> gist124 </td>
-                                <td> Nick Roberts </td>
-                                <td> 62 </td>
-                                <td class="center"> new user </td>
-                                <td>
-                                    <a class="edit" href="javascript:;"> Edit </a>
-                                </td>
-                                <td>
-                                    <a class="delete" href="javascript:;"> Delete </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> alex </td>
-                                <td> Alex Nilson </td>
-                                <td> 1234 </td>
-                                <td class="center"> power user </td>
-                                <td>
-                                    <a class="edit" href="javascript:;"> Edit </a>
-                                </td>
-                                <td>
-                                    <a class="delete" href="javascript:;"> Delete </a>
-                                </td>
-                            </tr>
+                            <?php
+                            }
+                            ?>
                             </tbody>
                         </table>
                     </div>

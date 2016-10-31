@@ -39,6 +39,7 @@
 
 		if(Request::is('*currency*')
 		|| Request::is('*unit*')
+		|| Request::is('*addUnit*')
 		|| Request::is('*product*')
 		|| Request::is('*subject*')
 		|| Request::is('*users*')
@@ -126,7 +127,9 @@
 					<span class="title">Tiền tệ</span>
 				</a>
 			</li>
-			<li {{(Request::is('*unitCategories') ? 'class="nav-item start active open"' : 'class="nav-item"') }}>
+			<li {{(Request::is('*unitCategories') || Request::is('*addUnit')
+
+			? 'class="nav-item start active open"' : 'class="nav-item"') }}>
 				<a href="{{url('/unitCategories')}}" class="nav-link nav-toggle">
 					<span class="title">Đơn vị tính</span>
 					<span class="selected"></span>
