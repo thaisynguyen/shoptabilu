@@ -99,6 +99,7 @@
 	<!-- BEGIN THEME GLOBAL SCRIPTS -->
 	{{ HTML::script('public/assets/admintheme/global/scripts/app.min.js') }}
 	{{ HTML::script('public/assets/admintheme/pages/scripts/table-datatables-editable.min.js') }}
+	{{ HTML::script('public/assets/admintheme/pages/scripts/table-datatables-responsive.min.js') }}
 	{{ HTML::script('public/assets/admintheme/pages/scripts/dashboard.min.js') }}
 	{{ HTML::script('public/assets/admintheme/layouts/layout/scripts/layout.min.js') }}
 	{{ HTML::script('public/assets/admintheme/layouts/layout/scripts/demo.min.js') }}

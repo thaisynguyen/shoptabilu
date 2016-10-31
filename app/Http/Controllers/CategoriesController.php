@@ -196,5 +196,13 @@ class CategoriesController extends AppController {
         return redirect('unitCategories');
     }
 
+    /*
+     * Controller for Products
+     */
 
+    public function productCategories(Request $request){
+        $this->clearSession();
+        $data = self::selectAndSortDataFromTable($request, 'product');
+        return view('admin.categories.product.productCategories')->with('data',$data);
+    }
 }
