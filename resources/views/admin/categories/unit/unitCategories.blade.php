@@ -45,7 +45,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="btn-group">
-                                        <a  id="addGoal" class="btn green" href="<?= URL::to('addUnit');?>"> Thêm mới
+                                        <a  id="demo_4" class="btn green btn-outline sbold uppercase" > Thêm mới
                                             <i class="fa fa-plus"></i>
                                         </a>
                                     </div>
@@ -109,10 +109,45 @@
     </div>
     <!-- END CONTENT BODY -->
 </div>
+<div class="modal fade" id="addPosition" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <form>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                    <h4 class="modal-title text-normal text-bold"><?php echo 'Add Position';?></h4>
+                </div>
+                <div class="modal-body text-normal">
+                    <div class="form-group has-success">
+                        <label class="control-label"><?php echo 'Code';?> (<span class="input-require">*</span>)</label>
+                        <div class="input-icon right">
+                            <input type="text" class="form-control add-data-position" id="code" required> </div>
+                    </div>
+                    <div class="form-group has-success">
+                        <label class="control-label"><?php echo 'Name';?> (<span class="input-require">*</span>)</label>
+                        <div class="input-icon right">
+                            <input type="text" class="form-control add-data-position" id="name" required> </div>
+                    </div>
+                    <div class="form-group has-success">
+                        <label class="control-label"><?php echo 'Description';?> </label>
+                        <div class="input-icon right">
+                            <textarea type="text" class="form-control" id="description" rows="3"> </textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn blue btn-act btn-smooth" id="savePosition"><?php echo 'Save';?></button>
+                    <button type="button" class="btn default btn-act btn-smooth" data-dismiss="modal"><?php echo 'Close';?></button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </form>
 
-<script>
-$(document).ready(function(){
-    sortOnPageLoad();
-});
-</script>
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+{{ HTML::script('public/assets/scripts/categories/unit.js') }}
+
 @stop
