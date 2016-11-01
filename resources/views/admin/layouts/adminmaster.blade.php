@@ -34,7 +34,7 @@
 	<!-- END PAGE LEVEL PLUGINS -->
 	<!-- BEGIN THEME GLOBAL STYLES -->
 	{{ HTML::style('public/assets/admintheme/global/css/components.min.css') }}
-	{{ HTML::style('public/assets/admintheme/global/plugins.min.css') }}
+	{{ HTML::style('public/assets/admintheme/global/css/plugins.min.css') }}
 
 	<!-- END THEME GLOBAL STYLES -->
 	<!-- BEGIN THEME LAYOUT STYLES -->
