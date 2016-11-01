@@ -11,10 +11,12 @@
 	<meta content="width=device-width, initial-scale=1" name="viewport"/>
 	<meta content="" name="description"/>
 	<meta content="" name="author"/>
+	
+	<link rel="shortcut icon" href="public/assets/admintheme/layouts/layout/img/favicon.ico" />
 
 	<!----------------------------------
 	* Include css
-	----------------------------------->
+	----------------------------------->	
 
 	<!-- BEGIN GLOBAL MANDATORY STYLES -->
 	{{ HTML::style('public/assets/admintheme/global/plugins/font-awesome/css/font-awesome.css') }}
@@ -34,7 +36,7 @@
 	<!-- END PAGE LEVEL PLUGINS -->
 	<!-- BEGIN THEME GLOBAL STYLES -->
 	{{ HTML::style('public/assets/admintheme/global/css/components.min.css') }}
-	{{ HTML::style('public/assets/admintheme/global/plugins.min.css') }}
+	{{ HTML::style('public/assets/admintheme/global/css/plugins.min.css') }}
 
 	<!-- END THEME GLOBAL STYLES -->
 	<!-- BEGIN THEME LAYOUT STYLES -->
