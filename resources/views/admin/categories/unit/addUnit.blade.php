@@ -47,11 +47,11 @@
                                 <div class="form-body">
                                     <div class="form-group clear-margin">
                                         <label class="control-label">Mã</label>
-                                        <input type="text" class="form-control" id="txtUnitCode">
+                                        <input type="text" class="form-control" id="txtUnitCode" name="unit_code">
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label">Tên</label>
-                                        <input type="text" class="form-control" id="txtUnitName">
+                                        <input type="text" class="form-control" id="txtUnitName" name="unit_name">
                                     </div>
 
                                 </div>
@@ -70,7 +70,7 @@
 </div>
 
 
-{{ HTML::script('assets/scripts/common.js') }}
+
 <script>
     $( document ).ready(function() {
         $("#txtUnitCode").focus();

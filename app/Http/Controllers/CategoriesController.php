@@ -76,6 +76,7 @@ class CategoriesController extends AppController {
                         'created_user'      => $createdUser);
 
         $check = DB::table('unit')->where('unit_code', $post['unit_code'])->get();
+
         if(count($check) > 0){
             Session::flash('message-errors', 'Mã đơn vị đã bị trùng. Vui lòng thử lại.');
 //            return redirect('addUnit');
@@ -90,6 +91,7 @@ class CategoriesController extends AppController {
 //            return redirect('addUnit');
 
         }
+//        return redirect('addUnit');
     }
 
     public function updateUnit($id){

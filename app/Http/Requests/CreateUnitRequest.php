@@ -1,7 +1,7 @@
 <?php namespace App\Http\Requests;
 
 use App\Http\Requests\Request;
-class CreateUnitRequest  extends Request{
+class createUnitRequest  extends Request{
     public function authorize(){
         return true;
     }
