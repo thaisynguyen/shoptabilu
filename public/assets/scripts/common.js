@@ -151,7 +151,7 @@ function formatNumber(number, numberAfterDot){
     return result;
 }
 //KEEP CURRENT ACTIVE TAB
-$(function() {
+/*$(function() {
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         // save the latest tab; use cookies if you like 'em better:
         localStorage.setItem('lastTab', $(this).attr('href'));
@@ -161,7 +161,7 @@ $(function() {
     if (lastTab) {
         $('[href="' + lastTab + '"]').tab('show');
     }
-});
+});*/
 
 
 function clickCheckBox() {
