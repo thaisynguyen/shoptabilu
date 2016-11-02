@@ -68,18 +68,19 @@
 
     </div>
 </div>
+@stop
 
-
-{{ HTML::script('assets/scripts/common.js') }}
-<script>
-    $( document ).ready(function() {
-        $("#txtUnitCode").focus();
-        //console.log(browserName());
-        if(browserName()=='Firefox'){
-            $("#button-bottom").attr('style',  'padding-top: 35px;');
-        }else{
-            $("#button-bottom").attr('style',  'padding-top: 20px;');
-        }
-    });
-</script>
+@section('custom_js')
+    {{ HTML::script('assets/scripts/common.js') }}
+    <script>
+        $( document ).ready(function() {
+            $("#txtUnitCode").focus();
+            //console.log(browserName());
+            if(browserName()=='Firefox'){
+                $("#button-bottom").attr('style',  'padding-top: 35px;');
+            }else{
+                $("#button-bottom").attr('style',  'padding-top: 20px;');
+            }
+        });
+    </script>
 @stop

@@ -141,10 +141,11 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
-<script>
-    var path = '{{url('/')}}' + '/saveUnit/';
-</script>
+@stop
 
-{{ HTML::script('public/assets/scripts/categories/unit.js') }}
-
+@section('custom_js')
+    <script>
+        var path = '{{url('/')}}' + '/saveUnit/';
+    </script>
+    {{ HTML::script('public/assets/scripts/categories/unit.js') }}
 @stop

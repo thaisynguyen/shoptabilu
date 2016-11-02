@@ -36,9 +36,12 @@
         </div>
     </div>
 </form>
-<script type="text/javascript">
-    $(document).ready(function() {
-        $("#txtUnitCode").focus();
-    });
-</script>
+@stop
+
+@section('custom_js')
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#txtUnitCode").focus();
+        });
+    </script>
 @stop
