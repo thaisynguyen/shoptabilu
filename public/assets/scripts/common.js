@@ -41,27 +41,7 @@ function browserName(){
     return Browser;
 }
 
-/**
- * Reload page with parameters
- * @param actionUrl
- * @param actionName
- */
-function reloadPageWithParam(actionUrl, actionName, strParam){
-    var path = actionUrl;
-    var pos = path.indexOf(actionName);
-    path = path.substring(0, pos);
-    path += actionName +'/';
-    var param = strParam.split('/');
 
-    for(var i = 0; i < param.length; i++){
-        if(document.getElementById(param[i])){
-            var v = document.getElementById(param[i]).value;
-            v = (v != 0) ? v : 0;
-            path += v + '/';
-        }
-    }
-    window.location.href = path;
-}
 
 /**
  * Get url parameter
@@ -83,71 +63,7 @@ function getUrlParameter(sParam) {
     }
 };
 
-/**
- * Reload to sort page
- * @param actionUrl
- * @param sortType
- * @param sortColumn
- */
-function reloadToSortPage(sortDirection, sortColumn){
 
-    var pathname = window.location.pathname;
-    //console.log(sortColumn);
-    $('th').each(function (column){
-        if($(this).attr('sort_key') == sortColumn){
-            if(sortDirection == '0'){
-                $(this).attr('sort_direction', 'asc');
-                sortDirection = 'asc';
-            } else if(sortDirection == 'asc') {
-                $(this).attr('sort_direction', 'desc');
-                sortDirection = 'desc';
-            } else {
-                $(this).attr('sort_direction', 'asc');
-                sortDirection = 'asc';
-            }
-        } else {
-            $(this).attr('sort_direction', '0');
-        }
-    });
-    window.location.href = pathname + '?sort=' + sortDirection + '&column=' + sortColumn;
-}
-
-/**
- * Set sort dimention on page load
- */
-function setSortDimentionOnPageLoad(){
-    var sortDirection = getUrlParameter('sort');
-    var column = getUrlParameter('column');
-    //console.log(column);
-
-    $('th').each(function (){
-        if($(this).attr('sort_key') == column){
-            $(this).attr('sort_direction', sortDirection);
-            if(sortDirection == 'asc'){
-                $(this).find('i').removeClass('fa-sort').addClass('fa-sort-desc');
-            }else if(sortDirection == 'desc') {
-                $(this).find('i').removeClass('fa-sort-desc').addClass('fa-sort-asc');
-            }else{
-                $(this).find('i').removeClass('fa-sort').addClass('fa-sort');
-            }
-
-        } else {
-            $(this).attr('sort_direction', '0');
-        }
-    });
-}
-
-function sortOnPageLoad(){
-    setSortDimentionOnPageLoad();
-
-    $(function(){
-        $('th').each(function (column){
-            $(this).addClass('sortable').click(function (){
-                reloadToSortPage($(this).attr('sort_direction'), $(this).attr('sort_key'));
-            });
-        });
-    });
-}
 
 function btnDeleteMultiRowClick(btnMultiDelete, tblName){
     btnMultiDelete.click(function(){
@@ -168,39 +84,6 @@ function btnDeleteMultiRowClick(btnMultiDelete, tblName){
     });
 }
 
-function getDescriptionByFormula(formula, label){
-    formula = parseInt(formula);
-    switch (formula){
-        case 1:
-            label.text('Lấy trung bình cộng của kế hoạch/thực hiện bất kỳ của chức danh được quận trưởng phân việc, chịu trách nhiệm việc đó (từ sheet Bảng phân trọng số)');
-            break;
-        case 2:
-            label.text('Lấy dữ liệu từ import/nhập tay');
-            break;
-        case 3:
-            label.text('Lấy trung bình cộng kế hoạch/thực hiện của tất cả các chức danh');
-            break;
-        case 4:
-            label.text('Lấy tổng kế hoạch/thực hiện của nhân viên bán hàng');
-            break;
-        case 5:
-            label.text('Lấy tổng kế hoạch/thực hiện của KAM/AM');
-            break;
-        case 6:
-            label.text('Lấy tổng kế hoạch/thực hiện của chuyên viên khách hàng cá nhân + chuyên viên khách hàng doanh nghiệp');
-            break;
-        case 7:
-            label.text('Lấy tổng kế hoạch/thực hiện của chuyên viên khách hàng cá nhân + cửa hàng trưởng');
-            break;
-        case 8:
-            label.text('Lấy tổng kế hoạch/thực hiện của giao dịch viên');
-            break;
-        case 9:
-            label.text('Lấy tổng kế hoạch/thực hiện của chuyên viên khách hàng cá nhân + chuyên viên khách hàng doanh nghiệp + cửa hàng trưởng');
-            break;
-    }
-
-}
 
 function fixHeader(tableName, tableHead, tableClone){
     var tableOffset = tableName.offset().top;
@@ -280,18 +163,6 @@ $(function() {
     }
 });
 
-function renderGoalType(number) {
-    var result = '';
-    switch (number) {
-        case 1:
-            result = 'Càng lớn càng tốt';
-            break;
-        case 2:
-            result = 'Càng nhỏ càng tốt';
-            break;
-    }
-    return result;
-}
 
 function clickCheckBox() {
     var valuesCk = $('input:checkbox:checked.ckbExport').map(function () {
