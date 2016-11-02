@@ -271,3 +271,26 @@ function showLoading(id){
     $('contentDelete-'+id).append(html);*/
 
 }
+
+function slideMessageMultiConfig(title, message, typeMessage, offset){
+    var notify = $.notify(
+        {
+            title: '<strong>'+title+'</strong>'
+            , message: ' <br/>'+message+''
+        }
+        , {
+            type: typeMessage
+            , allow_dismiss: false
+            , element: 'body'
+            , autoHideDelay: 500
+            , delay: 1500 /** timeout*/
+            , timer: 600
+            , offset: offset /** padding for placement*/
+            , z_index: 12000
+            , placement: {
+                from: "top",
+                align: "center"
+            }
+        }
+    );
+}

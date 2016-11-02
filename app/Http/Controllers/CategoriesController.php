@@ -40,7 +40,7 @@ class CategoriesController extends AppController {
 
         $data = DB::table($tableName)   ->where('inactive', 0)
                                         ->orderby($sortColumn, $sortDimension)
-                                        ->paginate(2);
+                                        ->paginate(commonUtils::ITEM_PER_PAGE_DEFAULT);
 
         $parametersSort = array(
             'sort'      => $sortDimension,
@@ -68,7 +68,7 @@ class CategoriesController extends AppController {
         return view('admin.categories.unit.addUnit');
     }
 
-    public function saveUnit(createUnitRequest $request){
+    public function saveUnit(Request $request){
         $post = $request->all();
         $createdUser = Session::get('sid');
         $data = array(  'unit_name' 	    => $post['unit_name'],
@@ -77,14 +77,26 @@ class CategoriesController extends AppController {
 
         $check = DB::table('unit')->where('unit_code', $post['unit_code'])->get();
         if(count($check) > 0){
-            Session::flash('message-errors', 'Mã đơn vị đã bị trùng. Vui lòng thử lại.');
+            return json_encode(array(
+                "success"  => false
+                , "alert"  => 'Mã đơn vị tính đã bị trùng. Vui lòng thử lại.'
+            ));
 //            return redirect('addUnit');
         } else {
             $unitId = DB::table('unit')->insertGetId($data);
             if($unitId > 0) {
-                Session::flash('message-success', commonUtils::INSERT_SUCCESSFULLY);
+                $smsSuccess = commonUtils::INSERT_SUCCESSFULLY;
+                return json_encode(array(
+                    "success"               => true
+                    , "alert"               => commonUtils::INSERT_SUCCESSFULLY
+//                , "contentPositionHtml" => $contentPositionHtml
+                ));
             } else {
-                Session::flash('message-errors', commonUtils::INSERT_UNSUCCESSFULLY);
+//                Session::flash('message-errors', commonUtils::INSERT_UNSUCCESSFULLY);
+                return json_encode(array(
+                    "success"  => false
+                    , "alert"  => commonUtils::INSERT_UNSUCCESSFULLY
+                ));
             }
 
 //            return redirect('addUnit');

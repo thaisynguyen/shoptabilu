@@ -105,8 +105,8 @@
 	{{ HTML::script('public/assets/admintheme/layouts/layout/scripts/layout.min.js') }}
 	{{ HTML::script('public/assets/admintheme/layouts/layout/scripts/demo.min.js') }}
 	{{ HTML::script('public/assets/admintheme/layouts/global/scripts/quick-sidebar.min.js') }}
-
-
+	{{ HTML::script('public/assets/scripts/bootstrap-notify.js') }}
+	{{ HTML::script('public/assets/scripts/bootstrap-notify.min.js') }}
 
 
     {{ HTML::script('public/assets/scripts/common.js') }}

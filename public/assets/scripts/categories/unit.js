@@ -4,20 +4,19 @@
 // A $( document ).ready() block.
 $( document ).ready(function() {
     resetForm();
-    showAddPosition();
-    savePosition();
-    showEditPosition();
-    updatePosition();
-    showDeletePosition();
-    deletePosition();
-    pressSavePosition();
-    reloadDataByPosition();
+    showAddUnit();
+    saveUnit();
+    showEditUnit();
+    updateUnit();
+    showDeleteUnit();
+    deleteUnit();
+    pressSaveUnit();
+    reloadDataByUnit();
 });
 
 function resetForm(){
     $('#code').val('');
     $('#name').val('');
-    $('#description').val('');
 }
 
 function focusInput(idPopup, idInput){
@@ -26,38 +25,56 @@ function focusInput(idPopup, idInput){
     })
 }
 
-function showAddPosition(){
-    $(document).on('click', '#add-position', function() {
-        $('#addPosition').modal('show');
-        focusInput('addPosition', 'code');
+function showAddUnit(){
+    $(document).on('click', '#btnAddUnit', function() {
+        $('#modalAddUnit').modal('show');
+        focusInput('modalAddUnit', 'code');
     });
 }
 
-function savePosition(){
-    $(document).on('click', '#savePosition', function() {
+function saveUnit(){
+    $(document).on('click', '#btnSaveUnit', function() {
         var code = $('#code').val()
             , name = $('#name').val()
-            , description = $('#description').val()
-            , url = KPIS.ApiUrl('kpi_standard/KsCategory/savePosition')
-            , dataPost = {code: code, name: name, description: description}
+            , dataPost = {unit_code: code, unit_name: name}
             ;
         if(code == ''){
             $('#code').focus();
-            slideMessageMultiConfig(lblWarning, nullCode, 'warning', 40);
+            slideMessageMultiConfig('Cảnh báo', 'Mã không được rỗng', 'warning', 40);
         } else if(name == ''){
             $('#name').focus();
-            slideMessageMultiConfig(lblWarning, nullName, 'warning', 40);
+            slideMessageMultiConfig('Cảnh báo', 'Tên không được rỗng', 'warning', 40);
         } else {
-            var dataJson = $.loadAjax(url, dataPost),
-                dataObj  = JSON.parse(dataJson);
-            if (dataObj.success == true) {
-                $('#main-content').html(dataObj.contentPositionHtml);
-                //$('#addPosition').modal('hide');
-                resetForm();
-                slideMessageMultiConfig(lblSuccess, dataObj.alert, 'success', 20);
-            }else{
-                slideMessageMultiConfig(lblWarning, dataObj.alert, 'warning', 40);
-            }
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: path,
+                type: 'POST',
+                dataType: 'json',
+                data: dataPost,
+                success: function(response) {
+
+                    dataObj = response;
+                    console.log(dataObj);
+                    if (dataObj.success == true) {
+                        //$('#main-content').html(dataObj.contentUnitHtml);
+                        //$('#addUnit').modal('hide');
+
+                        resetForm();
+                        slideMessageMultiConfig('Thông tin', dataObj.alert, 'success', 20);
+                        $('#code').focus();
+                    }else{
+                        slideMessageMultiConfig('Thông tin', dataObj.alert, 'warning', 40);
+                    }
+                    return dataObj;
+                },
+                error: function(xhr, textStatus, thrownError) {
+
+                    console.log(thrownError);
+                }
+            });
+
         }
 
     });
@@ -65,28 +82,26 @@ function savePosition(){
 
 }
 
-function showEditPosition(){
+function showEditUnit(){
 
-    $(document).on('click', '.td-edit-position', function() {
+    $(document).on('click', '.td-edit-unit', function() {
         var id = $(this).attr('data-id');
 
-        $('#edit-position-'+id).modal('show');
-        focusInput('edit-position-'+id, 'code-'+id);
+        $('#edit-unit-'+id).modal('show');
+        focusInput('edit-unit-'+id, 'code-'+id);
     });
 
 }
 
-function updatePosition(){
+function updateUnit(){
 
     reWriteStatus();
-    $(document).on('click', '.btn-edit-position', function() {
+    $(document).on('click', '.btn-edit-Unit', function() {
         var id = $(this).attr('data-id')
             , code = $('#code-'+id).val()
             , name = $('#name-'+id).val()
-            , description = $('#description-'+id).val()
             , status = $('#status-hidden-'+id).val()
-            , url = KPIS.ApiUrl('kpi_standard/KsCategory/editPosition')
-            , dataPost = {id: id, code: code, name: name, description: description, status: status}
+            , dataPost = {id: id, code: code, name: name, status: status}
             ;
         var dataJson = $.loadAjax(url, dataPost),
             dataObj  = JSON.parse(dataJson);
@@ -94,14 +109,13 @@ function updatePosition(){
         if (dataObj.success == true) {
             slideMessageMultiConfig(lblSuccess, dataObj.alert, 'success', 20);
 
-            var position = dataObj.position['KsPosition']
-                , statusStr = (position['status'] == 1) ? active : lock
+            var Unit = dataObj.Unit['KsUnit']
+                , statusStr = (Unit['status'] == 1) ? active : lock
                 ;
 
-            $('#td-code-'+position['id']).html(position['code']);
-            $('#td-name-'+position['id']).html(position['name']);
-            $('#td-description-'+position['id']).html(position['description']);
-            $('#td-status-'+position['id']).html(statusStr);
+            $('#td-code-'+Unit['id']).html(Unit['code']);
+            $('#td-name-'+Unit['id']).html(Unit['name']);
+            $('#td-status-'+Unit['id']).html(statusStr);
 
             //$('#editDepartment-'+id).modal('hide');
         }
@@ -110,7 +124,7 @@ function updatePosition(){
 
 function reWriteStatus(){
 
-    $(document).on('click', '.status-position', function() {
+    $(document).on('click', '.status-Unit', function() {
         var value = $(this).val()
             , id = $(this).attr('data-id')
             ;
@@ -118,20 +132,20 @@ function reWriteStatus(){
     });
 }
 
-function showDeletePosition(){
+function showDeleteUnit(){
 
-    $(document).on('click', '.td-delete-position', function() {
+    $(document).on('click', '.td-delete-unit', function() {
         var id = $(this).attr('data-id');
         $('#modal-standard-delete-'+id).modal('show');
     });
 
 }
 
-function deletePosition(){
+function deleteUnit(){
 
     $(document).on('click', '.btn-delete-object', function() {
         var id = $(this).attr('data-id')
-            , url = KPIS.ApiUrl('kpi_standard/KsCategory/deletePosition')
+            , url = KPIS.ApiUrl('kpi_standard/KsCategory/deleteUnit')
             , dataPost = {id: id}
             ;
 
@@ -140,7 +154,7 @@ function deletePosition(){
 
         $('.modal-backdrop').remove();
         if (dataObj.success == true) {
-            $('#main-content').html(dataObj.contentPositionHtml);
+            $('#main-content').html(dataObj.contentUnitHtml);
             slideMessageMultiConfig(lblSuccess, dataObj.alert, 'success', 40);
         } else {
             slideMessageMultiConfig(lblWarning, dataObj.alert, 'warning', 40);
@@ -148,22 +162,22 @@ function deletePosition(){
     });
 }
 
-function pressSavePosition(){
-    $(document).bind('keypress', '.add-data-position', function(e) {
+function pressSaveUnit(){
+    $(document).bind('keypress', '.add-data-Unit', function(e) {
         if(e.keyCode==13){
-            savePosition();
+            saveUnit();
         }
     });
 
 }
 
-function reloadDataByPosition(){
+function reloadDataByUnit(){
     $(document).on('change keyup', '.select-data', function() {
         var searchVal = $(this).val();
-        var position = $('#searchValue').val()
+        var Unit = $('#searchValue').val()
             , type = $('select[name=fieldValue]').val()
-            , url = KPIS.ApiUrl('kpi_standard/KsCategory/reloadDataByPosition')
-            , dataPost = {position: position, type: type}
+            , url = KPIS.ApiUrl('kpi_standard/KsCategory/reloadDataByUnit')
+            , dataPost = {Unit: Unit, type: type}
             ;
 
         var dataJson = $.loadAjax(url, dataPost),
@@ -172,7 +186,7 @@ function reloadDataByPosition(){
             slideMessageMultiConfig(lblWarning, dataObj.alert, 'danger', 40);
         }
 
-        $('#main-content').html(dataObj.contentPositionHtml);
+        $('#main-content').html(dataObj.contentUnitHtml);
         refreshSelectPicker();
     });
 }
