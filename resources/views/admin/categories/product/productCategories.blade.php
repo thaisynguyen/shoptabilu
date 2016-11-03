@@ -48,12 +48,14 @@
                                     <th></th>
                                     <th >Mã SP</th>
                                     <th >Tên SP</th>
+                                    <th >Barcode</th>
                                     <th >Loại</th>
                                     <th >Nhà SX</th>
-                                    <th >Đơn VT</th>
-                                    <th >Barcode</th>
-                                    <th >Giá</th>
-                                    <th >Loại tiền tệ</th>
+                                    <th >Dài (cm)</th>
+                                    <th >Rộng (cm)</th>
+                                    <th >Cao (cm)</th>
+                                    <th >Cân nặng (gam)</th>
+
                                     <th class="all"></th>
                                 </tr>
                                 </thead>
@@ -62,30 +64,17 @@
                                     <th></th>
                                     <td>NK001</td>
                                     <td>Nikon D90</td>
-                                    <td>Máy Ảnh</td>
+                                    <td>aawef234234</td>
                                     <td>Nikon</td>
-                                    <td>cái</td>
-                                    <td>2343241213</td>
-                                    <td>10,000,000</td>
-                                    <td>VNĐ</td>
+                                    <td>Nikon</td>
+                                    <td>20</td>
+                                    <td>10</td>
+                                    <td>5</td>
+                                    <td>5.3</td>
+
                                     <td>										
 										<a href="javascript:;" class="btn btn-icon-only red" data-toggle="confirmation" data-original-title="Are you sure ?" title="" data-placement="top"><i class="fa fa-trash"></i></a>
                                         <a href="#" class="btn btn-icon-only blue"><i class="fa fa-edit"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th></th>
-                                    <td>NK002</td>
-                                    <td>Nikon D92</td>
-                                    <td>Máy Ảnh 2</td>
-                                    <td>Nikon 2</td>
-                                    <td>cái</td>
-                                    <td>8798779798</td>
-                                    <td>10,000,000</td>
-                                    <td>VNĐ</td>
-                                    <td>
-                                        <a href="javascript:;" class="btn btn-icon-only red" data-toggle="confirmation" data-original-title="Are you sure ?" title="" data-placement="top"><i class="fa fa-trash"></i></a>
-                                        <a href="javascript:;" class="btn btn-icon-only blue"><i class="fa fa-edit"></i></a>
                                     </td>
                                 </tr>
 
@@ -101,5 +90,5 @@
 @stop
 
 @section('custom_js')
-    {{ HTML::script('resources/js/categories/product.js') }}
+    {{ HTML::script('public/assets/scripts/categories/product.js') }}
 @stop
