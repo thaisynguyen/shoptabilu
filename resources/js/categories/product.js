@@ -1,8 +1,6 @@
-var initTableProduct = function ()
-{
-    var table = $('#tblProduct');
-
-    var oTable = table.dataTable({
+$(document).ready(function () {
+	
+    var table = $('#tblProduct').DataTable({
         // Internationalisation. For more info refer to http://datatables.net/manual/i18n
         "language": {
             "aria": {
@@ -17,6 +15,13 @@ var initTableProduct = function ()
             "search": "Search:",
             "zeroRecords": "No matching records found"
         },
+		
+		//'aoColumnDefs': [
+			//{
+				//'bSortable': false,
+				//'aTargets': [9] /* 1st one, start by the right */
+			//}
+		//], 
 
         // Or you can use remote translation file
         //"language": {
@@ -25,9 +30,16 @@ var initTableProduct = function ()
 
         // setup buttons extentension: http://datatables.net/extensions/buttons/
         buttons: [
-            { extend: 'print', className: 'btn dark btn-outline' },
+            {
+                text: 'Them SP Moi',
+                action: function ( e, dt, node, config ) {
+                    alert( 'Button activated' );
+                },
+				className: 'btn blue'
+            },
+			{ extend: 'print', className: 'btn dark btn-outline' },
             { extend: 'pdf', className: 'btn green btn-outline' },
-            { extend: 'csv', className: 'btn purple btn-outline ' }
+            { extend: 'csv', className: 'btn purple btn-outline ' }			
         ],
 
         // setup responsive extension: http://datatables.net/extensions/responsive/
@@ -37,11 +49,18 @@ var initTableProduct = function ()
                 target: 'tr'
             }
         },
-        columnDefs: [ {
-            className: 'control',
-            orderable: false,
-            targets:   0
-        } ],
+		
+        columnDefs: [ 
+			{ 
+				className: 'control',
+				orderable: false,
+				targets:   0
+			},
+			{				
+				orderable: false,
+				targets:   -1
+			}
+		],
 
         order: [ 1, 'asc' ],
 
@@ -61,5 +80,4 @@ var initTableProduct = function ()
         // So when dropdowns used the scrollable div should be removed.
         //"dom": "<'row' <'col-md-12'T>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r>t<'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>",
     });
-}
-initTableProduct();
+});

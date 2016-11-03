@@ -715,8 +715,10 @@
     <!-- {{ HTML::script('public/assets/admintheme/global/plugins/jqvmap/jqvmap/data/jquery.vmap.sampledata.js') }} -->
     <!-- END PAGE LEVEL PLUGINS -->
 
-    <!-- BEGIN THEME GLOBAL SCRIPTS -->
+    <!-- BEGIN THEME GLOBAL SCRIPTS -->	
+	{{ HTML::script('public/assets/admintheme/global/plugins/bootstrap-confirmation/bootstrap-confirmation.min.js') }}
     {{ HTML::script('public/assets/admintheme/global/scripts/app.min.js') }}
+	{{ HTML::script('public/assets/admintheme/pages/scripts/ui-confirmations.min.js') }}	
     {{ HTML::script('public/assets/admintheme/pages/scripts/ui-bootbox.min.js') }}
     {{ HTML::script('public/assets/admintheme/pages/scripts/table-datatables-editable.min.js') }}
     {{ HTML::script('public/assets/admintheme/pages/scripts/dashboard.min.js') }}

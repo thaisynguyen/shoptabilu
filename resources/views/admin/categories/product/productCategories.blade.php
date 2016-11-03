@@ -54,7 +54,7 @@
                                     <th >Barcode</th>
                                     <th >Giá</th>
                                     <th >Loại tiền tệ</th>
-                                    <th></th>
+                                    <th class="all"></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -68,9 +68,9 @@
                                     <td>2343241213</td>
                                     <td>10,000,000</td>
                                     <td>VNĐ</td>
-                                    <td>
-                                        <a href="javascript:;" class="btn btn-icon-only red"><i class="fa fa-trash"></i></a>
-                                        <a href="javascript:;" class="btn btn-icon-only blue"><i class="fa fa-edit"></i></a>
+                                    <td>										
+										<a href="javascript:;" class="btn btn-icon-only red" data-toggle="confirmation" data-original-title="Are you sure ?" title="" data-placement="top"><i class="fa fa-trash"></i></a>
+                                        <a href="#" class="btn btn-icon-only blue"><i class="fa fa-edit"></i></a>
                                     </td>
                                 </tr>
                                 <tr>
@@ -84,7 +84,7 @@
                                     <td>10,000,000</td>
                                     <td>VNĐ</td>
                                     <td>
-                                        <a href="javascript:;" class="btn btn-icon-only red"><i class="fa fa-trash"></i></a>
+                                        <a href="javascript:;" class="btn btn-icon-only red" data-toggle="confirmation" data-original-title="Are you sure ?" title="" data-placement="top"><i class="fa fa-trash"></i></a>
                                         <a href="javascript:;" class="btn btn-icon-only blue"><i class="fa fa-edit"></i></a>
                                     </td>
                                 </tr>
