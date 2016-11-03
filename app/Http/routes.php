@@ -42,6 +42,7 @@ Route::any('currencyCategories','CategoriesController@currencyCategories');
 Route::any('unitCategories','CategoriesController@unitCategories');
 Route::any('addUnit','CategoriesController@addUnit');
 Route::any('saveUnit','CategoriesController@saveUnit');
+Route::any('updateUnit','CategoriesController@updateUnit');
 Route::any('productTypeCategories','CategoriesController@productTypeCategories');
 Route::any('productCategories','CategoriesController@productCategories');
 Route::any('subjectCategories','CategoriesController@subjectCategories');

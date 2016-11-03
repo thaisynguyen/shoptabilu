@@ -1,47 +1,36 @@
-@extends('admin.layouts.admindashboard')
-@section('section')
-@include('alerts.errors')
 <?php
-   // echo $row->unit_description; die;
 ?>
-<form action="{{action('CategoriesController@editUnit')}}" method="POST" class="form-horizontal margin-left-20" role="form">
-    <input type="hidden" name="_token" value="<?= csrf_token();?>"/>
-    <input type="hidden" name="id" value="<?=  $row->id;?>"/>
-    <div class="form-group">
-        <label class="col-sm-2 control-label padding-right-15 font-label-form" for="form-field-1"> Mã đơn vị tính: </label>
-        <div class="col-sm-10">
-            <input type="text" placeholder=" vd: TH" class="col-xs-10 col-sm-5" id="txtUnitCode" name="unit_code" required value="<?php echo $row->unit_code;?>">
-            <input type="hidden" class="form-control" id="txtUnitCode" name="unit_code_hide" value="<?php echo $row->unit_code;?>" required>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-2 control-label padding-right-15 font-label-form" for="form-field-1"> Tên đơn vị tính: </label>
-        <div class="col-sm-10">
-            <input type="text" placeholder=" vd: Thẻ" class="col-xs-10 col-sm-5" name="unit_name" required value="<?php echo $row->unit_name;?>">
-            <input type="hidden" class="form-control" id="txtUnitName" name="unit_name_hide" value="<?php echo $row->unit_name;?>" required>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-2 control-label padding-right-15 font-label-form" for="form-field-1"> Mô Tả: </label>
-        <div class="col-sm-10">
-            <input type="text" placeholder=" vd: Thẻ cào" class="col-xs-10 col-sm-5" name="unit_description" value="<?php echo $row->unit_description;?>">
-            <input  type="hidden" hidden class="form-control" name="unit_description_hide" value="<?php echo $row->unit_description;?>" >
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-2 control-label padding-right-15" for="form-field-1"> &nbsp; </label>
-        <div class="col-sm-10">
-            <button type="submit" class="btn btn-primary btn-save"> &nbsp;<i class="fa fa-floppy-o"></i> &nbsp;Lưu&nbsp;&nbsp;</button>
-            <a href="<?= URL::to('unitCategories');?>"><button type="button" class="btn btn-primary btn-cancel"> <i class="fa fa-reply"></i> Bỏ qua</button></a>
-        </div>
-    </div>
-</form>
-@stop
 
-@section('custom_js')
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $("#txtUnitCode").focus();
-        });
-    </script>
-@stop
+<div class="modal fade" id="edit-unit-<?php echo $unit_id;?>" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                <h4 class="modal-title text-normal text-bold"><?php echo 'Edit Unit';?></h4>
+
+
+            </div>
+            <div class="modal-body text-normal">
+                <div class="form-group has-success">
+                    <label class="control-label text-left"><?php echo 'Code';?> (<span class="input-require">*</span>):</label>
+                    <div class="input-icon right">
+                        <input type="text" class="form-control" id="code-<?php echo $unit_id;?>" required value="<?php echo $unit_code;?>"> </div>
+                </div>
+                <div class="form-group has-success">
+                    <label class="control-label text-left"><?php echo 'Name';?> (<span class="input-require">*</span>):</label>
+                    <div class="input-icon right">
+                        <input type="text" class="form-control" id="name-<?php echo $unit_id;?>" required value="<?php echo $unit_name;?>"> </div>
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" data-id="<?php echo $unit_id;?>" class="btn blue btn-act btn-edit-unit btn-smooth"><?php echo 'Save';?></button>
+                <button type="button" class="btn default btn-act btn-smooth" data-dismiss="modal"><?php echo 'Close';?></button>
+            </div>
+        </div>
+        <input type="hidden" id="hidden-code-<?php echo $unit_id;?>" required value="<?php echo $unit_code;?>"> </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
