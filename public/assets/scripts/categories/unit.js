@@ -49,7 +49,7 @@ function saveUnit(){
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                url: path,
+                url: path + '/saveUnit/',
                 type: 'POST',
                 dataType: 'json',
                 data: dataPost,
@@ -86,51 +86,59 @@ function showEditUnit(){
 
     $(document).on('click', '.td-edit-unit', function() {
         var id = $(this).attr('data-id');
-
-        $('#edit-unit-'+id).modal('show');
-        focusInput('edit-unit-'+id, 'code-'+id);
+        console.log(id);
+        $('#edit-unit-' + id).modal('show');
+        focusInput('edit-unit-' + id, 'code-' + id);
     });
 
 }
 
 function updateUnit(){
 
-    reWriteStatus();
-    $(document).on('click', '.btn-edit-Unit', function() {
+    $(document).on('click', '.btn-edit-unit', function() {
         var id = $(this).attr('data-id')
             , code = $('#code-'+id).val()
             , name = $('#name-'+id).val()
-            , status = $('#status-hidden-'+id).val()
-            , dataPost = {id: id, code: code, name: name, status: status}
+            , hiddencode = $('#hidden-code-'+id).val()
+            , dataPost = {id: id, code: code, name: name, hiddencode: hiddencode}
             ;
-        var dataJson = $.loadAjax(url, dataPost),
-            dataObj  = JSON.parse(dataJson);
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: path + '/updateUnit/',
+            type: 'POST',
+            dataType: 'json',
+            data: dataPost,
+            success: function(response) {
+                dataObj  = response;
 
-        if (dataObj.success == true) {
-            slideMessageMultiConfig(lblSuccess, dataObj.alert, 'success', 20);
+                if (dataObj.success == true) {
+                    slideMessageMultiConfig('Thông tin', dataObj.alert, 'success', 20);
+                    console.log(dataObj.unit.unit_code);
+                    var unit = dataObj.unit;
 
-            var Unit = dataObj.Unit['KsUnit']
-                , statusStr = (Unit['status'] == 1) ? active : lock
-                ;
+                    $('#code-' + id).html(unit.unit_code);
+                    $('#name-' + id).html(unit.unit_name);
 
-            $('#td-code-'+Unit['id']).html(Unit['code']);
-            $('#td-name-'+Unit['id']).html(Unit['name']);
-            $('#td-status-'+Unit['id']).html(statusStr);
+                    //$('#editDepartment-'+id).modal('hide');
+                }
+                else{
+                    slideMessageMultiConfig('Cảnh báo', 'Cập nhật không thành công', 'warning', 40);
+                }
+                return dataObj;
+            },
+            error: function(xhr, textStatus, thrownError) {
 
-            //$('#editDepartment-'+id).modal('hide');
-        }
+                console.log(thrownError);
+            }
+        });
+
+
     });
 }
 
-function reWriteStatus(){
 
-    $(document).on('click', '.status-Unit', function() {
-        var value = $(this).val()
-            , id = $(this).attr('data-id')
-            ;
-        $('#status-hidden-'+id).val(value);
-    });
-}
 
 function showDeleteUnit(){
 

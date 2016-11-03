@@ -104,58 +104,40 @@ class CategoriesController extends AppController {
         }
     }
 
-    public function updateUnit($id){
-        $row = DB::table('unit')->where('id', $id)->first();
-        return view('categories.updateUnit')->with('row',$row);
-    }
 
-    public function editUnit(Request $request){
+    public function updateUnit(Request $request){
         $post = $request->all();
         $createdUser = Session::get('sid');
-        $data = array(  'unit_name' 	    => $post['unit_name'],
-                        'unit_code' 	    => $post['unit_code'],
-                        'unit_description' 	=> $post['unit_description'],
+        $id = $post['id'];
+        $data = array(  'unit_name' 	    => $post['name'],
+                        'unit_code' 	    => $post['code'],
                         'updated_user'      => $createdUser,
-                        'updated_date'      =>date("Y-m-d h:i:sa"));
+                        'updated_at'      =>date("Y-m-d h:i:sa"));
 
-        $oldId = DB::table('unit')->where('unit_code','=',$post['unit_code_hide'])
-            ->where('inactive',0)
-            ->first();
-        $check = DB::table('unit')->where('unit_code', $post['unit_code'])
-            ->where('unit_code','!=',$post['unit_code_hide'])
+
+        $check = DB::table('unit')->where('unit_code', $post['code'])
+            ->where('unit_code','!=', $post['hiddencode'])
             ->first();
         if(count($check) > 0){
-            Session::flash('message-errors', 'Mã đơn vị tính đã bị trùng. Vui lòng thử lại.');
-            return redirect('updateUnit/'.$oldId->id);
+            return json_encode(array(
+                "success"  => false
+                , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY . 'Mã đơn vị tính đã bị trùng. Vui lòng thử lại.'
+            ));
         } else {
-            DB::beginTransaction();
             try {
-                $i = DB::table('unit')->where('id', $post['id'])->update($data);
-                $unit = DB::table('unit')->where('unit_code', $post['unit_code'])->first();
-                if(count($i)) {
-                    $functionName = 'Sửa đơn vị tính (editUnit)';
-                    $dataLog = array('function_name' => $functionName,
-                                    'action'         => commonUtils::ACTION_EDIT,
-                                    'url'            => $_SERVER['REQUEST_URI'],
-                                    'id_row'         => $unit->id,
-                                    'old_value'      => 'Mã đơn vị: '.$post['unit_code_hide']
-                                                        .', Tên đơn vị: '.$post['unit_name_hide']
-                                                        .', Mô tả: '.$post['unit_description_hide'],
-                                    'new_value'      => 'Mã đơn vị: '.$post['unit_code']
-                                                        .', Tên đơn vị: '.$post['unit_name']
-                                                        .', Mô tả: '.$post['unit_description'],
-                                    'created_user'   => $createdUser,
-                                    'created_date'   => date("Y-m-d"));
-                    $log = DB::table('kpi_log')->insert($dataLog);
-                }
+                $i = DB::table('unit')->where('unit_id', $post['id'])->update($data);
+                return json_encode(array(
+                    "success"  => true
+                    , "alert"  => commonUtils::EDIT_SUCCESSFULLY
+                    , "unit"  => $data
+                ));
             } catch (Exception $e) {
-                DB::rollback();
-                Session::flash('message-errors', commonUtils::EDIT_UNSUCCESSFULLY);
-                return redirect('updateUnit'.$oldId->id);
+                return json_encode(array(
+                    "success"  => false
+                , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY
+                ));
             }
-            DB::commit();
-            Session::flash('message-success', commonUtils::EDIT_SUCCESSFULLY);
-            return redirect('unitCategories');
+
         }
     }
 
