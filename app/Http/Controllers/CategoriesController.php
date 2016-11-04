@@ -146,17 +146,22 @@ class CategoriesController extends AppController {
         $createdUser = Session::get('sid');
 
         try{
-            $r = DB::table('unit')->where('unit_id', $post['id'])->delete();
+            $data = array(
+                            'inactive' 	      => 1,
+                            'deleted_user'    => $createdUser,
+                            'deleted_at'      => date("Y-m-d h:i:sa"));
+            $i = DB::table('unit')->where('unit_id', $post['id'])->update($data);
 
-            $data = DB::table('unit')
-                        ->where('inactive', 0)
-                        ->paginate(commonUtils::ITEM_PER_PAGE_DEFAULT);;
+            $arr = DB::table('unit')
+                ->select(DB::raw('*'))
+                ->where('inactive', '=', 0)
+                ->get();
             return json_encode(array(
                 "success"  => true
                 , "alert"  => commonUtils::DELETE_SUCCESSFULLY
-                , "unit"  => $data
+                , "unit"  => $arr
             ));
-        }catch(\Exception $e){
+        }catch(Exception $e){
             return json_encode(array(
                 "success"  => false
                 , "alert"  => commonUtils::DELETE_UNSUCCESSFULLY

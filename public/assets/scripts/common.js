@@ -1,3 +1,7 @@
+var lblSuccess = 'Thành công';
+var lblInfo = 'Thông tin';
+var lblWarning = 'Cảnh báo';
+
 function slideMessage(type, message){
     $.notify({
         message: message,

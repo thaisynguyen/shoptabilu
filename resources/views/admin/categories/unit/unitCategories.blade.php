@@ -75,7 +75,7 @@
                                 <th> Xóa </th>
                             </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="main-content">
 
                             <?php
                             $i = 0;

@@ -168,17 +168,13 @@ function deleteUnit(){
 
                 dataObj = response;
                 console.log(dataObj);
+                $('.modal-backdrop').remove();
                 if (dataObj.success == true) {
-                    //$('#main-content').html(dataObj.contentUnitHtml);
-                    //$('#addUnit').modal('hide');
-                    $('.modal-backdrop').remove();
-                    resetForm();
-                    slideMessageMultiConfig('Thông tin', dataObj.alert, 'success', 20);
-                    $('#code').focus();
-                }else{
-                    slideMessageMultiConfig('Thông tin', dataObj.alert, 'warning', 40);
+                    $('#main-content').html(dataObj.unit);
+                    slideMessageMultiConfig(lblSuccess, dataObj.alert, 'success', 40);
+                } else {
+                    slideMessageMultiConfig(lblWarning, dataObj.alert, 'warning', 40);
                 }
-                return dataObj;
             },
             error: function(xhr, textStatus, thrownError) {
 
@@ -186,13 +182,7 @@ function deleteUnit(){
             }
         });
 
-        $('.modal-backdrop').remove();
-        if (dataObj.success == true) {
-            $('#main-content').html(dataObj.contentUnitHtml);
-            slideMessageMultiConfig(lblSuccess, dataObj.alert, 'success', 40);
-        } else {
-            slideMessageMultiConfig(lblWarning, dataObj.alert, 'warning', 40);
-        }
+
     });
 }
 
