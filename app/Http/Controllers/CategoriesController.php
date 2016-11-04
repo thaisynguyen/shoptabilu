@@ -134,7 +134,7 @@ class CategoriesController extends AppController {
             } catch (Exception $e) {
                 return json_encode(array(
                     "success"  => false
-                , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY
+                    , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY
                 ));
             }
 
@@ -144,33 +144,25 @@ class CategoriesController extends AppController {
     public function deleteUnit(Request $request){
         $post = $request->all();
         $createdUser = Session::get('sid');
-        $row = DB::table('unit')->where('id', $post['id'])->first();
 
-        DB::beginTransaction();
         try{
-            DB::table('unit')->where('id', $post['id'])->delete();
-            #Write log
-            $functionName = 'Xóa đơn vị tính (deleteUnit)';
-            $value = 'Mã đơn vị: '.$row->unit_code
-                    .', Tên đơn vị: '.$row->unit_name
-                    .', Mô tả: '.$row->unit_description;
-            $dataLog = array('function_name' => $functionName,
-                            'action'         => commonUtils::ACTION_DELETE,
-                            'url'            => $_SERVER['REQUEST_URI'],
-                            'id_row'         => $row->id,
-                            'old_value'      => $value,
-                            'new_value'      => $value,
-                            'created_user'   => $createdUser,
-                            'created_date'   => date("Y-m-d h:i:sa"));
-            DB::table('kpi_log')->insert($dataLog);
+            $r = DB::table('unit')->where('unit_id', $post['id'])->delete();
+
+            $data = DB::table('unit')
+                        ->where('inactive', 0)
+                        ->paginate(commonUtils::ITEM_PER_PAGE_DEFAULT);;
+            return json_encode(array(
+                "success"  => true
+                , "alert"  => commonUtils::DELETE_SUCCESSFULLY
+                , "unit"  => $data
+            ));
         }catch(\Exception $e){
-            DB::rollback();
-            Session::flash('message-errors', commonUtils::DELETE_ISSET_CHILD);
-            return redirect('unitCategories');
+            return json_encode(array(
+                "success"  => false
+                , "alert"  => commonUtils::DELETE_UNSUCCESSFULLY
+            ));
         }
-        DB::commit();
-        Session::flash('message-success', commonUtils::DELETE_SUCCESSFULLY);
-        return redirect('unitCategories');
+
     }
 
     /*

@@ -101,7 +101,7 @@ function updateUnit(){
             , name = $('#name-'+id).val()
             , hiddencode = $('#hidden-code-'+id).val()
             , dataPost = {id: id, code: code, name: name, hiddencode: hiddencode}
-            ;
+            , dataObj;
         $.ajax({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -118,8 +118,8 @@ function updateUnit(){
                     console.log(dataObj.unit.unit_code);
                     var unit = dataObj.unit;
 
-                    $('#code-' + id).html(unit.unit_code);
-                    $('#name-' + id).html(unit.unit_name);
+                    $('#td-code-' + id).html(unit.unit_code);
+                    $('#td-name-' + id).html(unit.unit_name);
 
                     //$('#editDepartment-'+id).modal('hide');
                 }
@@ -151,14 +151,40 @@ function showDeleteUnit(){
 
 function deleteUnit(){
 
-    $(document).on('click', '.btn-delete-object', function() {
+    $(document).on('click', '.btn-delete-unit', function() {
         var id = $(this).attr('data-id')
-            , url = KPIS.ApiUrl('kpi_standard/KsCategory/deleteUnit')
             , dataPost = {id: id}
             ;
 
-        var dataJson = $.loadAjax(url, dataPost),
-            dataObj  = JSON.parse(dataJson);
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: path + '/deleteUnit/',
+            type: 'POST',
+            dataType: 'json',
+            data: dataPost,
+            success: function(response) {
+
+                dataObj = response;
+                console.log(dataObj);
+                if (dataObj.success == true) {
+                    //$('#main-content').html(dataObj.contentUnitHtml);
+                    //$('#addUnit').modal('hide');
+                    $('.modal-backdrop').remove();
+                    resetForm();
+                    slideMessageMultiConfig('Thông tin', dataObj.alert, 'success', 20);
+                    $('#code').focus();
+                }else{
+                    slideMessageMultiConfig('Thông tin', dataObj.alert, 'warning', 40);
+                }
+                return dataObj;
+            },
+            error: function(xhr, textStatus, thrownError) {
+
+                console.log(thrownError);
+            }
+        });
 
         $('.modal-backdrop').remove();
         if (dataObj.success == true) {

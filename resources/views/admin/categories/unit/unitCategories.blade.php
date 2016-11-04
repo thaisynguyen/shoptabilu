@@ -88,8 +88,8 @@
 
                             <tr>
                                 <td class="text-center"> <?php  echo $stt; $stt++; ?>  </td>
-                                <td unit_id="{{$row->unit_id}}"> <?php echo $row->unit_code; ?> </td>
-                                <td> <?php echo $row->unit_name; ?> </td>
+                                <td id="td-code-{{$row->unit_id}}"> <?php echo $row->unit_code; ?> </td>
+                                <td id="td-name-{{$row->unit_id}}"> <?php echo $row->unit_name; ?> </td>
                                 <td>
                                     <a class="td-edit-unit" data-id="{{$row->unit_id}}"> Sửa </a>
 
@@ -99,8 +99,13 @@
                                                                                     'unit_name' => $row->unit_name,
 
                                 ))
+                                @include('admin.categories.unit.deleteUnit', array('unit_id' => $row->unit_id,
+                                                                                    'unit_code' => $row->unit_code,
+                                                                                    'unit_name' => $row->unit_name,
+
+                                ))
                                 <td>
-                                    <a class="delete" > Xóa </a>
+                                    <a class='td-delete-unit' data-id="{{$row->unit_id}}"> Xóa </a>
                                 </td>
                             </tr>
                             <?php
