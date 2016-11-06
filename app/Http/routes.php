@@ -39,13 +39,20 @@ Route::get('/', function()
 
 // CATEGORIES
 Route::any('currencyCategories','CategoriesController@currencyCategories');
+
 Route::any('unitCategories','CategoriesController@unitCategories');
 Route::any('addUnit','CategoriesController@addUnit');
 Route::any('saveUnit','CategoriesController@saveUnit');
 Route::any('updateUnit','CategoriesController@updateUnit');
 Route::any('deleteUnit','CategoriesController@deleteUnit');
+
 Route::any('productTypeCategories','CategoriesController@productTypeCategories');
-Route::any('productCategories','CategoriesController@productCategories');
+
+Route::any('productCategories','ProductController@productCategories');
+Route::any('deleteProduct/{product_id}','ProductController@deleteProduct');
+Route::any('updateProduct','ProductController@updateProduct');
+Route::any('addProduct','ProductController@addProduct');
+
 Route::any('subjectCategories','CategoriesController@subjectCategories');
 Route::any('producerCategories','CategoriesController@producerCategories');
 Route::any('companyProfile','CategoriesController@companyProfile');

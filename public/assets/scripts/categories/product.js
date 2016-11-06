@@ -80,9 +80,40 @@ $(document).ready(function () {
         // So when dropdowns used the scrollable div should be removed.
         //"dom": "<'row' <'col-md-12'T>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r>t<'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>",
     });
-	
-	function deleteRow(id)
-	{
-		table.row($('id')).remove().draw( false );
-	}
 });
+
+function deleteRow(idProduct)
+{
+    //var id = $(this).attr('data-id')
+    //  , dataPost = {id: id}
+    //;
+    console.log(1111111);
+    console.log(path);
+    $.ajax({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        url: path + '/deleteProduct/' + idProduct,
+        type: 'POST',
+        dataType: 'json',
+        data: {id: idProduct},
+
+        success: function(response) {
+            console.log(22222);
+            dataObj = response;
+            console.log(dataObj);
+            //$('.modal-backdrop').remove();
+            if (dataObj.success == true) {
+                $('#main-content').html(dataObj.unit);
+                //slideMessageMultiConfig(lblSuccess, dataObj.alert, 'success', 40);
+            } else {
+                //slideMessageMultiConfig(lblWarning, dataObj.alert, 'warning', 40);
+            }
+        },
+        error: function(xhr, textStatus, thrownError) {
+            console.log(3333);
+            console.log(thrownError);
+        }
+    });
+    //table.row($('id')).remove().draw( false );
+}
