@@ -51,32 +51,41 @@
                                     <th >Barcode</th>
                                     <th >Loại</th>
                                     <th >Nhà SX</th>
-                                    <th >Dài (cm)</th>
-                                    <th >Rộng (cm)</th>
-                                    <th >Cao (cm)</th>
-                                    <th >Cân nặng (gam)</th>
-
+                                    <th >Kích thước</th>
+                                    <th >Cân nặng</th>
+									<th >Màu</th>
                                     <th class="all"></th>
                                 </tr>
                                 </thead>
-                                <tbody>
+                                
+								<tbody>								
+								<?php
+								$i = 0;
+								//$stt = (($curpage-1) * CommonUtils::ITEM_PER_PAGE_DEFAULT) + 1;
+								foreach($data as $row)
+								{
+									$i++;									
+								
+								?>
                                 <tr>
                                     <th></th>
-                                    <td>NK001</td>
-                                    <td>Nikon D90</td>
-                                    <td>aawef234234</td>
-                                    <td>Nikon</td>
-                                    <td>Nikon</td>
-                                    <td>20</td>
-                                    <td>10</td>
-                                    <td>5</td>
-                                    <td>5.3</td>
+                                    <td><?php echo $row->product_id; ?></td>
+                                    <td><?php echo $row->product_name; ?> </td>
+                                    <td><?php echo $row->barcode; ?> </td>
+                                    <td><?php echo $row->product_type_name; ?> </td>
+                                    <td><?php echo $row->producer_name; ?> </td>
+                                    <td><?php echo $row->length.' x '.$row->width.' x '.$row->height; ?></td>
+                                    <td><?php echo $row->weight; ?> (kg)</td>
+                                    <td><?php echo $row->color; ?> </td>
 
                                     <td>										
 										<a href="javascript:;" class="btn btn-icon-only red" data-toggle="confirmation" data-original-title="Are you sure ?" title="" data-placement="top"><i class="fa fa-trash"></i></a>
                                         <a href="#" class="btn btn-icon-only blue"><i class="fa fa-edit"></i></a>
                                     </td>
                                 </tr>
+								<?php
+								}
+								?>
 
                                 </tbody>
                             </table>
