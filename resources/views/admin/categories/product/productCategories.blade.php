@@ -83,7 +83,7 @@
                                     <td>
                                         <a href="javascript:deleteRow(<?php echo $row->product_id; ?>);" class="btn btn-icon-only red"><i class="fa fa-trash"></i></a>
 										<!--<a href="javascript:deleteRow(1);" class="btn btn-icon-only red" data-toggle="confirmation" data-original-title="Are you sure ?" title="" data-placement="top"><i class="fa fa-trash"></i></a>-->
-                                        <a href="#" class="btn btn-icon-only blue"><i class="fa fa-edit"></i></a>
+                                        <a href="updateProduct" class="btn btn-icon-only blue"><i class="fa fa-edit"></i></a>
                                     </td>
                                 </tr>
 								<?php

@@ -93,6 +93,13 @@ class ProductController extends AppController {
         return view('admin.categories.product.productCategories')
 						->with('data',$data);						
     }
+
+    public function updateProduct(Request $request){
+        $this->clearSession();
+        $data = self::viewProduct();
+        return view('admin.categories.product.updateProduct')
+            ->with('data',$data);
+    }
 	
 	
 }
