@@ -49,7 +49,7 @@ Route::any('deleteUnit','CategoriesController@deleteUnit');
 Route::any('productTypeCategories','CategoriesController@productTypeCategories');
 
 Route::any('productCategories','ProductController@productCategories');
-Route::any('deleteProduct/{product_id}','ProductController@deleteProduct');
+Route::any('deleteProduct','ProductController@deleteProduct');
 Route::any('updateProduct','ProductController@updateProduct');
 Route::any('addProduct','ProductController@addProduct');
 

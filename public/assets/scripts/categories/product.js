@@ -1,6 +1,15 @@
 $(document).ready(function () {
-	
-    var table = $('#tblProduct').DataTable({
+
+	var table = $('#tblProduct').DataTable({
+		/*"processing": true,
+		"serverSide": true,
+        "ajax": {
+			"headers": {
+				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			},
+            "url": path + "/viewProduct/",
+            "type": "GET",
+        },*/
         // Internationalisation. For more info refer to http://datatables.net/manual/i18n
         "language": {
             "aria": {
@@ -37,9 +46,9 @@ $(document).ready(function () {
                 },
 				className: 'btn blue'
             },
-			{ extend: 'print', className: 'btn dark btn-outline' },
-            { extend: 'pdf', className: 'btn green btn-outline' },
-            { extend: 'csv', className: 'btn purple btn-outline ' }			
+			{ extend: 'print', className: 'btn dark btn-outline' }
+            //{ extend: 'pdf', className: 'btn green btn-outline' },
+            //{ extend: 'csv', className: 'btn purple btn-outline ' }			
         ],
 
         // setup responsive extension: http://datatables.net/extensions/responsive/
@@ -70,7 +79,7 @@ $(document).ready(function () {
             [5, 10, 15, 20, "All"] // change per page values here
         ],
         // set the initial value
-        "pageLength": 10,
+        "pageLength": 5,
         "pagingType": 'bootstrap_extended', // pagination type
 
         "dom": "<'row' <'col-md-12'B>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>", // horizobtal scrollable datatable
@@ -80,40 +89,50 @@ $(document).ready(function () {
         // So when dropdowns used the scrollable div should be removed.
         //"dom": "<'row' <'col-md-12'T>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r>t<'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>",
     });
+    
 });
 
-function deleteRow(idProduct)
-{
-    //var id = $(this).attr('data-id')
-    //  , dataPost = {id: id}
-    //;
-    console.log(1111111);
-    console.log(path);
-    $.ajax({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        url: path + '/deleteProduct/' + idProduct,
-        type: 'POST',
-        dataType: 'json',
-        data: {id: idProduct},
 
-        success: function(response) {
-            console.log(22222);
-            dataObj = response;
-            console.log(dataObj);
-            //$('.modal-backdrop').remove();
-            if (dataObj.success == true) {
-                $('#main-content').html(dataObj.unit);
-                //slideMessageMultiConfig(lblSuccess, dataObj.alert, 'success', 40);
-            } else {
-                //slideMessageMultiConfig(lblWarning, dataObj.alert, 'warning', 40);
-            }
-        },
-        error: function(xhr, textStatus, thrownError) {
-            console.log(3333);
-            console.log(thrownError);
-        }
-    });
-    //table.row($('id')).remove().draw( false );
+$("[data-toggle=confirmation]").confirmation({
+	container:"body",	
+	btnOkClass:"btn btn-sm btn-success",
+	btnCancelClass:"btn btn-sm btn-danger",
+	onConfirm:function(event, element) {		
+		var id = $(element)[0].getAttribute('data-id');
+		//console.log(id);
+		deleteProduct(id);
+	}
+});
+
+function deleteProduct(idProduct)
+{	
+	var dataPost = {id: idProduct};
+	$.ajax({
+		headers: {
+			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+		},
+		url: path + '/deleteProduct/',
+		type: 'POST',
+		dataType: 'json',
+		data: dataPost,
+
+		success: function (response) {
+			dataObj = response;
+
+			if (dataObj.success == true) {				
+				slideMessageMultiConfig('Thông tin', dataObj.alert, 'success', 20);
+				$('#tblProduct').DataTable().row($('#pid_' + idProduct)).remove().draw( false );				
+			}
+			else {				
+				slideMessageMultiConfig('C?nh báo', 'Xoa không thành công', 'warning', 40);
+			}
+			return dataObj;
+		},
+		error: function (xhr, textStatus, thrownError) {
+			console.log('333');
+			console.log(thrownError);
+		}
+	})	
 }
+
+
