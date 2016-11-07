@@ -60,7 +60,7 @@ class CategoriesController extends AppController {
     public function unitCategories(Request $request){
         $this->clearSession();
         $data = self::selectAndSortDataFromTable($request, 'unit');
-//        print_r($data);die;
+//        commonUtils::pr($data);die;
         return view('admin.categories.unit.unitCategories')->with('data',$data);
     }
 
@@ -152,14 +152,12 @@ class CategoriesController extends AppController {
                             'deleted_at'      => date("Y-m-d h:i:sa"));
             $i = DB::table('unit')->where('unit_id', $post['id'])->update($data);
 
-            $arr = DB::table('unit')
-                ->select(DB::raw('*'))
-                ->where('inactive', '=', 0)
-                ->get();
+            $arr = self::selectAndSortDataFromTable($request, 'unit');
+            $unitHtml = view('admin.categories.unit.unitContent', ['data' => $arr])->render();
             return json_encode(array(
                 "success"  => true
                 , "alert"  => commonUtils::DELETE_SUCCESSFULLY
-                , "unit"  => $arr
+                , "unit"  => $unitHtml
             ));
         }catch(Exception $e){
             return json_encode(array(

@@ -298,3 +298,71 @@ function slideMessageMultiConfig(title, message, typeMessage, offset){
         }
     );
 }
+
+/**
+ * Reload to sort page
+ * @param actionUrl
+ * @param sortType
+ * @param sortColumn
+ */
+function reloadToSortPage(sortDirection, sortColumn){
+
+    var pathname = window.location.pathname;
+    //console.log(sortColumn);
+    $('th').each(function (column){
+        if($(this).attr('sort_key') == sortColumn){
+            if(sortDirection == '0'){
+                $(this).attr('sort_direction', 'asc');
+                sortDirection = 'asc';
+            } else if(sortDirection == 'asc') {
+                $(this).attr('sort_direction', 'desc');
+                sortDirection = 'desc';
+            } else {
+                $(this).attr('sort_direction', 'asc');
+                sortDirection = 'asc';
+            }
+        } else {
+            $(this).attr('sort_direction', '0');
+        }
+    });
+    window.location.href = pathname + '?sort=' + sortDirection + '&column=' + sortColumn;
+}
+
+
+/**
+ * Set sort dimention on page load
+ */
+function setSortDimentionOnPageLoad(){
+    var sortDirection = getUrlParameter('sort');
+    var column = getUrlParameter('column');
+    //console.log(column);
+
+    $('th').each(function (){
+        if($(this).attr('sort_key') == column){
+            $(this).attr('sort_direction', sortDirection);
+            if(sortDirection == 'asc'){
+                $(this).find('i').removeClass('fa-sort').addClass('fa-sort-desc');
+            }else if(sortDirection == 'desc') {
+                $(this).find('i').removeClass('fa-sort-desc').addClass('fa-sort-asc');
+            }else{
+                $(this).find('i').removeClass('fa-sort').addClass('fa-sort');
+            }
+
+        } else {
+            $(this).attr('sort_direction', '0');
+        }
+    });
+}
+
+
+function sortOnPageLoad(){
+    setSortDimentionOnPageLoad();
+
+    $(function(){
+        $('th').each(function (column){
+            $(this).addClass('sortable').click(function (){
+                reloadToSortPage($(this).attr('sort_direction'), $(this).attr('sort_key'));
+            });
+        });
+    });
+}
