@@ -26,6 +26,7 @@
     <!-- BEGIN THEME LAYOUT STYLES -->
     {{ HTML::style('public/assets/admintheme/layouts/layout/css/layout.min.css') }}
     {{ HTML::style('public/assets/admintheme/layouts/layout/css/themes/darkblue.min.css') }}
+    {{ HTML::style('public/assets/admintheme/global/plugins/jstree/themes/default/style.min.css') }}
     {{ HTML::style('public/assets/admintheme/layouts/layout/css/custom.css') }}
     <!-- END THEME LAYOUT STYLES -->
 @stop
@@ -199,7 +200,10 @@
     <!-- {{ HTML::script('public/assets/admintheme/global/plugins/jqvmap/jqvmap/data/jquery.vmap.sampledata.js') }} -->
     <!-- END PAGE LEVEL PLUGINS -->
 
-    <!-- BEGIN THEME GLOBAL SCRIPTS -->	
+    <!-- BEGIN THEME GLOBAL SCRIPTS -->
+
+	{{ HTML::script('public/assets/admintheme/global/plugins/jstree/dist/jstree.js') }}
+	{{ HTML::script('public/assets/admintheme/global/plugins/jstree/dist/jstree.min.js') }}
 	{{ HTML::script('public/assets/admintheme/global/plugins/bootstrap-confirmation/bootstrap-confirmation.min.js') }}
     {{ HTML::script('public/assets/admintheme/global/scripts/app.min.js') }}
 	{{ HTML::script('public/assets/admintheme/pages/scripts/ui-confirmations.min.js') }}	

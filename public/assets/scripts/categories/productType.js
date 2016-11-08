@@ -197,14 +197,14 @@ function pressSaveUnit(){
 
 function loadData(){
     var dataPost = {id: 0}
-        , data;
+        , dataProductType;
     var jsonData = [
         { "id" : "ajson1", "parent" : "#", "text" : "Simple root node" },
         { "id" : "ajson2", "parent" : "#", "text" : "Root node 2" },
         { "id" : "ajson3", "parent" : "ajson2", "text" : "Child 1" },
         { "id" : "ajson4", "parent" : "ajson2", "text" : "Child 2" },
     ];
-    $.ajax({
+    dataProductType = $.ajax({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
@@ -214,15 +214,11 @@ function loadData(){
         data: dataPost,
         success: function(response) {
 
-            data = response.data;
+            dataProductType = response.data;
+            console.log(dataProductType);
             $('#treeProductType').jstree({
                 'core' : {
-                    'data' : [
-                        { "id" : "ajson1", "parent" : "#", "text" : "Simple root node" },
-                        { "id" : "ajson2", "parent" : "#", "text" : "Root node 2" },
-                        { "id" : "ajson3", "parent" : "ajson2", "text" : "Child 1" },
-                        { "id" : "ajson4", "parent" : "ajson2", "text" : "Child 2" },
-                    ]
+                    'data' : dataProductType
                 }
             });
         },
@@ -231,6 +227,5 @@ function loadData(){
             console.log(thrownError);
         }
     });
-
 
 }

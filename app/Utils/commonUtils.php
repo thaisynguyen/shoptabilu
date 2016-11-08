@@ -142,16 +142,18 @@ class commonUtils
         return $temp;
     }
 
-    public static function buildTreeTest(array $elements, $parentId = 0)
+    public static function buildTreeProductType(array $elements, $parentId = 0)
     {
         $branch = array();
 
         foreach ($elements as $element) {
             if ($element['parent_id'] == $parentId) {
-                $children = self::buildTree($elements, $element['id']);
+                $children = self::buildTreeProductType($elements, $element['id']);
                 if ($children) {
                     $element['children'] = $children;
+                    $element['state'] = array('opened' => true);
                 }
+
                 $branch[] = $element;
             }
         }

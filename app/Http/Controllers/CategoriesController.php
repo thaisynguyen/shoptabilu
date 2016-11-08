@@ -167,4 +167,37 @@ class CategoriesController extends AppController {
         }
 
     }
+
+    /*
+     * Controller for Product Type
+     */
+
+    public function productTypeCategories(Request $request){
+        $this->clearSession();
+
+        return view('admin.categories.productType.productTypeCategories');
+    }
+
+    public function productTypeTree(Request $request){
+        $this->clearSession();
+        $sql = 'SELECT p.product_type_id AS id
+                      , p.parent_id
+                      , p.product_type_name AS text
+                FROM product_type AS p
+                WHERE p.inactive = 0
+        ';
+        $data = DB::select(DB::raw($sql));
+
+        $data = commonUtils::objectToArray($data);
+
+        $data = commonUtils::buildTreeProductType($data, 0);
+
+        return json_encode(array(
+            "success"   => true
+        , "data"    => $data
+        ));
+
+//        commonUtils::pr($data);die;
+//        return view('admin.categories.productType.productTypeCategories')->with('data',$data);
+    }
 }
