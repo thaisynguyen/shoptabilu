@@ -6,7 +6,7 @@
 
     <?php
         use Utils\commonUtils;
-        $curpage =  $data->currentPage();
+        //$curpage =  $data->currentPage();
     ?>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -69,7 +69,7 @@
 									$i++;									
 								
 								?>
-                                <tr>
+                                <tr id="<?php echo 'pid_'.$row->product_id; ?>">
                                     <th></th>
                                     <td><?php echo $row->product_id; ?></td>
                                     <td><?php echo $row->product_name; ?> </td>
@@ -81,15 +81,20 @@
                                     <td><?php echo $row->color; ?> </td>
 
                                     <td>
-                                        <a href="javascript:deleteRow(<?php echo $row->product_id; ?>);" class="btn btn-icon-only red"><i class="fa fa-trash"></i></a>
-										<!--<a href="javascript:deleteRow(1);" class="btn btn-icon-only red" data-toggle="confirmation" data-original-title="Are you sure ?" title="" data-placement="top"><i class="fa fa-trash"></i></a>-->
-                                        <a href="updateProduct" class="btn btn-icon-only blue"><i class="fa fa-edit"></i></a>
+                                        <!--a href="javascript:deleteRow();" class="btn btn-icon-only red"><i class="fa fa-trash"></i></a-->
+										<a class="btn btn-icon-only red" 											
+											data-id="<?php echo $row->product_id;?>"
+											data-toggle="confirmation" 
+											data-original-title="Are you sure ?" 
+											data-placement="top"><i class="fa fa-trash"></i></a>											
+											
+										<a href="updateProduct" class="btn btn-icon-only blue"><i class="fa fa-edit"></i></a>
                                     </td>
                                 </tr>
 								<?php
 								}
 								?>
-
+								
                                 </tbody>
                             </table>
                         </div>
