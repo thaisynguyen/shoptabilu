@@ -1,94 +1,145 @@
 $(document).ready(function () {
 
-	var table = $('#tblProduct').DataTable({
-		/*"processing": true,
-		"serverSide": true,
-        "ajax": {
-			"headers": {
-				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-			},
-            "url": path + "/viewProduct/",
-            "type": "GET",
-        },*/
-        // Internationalisation. For more info refer to http://datatables.net/manual/i18n
-        "language": {
-            "aria": {
-                "sortAscending": ": activate to sort column ascending",
-                "sortDescending": ": activate to sort column descending"
-            },
-            "emptyTable": "No data available in table",
-            "info": "Showing _START_ to _END_ of _TOTAL_ entries",
-            "infoEmpty": "No entries found",
-            "infoFiltered": "(filtered1 from _MAX_ total entries)",
-            "lengthMenu": "_MENU_ entries",
-            "search": "Search:",
-            "zeroRecords": "No matching records found"
-        },
-		
-		//'aoColumnDefs': [
-			//{
-				//'bSortable': false,
-				//'aTargets': [9] /* 1st one, start by the right */
-			//}
-		//], 
+	//
+	// Pipelining function for DataTables. To be used to the `ajax` option of DataTables
+	//
+	$.fn.dataTable.pipeline = function ( opts ) {
+		// Configuration options
+		var conf = $.extend( {
+			pages: 5,     // number of pages to cache
+			url: '',      // script url
+			data: null,   // function or object with parameters to send to the server
+						  // matching how `ajax.data` works in DataTables
+			method: 'GET' // Ajax HTTP method
+		}, opts );
+	 	//console.log(conf);
 
-        // Or you can use remote translation file
-        //"language": {
-        //   url: '//cdn.datatables.net/plug-ins/3cfcc339e89/i18n/Portuguese.json'
-        //},
-
-        // setup buttons extentension: http://datatables.net/extensions/buttons/
-        buttons: [
-            {
-                text: 'Them SP Moi',
-                action: function ( e, dt, node, config ) {
-                    alert( 'Button activated' );
-                },
-				className: 'btn blue'
-            },
-			{ extend: 'print', className: 'btn dark btn-outline' }
-            //{ extend: 'pdf', className: 'btn green btn-outline' },
-            //{ extend: 'csv', className: 'btn purple btn-outline ' }			
-        ],
-
-        // setup responsive extension: http://datatables.net/extensions/responsive/
-        responsive: {
-            details: {
-                type: 'column',
-                target: 'tr'
-            }
-        },
-		
-        columnDefs: [ 
-			{ 
-				className: 'control',
-				orderable: false,
-				targets:   0
-			},
-			{				
-				orderable: false,
-				targets:   -1
+		// Private variables for storing the cache
+		var cacheLower = -1;
+		var cacheUpper = null;
+		var cacheLastRequest = null;
+		var cacheLastJson = null;
+	 
+		return function ( request, drawCallback, settings ) {
+			var ajax          = false;
+			var requestStart  = request.start;
+			var drawStart     = request.start;
+			var requestLength = request.length;
+			var requestEnd    = requestStart + requestLength;
+			 
+			if ( settings.clearCache ) {
+				// API requested that the cache be cleared
+				ajax = true;
+				settings.clearCache = false;
 			}
-		],
+			else if ( cacheLower < 0 || requestStart < cacheLower || requestEnd > cacheUpper ) {
+				// outside cached data - need to make a request
+				ajax = true;
+			}
+			else if ( JSON.stringify( request.order )   !== JSON.stringify( cacheLastRequest.order ) ||
+					  JSON.stringify( request.columns ) !== JSON.stringify( cacheLastRequest.columns ) ||
+					  JSON.stringify( request.search )  !== JSON.stringify( cacheLastRequest.search )
+			) {
+				// properties changed (ordering, columns, searching)
+				ajax = true;
+			}
+			 
+			// Store the request for checking next time around
+			cacheLastRequest = $.extend( true, {}, request );
+	 
+			if ( ajax ) {
+				// Need data from the server
+				if ( requestStart < cacheLower ) {
+					requestStart = requestStart - (requestLength*(conf.pages-1));
+	 
+					if ( requestStart < 0 ) {
+						requestStart = 0;
+					}
+				}
+				 
+				cacheLower = requestStart;
+				cacheUpper = requestStart + (requestLength * conf.pages);
+	 
+				request.start = requestStart;
+				request.length = requestLength*conf.pages;
+	 
+				// Provide the same `data` options as DataTables.
+				if ( $.isFunction ( conf.data ) ) {
+					// As a function it is executed with the data object as an arg
+					// for manipulation. If an object is returned, it is used as the
+					// data object to submit
+					var d = conf.data( request );
+					if ( d ) {
+						$.extend( request, d );
+					}
+				}
+				else if ( $.isPlainObject( conf.data ) ) {
+					// As an object, the data given extends the default
+					$.extend( request, conf.data );
+				}
+	 
+				settings.jqXHR = $.ajax( {
+					"type":     conf.method,
+					"url":      conf.url,
+					"data":     request,
+					"dataType": "json",
+					"cache":    false,
+					"success":  function ( json ) {
+						cacheLastJson = $.extend(true, {}, json);
+	 
+						if ( cacheLower != drawStart ) {
+							json.data.splice( 0, drawStart-cacheLower );
+						}
+						if ( requestLength >= -1 ) {
+							json.data.splice( requestLength, json.data.length );
+						}
+						 
+						drawCallback( json );
+					}
+				} );
+			}
+			else {
+				console.log("ko cache");
+				json = $.extend( true, {}, cacheLastJson );
+				json.draw = request.draw; // Update the echo for each response
+				json.data.splice( 0, requestStart-cacheLower );
+				json.data.splice( requestLength, json.data.length );
 
-        order: [ 1, 'asc' ],
+				console.log(json);
 
-        // pagination control
-        "lengthMenu": [
-            [5, 10, 15, 20, -1],
-            [5, 10, 15, 20, "All"] // change per page values here
-        ],
-        // set the initial value
-        "pageLength": 5,
-        "pagingType": 'bootstrap_extended', // pagination type
-
-        "dom": "<'row' <'col-md-12'B>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>", // horizobtal scrollable datatable
-
-        // Uncomment below line("dom" parameter) to fix the dropdown overflow issue in the datatable cells. The default datatable layout
-        // setup uses scrollable div(table-scrollable) with overflow:auto to enable vertical scroll(see: assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.js).
-        // So when dropdowns used the scrollable div should be removed.
-        //"dom": "<'row' <'col-md-12'T>><'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r>t<'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>",
-    });
+				drawCallback(json);
+			}
+		}
+	};
+	 
+	// Register an API method that will empty the pipelined data, forcing an Ajax
+	// fetch on the next draw (i.e. `table.clearPipeline().draw()`)
+	$.fn.dataTable.Api.register( 'clearPipeline()', function () {
+		return this.iterator( 'table', function ( settings ) {
+			settings.clearCache = true;
+		} );
+	} );
+  
+	//
+	// DataTables initialisation
+	//
+	$('#tblProduct').DataTable( {
+        "processing": true,
+        "serverSide": true,
+        "ajax": $.fn.dataTable.pipeline( {
+            url: path + "/viewProduct/",
+            pages: 5 // number of pages to cache
+        } ),
+		"columns": [
+			{"data": "product_id"},
+			{"data": "product_name"},
+			{"data": "barcode"},
+			{"data": "product_type_name"},
+			{"data": "producer_name"},
+			{"data": "weight"},
+			{"data": "color"}
+        ]
+    } );	
     
 });
 
@@ -120,11 +171,11 @@ function deleteProduct(idProduct)
 			dataObj = response;
 
 			if (dataObj.success == true) {				
-				slideMessageMultiConfig('Thông tin', dataObj.alert, 'success', 20);
+				slideMessageMultiConfig('Thï¿½ng tin', dataObj.alert, 'success', 20);
 				$('#tblProduct').DataTable().row($('#pid_' + idProduct)).remove().draw( false );				
 			}
 			else {				
-				slideMessageMultiConfig('C?nh báo', 'Xoa không thành công', 'warning', 40);
+				slideMessageMultiConfig('C?nh bï¿½o', 'Xoa khï¿½ng thï¿½nh cï¿½ng', 'warning', 40);
 			}
 			return dataObj;
 		},

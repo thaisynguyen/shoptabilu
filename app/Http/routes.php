@@ -54,6 +54,7 @@ Route::any('updateProductType','CategoriesController@updateProductType');
 Route::any('deleteProductType','CategoriesController@deleteProductType');
 
 Route::any('productCategories','ProductController@productCategories');
+Route::any('viewProduct','ProductController@viewProduct');
 Route::any('deleteProduct','ProductController@deleteProduct');
 Route::any('updateProduct','ProductController@updateProduct');
 Route::any('addProduct','ProductController@addProduct');
