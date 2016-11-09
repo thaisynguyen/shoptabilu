@@ -85,11 +85,12 @@ class CategoriesController extends AppController {
         } else {
             $unitId = DB::table('unit')->insertGetId($data);
             if($unitId > 0) {
-                $smsSuccess = commonUtils::INSERT_SUCCESSFULLY;
+                $arr = self::selectAndSortDataFromTable($request, 'unit');
+                $unitHtml = view('admin.categories.unit.unitContent', ['data' => $arr])->render();
                 return json_encode(array(
                     "success"               => true
                     , "alert"               => commonUtils::INSERT_SUCCESSFULLY
-//                , "contentPositionHtml" => $contentPositionHtml
+                    , "unit"                => $unitHtml
                 ));
             } else {
 //                Session::flash('message-errors', commonUtils::INSERT_UNSUCCESSFULLY);
@@ -199,5 +200,38 @@ class CategoriesController extends AppController {
 
 //        commonUtils::pr($data);die;
 //        return view('admin.categories.productType.productTypeCategories')->with('data',$data);
+    }
+
+    public function saveProductType(Request $request){
+        $post = $request->all();
+        $createdUser = Session::get('sid');
+        $data = array(  'product_type_name' => $post['product_type_name'],
+                        'created_user'      => $createdUser);
+
+        $check = DB::table('product_type')->where('product_type_name', $post['product_type_name'])->get();
+        if(count($check) > 0){
+            $arr = self::productTypeTree($request);
+            return json_encode(array(
+                "success"  => false
+                , "alert"  => 'Tên loại sản phẩm đã bị trùng. Vui lòng thử lại.'
+                , "productType" => $arr
+            ));
+        } else {
+            $unitId = DB::table('product_type')->insertGetId($data);
+            if($unitId > 0) {
+                $smsSuccess = commonUtils::INSERT_SUCCESSFULLY;
+                return json_encode(array(
+                    "success"               => true
+                    , "alert"               => commonUtils::INSERT_SUCCESSFULLY
+                ));
+            } else {
+                return json_encode(array(
+                    "success"  => false
+                    , "alert"  => commonUtils::INSERT_UNSUCCESSFULLY
+                ));
+            }
+
+
+        }
     }
 }

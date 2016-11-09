@@ -30,7 +30,7 @@
         </div>
         <!-- END PAGE BAR -->
         </BR>
-        <div class="row">
+        <div class="row" id="main-content">
             <div class="col-md-12">
                 <!-- BEGIN EXAMPLE TABLE PORTLET-->
                 <div class="portlet light bordered">
@@ -75,7 +75,7 @@
     <!-- END CONTENT BODY -->
 </div>
 
-    @include('admin.categories.unit.addUnit')
+    @include('admin.categories.productType.addProducType')
 @stop
 
 @section('custom_js')

@@ -58,9 +58,8 @@ function saveUnit(){
                     dataObj = response;
                     console.log(dataObj);
                     if (dataObj.success == true) {
-                        //$('#main-content').html(dataObj.contentUnitHtml);
                         //$('#addUnit').modal('hide');
-
+                        $('#main-content').html(dataObj.unit);
                         resetForm();
                         slideMessageMultiConfig('Thông tin', dataObj.alert, 'success', 20);
                         $('#code').focus();

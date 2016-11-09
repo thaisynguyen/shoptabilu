@@ -11,7 +11,7 @@ use Session;
 
 class commonUtils
 {
-    const ITEM_PER_PAGE_DEFAULT = 30;
+    const ITEM_PER_PAGE_DEFAULT = 5;
     const MANAGER_COMPANY_NAME = '';
 
     const TIME_KEEP_COOKIE              = 4500;
