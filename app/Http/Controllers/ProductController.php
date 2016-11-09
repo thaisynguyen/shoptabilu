@@ -33,18 +33,26 @@ class ProductController extends AppController {
 
     /*
      * Controller for Products
-     */	
-	private function viewProduct()
+     */
+    public function viewProduct()
 	{        
 		$data = DB::table('product')
-						->leftJoin('producer', 'product.producer_id', '=', 'producer.producer_id')
-						->leftJoin('product_type', 'product.product_type_id', '=', 'product_type.product_type_id')
-						->where('product.inactive', 0)
-                        ->orderby('product.product_id', 'asc')->get();
-//                        ->paginate(commonUtils::ITEM_PER_PAGE_DEFAULT);
-		
-		//print_r($data); die;
-        return $data;
+                    ->select('product.product_id', 'product.product_name', 'product.barcode', 'product_type.product_type_name', 'producer.producer_name', 'product.weight', 'product.color')
+					->leftJoin('producer', 'product.producer_id', '=', 'producer.producer_id')
+					->leftJoin('product_type', 'product.product_type_id', '=', 'product_type.product_type_id')
+					->where('product.inactive', 0)
+                    ->orderby('product.product_id', 'asc')->get();
+//                  ->paginate(commonUtils::ITEM_PER_PAGE_DEFAULT);
+
+        $recordsTotal = count($data);
+        $data = commonUtils::objectToArray($data);
+        $data_json = json_encode(array(
+            "recordsTotal" => $recordsTotal
+        , "recordsFiltered" => $recordsTotal
+        , "data" => $data
+        ));
+		//print_r($data_json); die;
+        return $data_json;
     }
 
     public function productCategories(Request $request){

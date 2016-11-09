@@ -53,49 +53,11 @@
                                     <th >Barcode</th>
                                     <th >Loại</th>
                                     <th >Nhà SX</th>
-                                    <th >Kích thước</th>
                                     <th >Cân nặng</th>
 									<th >Màu</th>
                                     <th class="all"></th>
                                 </tr>
                                 </thead>
-                                
-								<tbody id="main-content">
-								<?php
-								$i = 0;
-								//$stt = (($curpage-1) * CommonUtils::ITEM_PER_PAGE_DEFAULT) + 1;
-								foreach($data as $row)
-								{
-									$i++;									
-								
-								?>
-                                <tr id="<?php echo 'pid_'.$row->product_id; ?>">
-                                    <th></th>
-                                    <td><?php echo $row->product_id; ?></td>
-                                    <td><?php echo $row->product_name; ?> </td>
-                                    <td><?php echo $row->barcode; ?> </td>
-                                    <td><?php echo $row->product_type_name; ?> </td>
-                                    <td><?php echo $row->producer_name; ?> </td>
-                                    <td><?php echo $row->length.' x '.$row->width.' x '.$row->height; ?></td>
-                                    <td><?php echo $row->weight; ?> (kg)</td>
-                                    <td><?php echo $row->color; ?> </td>
-
-                                    <td>
-                                        <!--a href="javascript:deleteRow();" class="btn btn-icon-only red"><i class="fa fa-trash"></i></a-->
-										<a class="btn btn-icon-only red" 											
-											data-id="<?php echo $row->product_id;?>"
-											data-toggle="confirmation" 
-											data-original-title="Are you sure ?" 
-											data-placement="top"><i class="fa fa-trash"></i></a>											
-											
-										<a href="updateProduct" class="btn btn-icon-only blue"><i class="fa fa-edit"></i></a>
-                                    </td>
-                                </tr>
-								<?php
-								}
-								?>
-								
-                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -109,6 +71,7 @@
 @section('custom_js')
     <script>
         var path = '{{url('/')}}';
+		 console.log(path);
     </script>
 
     {{ HTML::script('public/assets/scripts/categories/product.js') }}
