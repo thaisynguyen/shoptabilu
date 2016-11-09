@@ -30,12 +30,14 @@ function loadData(){
         success: function(response) {
 
             dataProductType = response.data;
-            console.log(dataProductType);
+            //console.log(dataProductType);
             $('#treeProductType').jstree({
                 'core' : {
                     'data' : dataProductType
                 }
             });
+            console.log(response.option);
+            $('#opt').html(response.option);
         },
         error: function(xhr, textStatus, thrownError) {
 
@@ -60,6 +62,9 @@ function showAddProductType(){
     $(document).on('click', '#btnAddProductType', function() {
         $('#modalAddProductType').modal('show');
         focusInput('modalAddProductType', 'name');
+
+
+
     });
 }
 

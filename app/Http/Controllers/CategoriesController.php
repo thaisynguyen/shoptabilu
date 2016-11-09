@@ -179,6 +179,32 @@ class CategoriesController extends AppController {
         return view('admin.categories.productType.productTypeCategories');
     }
 
+
+    public function buildTreeComboProductType($data, $parent = null, $parentName)
+    {
+        $ret = '';
+        foreach($data as $index => $category)
+        {
+//        echo 'id:'.$category['id'] . '-parent: ' .$parent . "<pre>";
+            if($category['parent_id'] == $parent)
+            {
+                if($parentName != ''){
+                    $ret .= '<option value="' . $category['id']  . '">' . $parentName . ' > ' .$category['text']  . '</option>';
+
+                } else {
+                    $ret .= '<option value="' . $category['id']  . '">' . $parentName . $category['text']  . '</option>';
+
+                }
+                if(isset($category['children'])){
+                    $ret .= self::buildTreeComboProductType($category['children'], $category['id'], $category['text']);
+                }
+
+            }
+        }
+        return $ret;
+    }
+
+
     public function productTypeTree(Request $request){
         $this->clearSession();
         $sql = 'SELECT p.product_type_id AS id
@@ -192,10 +218,16 @@ class CategoriesController extends AppController {
         $data = commonUtils::objectToArray($data);
 
         $data = commonUtils::buildTreeProductType($data, 0);
-
+//        commonUtils::pr($data);
+        $optionHtml = '<select class="bs-select form-control bs-select-hidden">
+                        <option value="">(none)</option>';
+        $optionHtml .= self::buildTreeComboProductType($data, 0, '');
+        $optionHtml .= '</select>';
+//        commonUtils::pr($optionHtml);die;
         return json_encode(array(
             "success"   => true
-        , "data"    => $data
+            , "data"    => $data
+            , "option"  => $optionHtml
         ));
 
 //        commonUtils::pr($data);die;

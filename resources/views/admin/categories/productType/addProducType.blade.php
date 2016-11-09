@@ -9,18 +9,11 @@
             <div class="modal-body text-normal">
                 <div class="form-group has-success">
                     <label class="control-label"><?php echo 'Loại sản phẩm cha';?> (<span class="input-require">*</span>)</label>
-                    <select id="parent-type" class="bs-select form-control">
-                        <optgroup label="Picnic">
-                            <option>Mustard</option>
-                            <option>Ketchup</option>
-                            <option>Relish</option>
-                        </optgroup>
-                        <optgroup label="Camping">
-                            <option>Tent</option>
-                            <option>Flashlight</option>
-                            <option>Toilet Paper</option>
-                        </optgroup>
-                    </select>
+                    <div id="opt">
+
+
+
+                    </div>
                 </div>
                 <div class="form-group has-success">
                     <label class="control-label"><?php echo 'Tên';?> (<span class="input-require">*</span>)</label>
