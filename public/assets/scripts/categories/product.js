@@ -131,14 +131,36 @@ $(document).ready(function () {
             pages: 5 // number of pages to cache
         } ),
 		"columns": [
+			{"data": ''},
 			{"data": "product_id"},
 			{"data": "product_name"},
 			{"data": "barcode"},
 			{"data": "product_type_name"},
 			{"data": "producer_name"},
 			{"data": "weight"},
-			{"data": "color"}
-        ]
+			{"data": "color"},
+			{"data": ''}
+        ],
+		"responsive": {
+			details: {
+				type: 'column',
+				target: 0
+			}
+		},
+		"columnDefs": [
+			{
+				className: 'control',
+				orderable: false,
+				targets:   0
+			},
+			{
+				orderable: false,
+				targets:   -1
+			}
+		],
+		"order": [ 1, 'asc' ],
+
+		"pagingType": 'bootstrap_extended' // pagination type
     } );	
     
 });
