@@ -114,7 +114,7 @@ function updateUnit(){
 
                 if (dataObj.success == true) {
                     slideMessageMultiConfig('Thông tin', dataObj.alert, 'success', 20);
-                    console.log(dataObj.unit.unit_code);
+                    //console.log(dataObj.unit.unit_code);
                     var unit = dataObj.unit;
 
                     $('#td-code-' + id).html(unit.unit_code);

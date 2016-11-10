@@ -8,7 +8,6 @@ $( document ).ready(function() {
     saveProductType();
     showEditProductType();
     updateProductType();
-    showDeleteProductType();
     deleteProductType();
     pressSaveProductType();
     loadData();
@@ -36,7 +35,7 @@ function loadData(){
                     'data' : dataProductType
                 }
             });
-            console.log(response.option);
+            //console.log(response.option);
             $('#opt').html(response.option);
         },
         error: function(xhr, textStatus, thrownError) {
@@ -48,7 +47,6 @@ function loadData(){
 }
 
 function resetForm(){
-    $('#code').val('');
     $('#name').val('');
 }
 
@@ -63,16 +61,16 @@ function showAddProductType(){
         $('#modalAddProductType').modal('show');
         focusInput('modalAddProductType', 'name');
 
-
-
     });
 }
 
 function saveProductType(){
     $(document).on('click', '#btnSaveProductType', function() {
-        var name = $('#name').val()
-            , dataPost = {product_type_name: name}
+        var parentId = $('#parent_id').val()
+            , name = $('#name').val()
+            , dataPost = {parent_id: parentId, product_type_name: name}
             ;
+        console.log(parentId);
         if(name == ''){
             $('#name').focus();
             slideMessageMultiConfig('Cảnh báo', 'Tên không được rỗng', 'warning', 40);
@@ -88,18 +86,13 @@ function saveProductType(){
                 success: function(response) {
 
                     dataObj = response;
-                    console.log(dataObj);
+                    //console.log(dataObj);
                     if (dataObj.success == true) {
-                        //$('#main-content').html(dataObj.productType);
-                        //$('#treeProductType').jstree(true).settings.core.data = dataObj.productType;
-                        //$('#addUnit').modal('hide');
-                        //
+                        resetForm();
+                        $('#name').focus();
                         $('#treeProductType').jstree("destroy");
                         loadData();
-                        $('#treeProductType').jstree(true).refresh();
-                        resetForm();
                         slideMessageMultiConfig('Thông tin', dataObj.alert, 'success', 20);
-                        $('#name').focus();
                     }else{
                         slideMessageMultiConfig('Thông tin', dataObj.alert, 'warning', 40);
                     }
@@ -170,21 +163,12 @@ function updateProductType(){
     });
 }
 
-
-
-function showDeleteProductType(){
-
-    $(document).on('click', '.td-delete-product-type', function() {
-        var id = $(this).attr('data-id');
-        $('#modal-standard-delete-'+id).modal('show');
-    });
-
-}
-
 function deleteProductType(){
 
-    $(document).on('click', '.btn-delete-product-type', function() {
-        var id = $(this).attr('data-id')
+    $(document).on('click', '#btnDeleteProductType', function() {
+
+        var node = $('#treeProductType').jstree("get_selected",true);
+        var id = node[0].id
             , dataPost = {id: id}
             ;
 
@@ -197,12 +181,11 @@ function deleteProductType(){
             dataType: 'json',
             data: dataPost,
             success: function(response) {
-
                 dataObj = response;
-                console.log(dataObj);
-                $('.modal-backdrop').remove();
+                //console.log(dataObj);
                 if (dataObj.success == true) {
-                    $('#main-content').html(dataObj.unit);
+                    $('#treeProductType').jstree("destroy");
+                    loadData();
                     slideMessageMultiConfig(lblSuccess, dataObj.alert, 'success', 40);
                 } else {
                     slideMessageMultiConfig(lblWarning, dataObj.alert, 'warning', 40);
