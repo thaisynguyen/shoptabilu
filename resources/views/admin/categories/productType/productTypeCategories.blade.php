@@ -44,10 +44,17 @@
                     <div class="portlet-body">
                         <div class="table-toolbar">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-2">
                                     <div class="btn-group">
                                         <a  id="btnAddProductType" class="btn green btn-outline sbold uppercase" > Thêm mới
                                             <i class="fa fa-plus"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="btn-group">
+                                        <a  id="btnDeleteProductType" class="btn green btn-outline sbold uppercase" > Xóa
+                                            <i class="fa fa-minus"></i>
                                         </a>
                                     </div>
                                 </div>

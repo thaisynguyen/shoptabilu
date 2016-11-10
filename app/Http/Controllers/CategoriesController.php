@@ -5,15 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Mockery\Exception;
 use Session;
 use Illuminate\Http\Request;
-use App\Http\Requests\CreateCompanyRequest;
-use App\Http\Requests\CreateEmployeeRequest;
-use App\Http\Requests\CreateAccessLevelRequest;
-use App\Http\Requests\CreateGroupRequest;
-use App\Http\Requests\CreateAreaRequest;
-use App\Http\Requests\CreatePositionRequest;
 use App\Http\Requests\CreateUnitRequest;
-use App\Http\Requests\CreateGoalLevelOneRequest;
-use App\Http\Requests\CreateGoalLevelTwoRequest;
 use Utils\commonUtils;
 use App\Services\CustomPaginator;
 
@@ -179,7 +171,6 @@ class CategoriesController extends AppController {
         return view('admin.categories.productType.productTypeCategories');
     }
 
-
     public function buildTreeComboProductType($data, $parent = null, $parentName)
     {
         $ret = '';
@@ -204,7 +195,6 @@ class CategoriesController extends AppController {
         return $ret;
     }
 
-
     public function productTypeTree(Request $request){
         $this->clearSession();
         $sql = 'SELECT p.product_type_id AS id
@@ -219,7 +209,7 @@ class CategoriesController extends AppController {
 
         $data = commonUtils::buildTreeProductType($data, 0);
 //        commonUtils::pr($data);
-        $optionHtml = '<select class="bs-select form-control bs-select-hidden">
+        $optionHtml = '<select id="parent_id" class="bs-select form-control bs-select-hidden">
                         <option value="">(none)</option>';
         $optionHtml .= self::buildTreeComboProductType($data, 0, '');
         $optionHtml .= '</select>';
@@ -237,7 +227,8 @@ class CategoriesController extends AppController {
     public function saveProductType(Request $request){
         $post = $request->all();
         $createdUser = Session::get('sid');
-        $data = array(  'product_type_name' => $post['product_type_name'],
+        $data = array(  'parent_id'         => $post['parent_id'],
+                        'product_type_name' => $post['product_type_name'],
                         'created_user'      => $createdUser);
 
         $check = DB::table('product_type')->where('product_type_name', $post['product_type_name'])->get();
@@ -266,4 +257,29 @@ class CategoriesController extends AppController {
 
         }
     }
+
+    public function deleteProductType(Request $request){
+        $post = $request->all();
+        $createdUser = Session::get('sid');
+
+        try{
+            $data = array(
+                'inactive' 	      => 1,
+                'deleted_user'    => $createdUser,
+                'deleted_at'      => date("Y-m-d h:i:sa"));
+            $i = DB::table('product_type')->where('product_type_id', $post['id'])->update($data);
+
+            return json_encode(array(
+                "success"  => true
+                , "alert"  => commonUtils::DELETE_SUCCESSFULLY
+            ));
+        }catch(Exception $e){
+            return json_encode(array(
+                "success"  => false
+                , "alert"  => commonUtils::DELETE_UNSUCCESSFULLY
+            ));
+        }
+
+    }
+
 }

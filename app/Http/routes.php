@@ -66,22 +66,10 @@ Route::any('languageTranslator','CategoriesController@languageTranslator');
 Route::any('languageTranslatorList','CategoriesController@languageTranslatorList');
 Route::any('userManagement','CategoriesController@userManagement');
 
-Route::get('/quickSavePosition', function(){
-    if(Request::ajax()){
-        $post = Input::all();
-        $data = array('position_name' => $post['position_name'],
-            'position_code' => $post['position_code']);
-        $row = DB::table('position')->insertGetId($data);
-        if($row > 0){
-            return Response::json($row);
-        } else {
-            return Response::json(false);
-        }
-    }
-});
 
+// SALE
 
-
+Route::any('saleInvoice','SaleController@saleInvoice');
 
 //EXPORT
 Route::get('exportTargetCorporation/{gId}/{d}','ExportExcelController@exportTargetCorporation');
