@@ -122,16 +122,21 @@ $(document).ready(function () {
   
 	//
 	// DataTables initialisation
-	//
+	//	
 	$('#tblProduct').DataTable( {
         "processing": true,
         "serverSide": true,
         "ajax": $.fn.dataTable.pipeline( {
             url: path + "/viewProduct/",
-            pages: 5 // number of pages to cache
-        } ),
+            pages: 5 // number of pages to cache,
+        } ),		
 		"columns": [
-			{"data": ''},
+			{				
+				data: null,
+                defaultContent: '',
+                className: 'control',
+                orderable: false
+			},
 			{"data": "product_id"},
 			{"data": "product_name"},
 			{"data": "barcode"},
@@ -139,7 +144,11 @@ $(document).ready(function () {
 			{"data": "producer_name"},
 			{"data": "weight"},
 			{"data": "color"},
-			{"data": ''}
+			{
+				data: null,
+                defaultContent: '',                
+                orderable: false
+			}
         ],
 		"responsive": {
 			details: {
@@ -147,20 +156,20 @@ $(document).ready(function () {
 				target: 0
 			}
 		},
-		"columnDefs": [
-			{
-				className: 'control',
-				orderable: false,
-				targets:   0
-			},
-			{
-				orderable: false,
-				targets:   -1
-			}
-		],
-		"order": [ 1, 'asc' ],
-
-		"pagingType": 'bootstrap_extended' // pagination type
+		"buttons": [
+            {
+                text: 'Them SP Moi',
+                action: function ( e, dt, node, config ) {
+                    alert( 'Button activated' );
+                },
+				className: 'btn blue'
+            },
+			{ extend: 'print', className: 'btn dark btn-outline' }
+            //{ extend: 'pdf', className: 'btn green btn-outline' },
+            //{ extend: 'csv', className: 'btn purple btn-outline ' }			
+        ],		
+		"order": [ 1, 'asc' ]
+		//"pagingType": 'bootstrap_extended' // pagination type
     } );	
     
 });

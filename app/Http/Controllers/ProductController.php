@@ -34,32 +34,44 @@ class ProductController extends AppController {
     /*
      * Controller for Products
      */
-    public function viewProduct()
+    public function viewProduct(Request $request)
 	{        
-		$data = DB::table('product')
+		$post = $request->all();
+
+        $sortDimension = ($request->get('sort') != '') ? $request->get('sort') : 'asc';
+        $sortColumn = ($request->get('column') != '') ? $request->get('column') : 'product.product_id';
+
+        $sortDimension = ($sortDimension == '0' || $sortDimension == 'desc') ? $sortDimension : 'asc';
+        $sortColumn = ($sortColumn != 'product.product_id') ? $sortColumn : 'product.product_id';
+
+        $data = DB::table('product')
                     ->select('product.product_id', 'product.product_name', 'product.barcode', 'product_type.product_type_name', 'producer.producer_name', 'product.weight', 'product.color')
 					->leftJoin('producer', 'product.producer_id', '=', 'producer.producer_id')
 					->leftJoin('product_type', 'product.product_type_id', '=', 'product_type.product_type_id')
 					->where('product.inactive', 0)
-                    ->orderby('product.product_id', 'asc')->get();
+                    ->orderby($sortColumn, $sortDimension)->get();
 //                  ->paginate(commonUtils::ITEM_PER_PAGE_DEFAULT);
 
         $recordsTotal = count($data);
         $data = commonUtils::objectToArray($data);
         $data_json = json_encode(array(
             "recordsTotal" => $recordsTotal
-        , "recordsFiltered" => $recordsTotal
+        , "recordsFiltered" => $recordsTotal		
         , "data" => $data
         ));
+
+        //commonUtils::pr($post['start']);
+        //commonUtils::pr($post['length']);
+
 		//print_r($data_json); die;
         return $data_json;
     }
 
     public function productCategories(Request $request){
         $this->clearSession();
-        $data = self::viewProduct();
-        return view('admin.categories.product.productCategories')
-						->with('data',$data);						
+        //$data = self::viewProduct();
+        return view('admin.categories.product.productCategories');
+						//->with('data',$data);						
     }
 
     public function deleteProduct(Request $request)
