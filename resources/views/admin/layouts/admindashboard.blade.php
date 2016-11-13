@@ -16,6 +16,7 @@
     {{ HTML::style('public/assets/admintheme/global/plugins/jqvmap/jqvmap/jqvmap.css') }}
     {{ HTML::style('public/assets/admintheme/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css') }}
     {{ HTML::style('public/assets/admintheme/global/plugins/datatables/datatables.min.css') }}
+    {{ HTML::style('public/assets/admintheme//global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css') }}
     <!-- END PAGE LEVEL PLUGINS -->
 
     <!-- BEGIN THEME GLOBAL STYLES -->
@@ -191,13 +192,10 @@
     {{ HTML::script('public/assets/admintheme/global/plugins/flot/jquery.flot.categories.min.js') }}
     {{ HTML::script('public/assets/admintheme/global/plugins/jquery-easypiechart/jquery.easypiechart.min.js') }}
     {{ HTML::script('public/assets/admintheme/global/plugins/jquery.sparkline.min.js') }}
-            <!-- {{ HTML::script('public/assets/admintheme/global/plugins/jqvmap/jqvmap/jquery.vmap.js') }} -->
-    <!-- {{ HTML::script('public/assets/admintheme/global/plugins/jqvmap/jqvmap/maps/jquery.vmap.russia.js') }} -->
-    <!-- {{ HTML::script('public/assets/admintheme/global/plugins/jqvmap/jqvmap/maps/jquery.vmap.world.js') }} -->
-    <!-- {{ HTML::script('public/assets/admintheme/global/plugins/jqvmap/jqvmap/maps/jquery.vmap.europe.js') }} -->
-    <!-- {{ HTML::script('public/assets/admintheme/global/plugins/jqvmap/jqvmap/maps/jquery.vmap.germany.js') }} -->
-    <!-- {{ HTML::script('public/assets/admintheme/global/plugins/jqvmap/jqvmap/maps/jquery.vmap.usa.js') }} -->
-    <!-- {{ HTML::script('public/assets/admintheme/global/plugins/jqvmap/jqvmap/data/jquery.vmap.sampledata.js') }} -->
+    {{ HTML::script('public/assets/admintheme/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}
+    {{ HTML::script('public/assets/admintheme/global/plugins/bootstrap-markdown/lib/markdown.js') }}
+    {{ HTML::script('public/assets/admintheme/global/plugins/bootstrap-markdown/js/bootstrap-markdown.js') }}
+
     <!-- END PAGE LEVEL PLUGINS -->
 
     <!-- BEGIN THEME GLOBAL SCRIPTS -->
