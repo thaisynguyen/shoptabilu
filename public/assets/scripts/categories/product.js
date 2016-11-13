@@ -99,14 +99,12 @@ $(document).ready(function () {
 				} );
 			}
 			else {
-				console.log("ko cache");
 				json = $.extend( true, {}, cacheLastJson );
 				json.draw = request.draw; // Update the echo for each response
 				json.data.splice( 0, requestStart-cacheLower );
 				json.data.splice( requestLength, json.data.length );
 
-				console.log(json);
-
+				//console.log(json);
 				drawCallback(json);
 			}
 		}
@@ -129,9 +127,12 @@ $(document).ready(function () {
         "ajax": $.fn.dataTable.pipeline( {
             url: path + "/viewProduct/",
             pages: 5 // number of pages to cache,
-        } ),		
+        } ),
+		"createdRow": function( row, data, dataIndex ) {
+			row.id = "pid_" + data.product_id;
+		},
 		"columns": [
-			{				
+			{
 				data: null,
                 defaultContent: '',
                 className: 'control',
@@ -146,7 +147,10 @@ $(document).ready(function () {
 			{"data": "color"},
 			{
 				data: null,
-                defaultContent: '',                
+				render: function ( data, type, row ) {
+					return	'<a class="btn btn-icon-only red" data-id="' + row.product_id + '" data-toggle="confirmation" data-original-title="Are you sure ?" data-placement="top"><i class="fa fa-trash"></i></a>' +
+							'<a href="updateProduct" class="btn btn-icon-only blue"><i class="fa fa-edit"></i></a>';
+				},
                 orderable: false
 			}
         ],
@@ -156,7 +160,7 @@ $(document).ready(function () {
 				target: 0
 			}
 		},
-		"buttons": [
+		/*"buttons": [
             {
                 text: 'Them SP Moi',
                 action: function ( e, dt, node, config ) {
@@ -167,23 +171,57 @@ $(document).ready(function () {
 			{ extend: 'print', className: 'btn dark btn-outline' }
             //{ extend: 'pdf', className: 'btn green btn-outline' },
             //{ extend: 'csv', className: 'btn purple btn-outline ' }			
-        ],		
-		"order": [ 1, 'asc' ]
-		//"pagingType": 'bootstrap_extended' // pagination type
-    } );	
-    
-});
+        ],*/
+		"order": [ 1, 'asc' ],
+		"pagingType": 'bootstrap_extended' // pagination type
+    } );
 
+	/*$('#tblProduct').on('page.dt', function() {
+		console.log('page.dt');
+		setTimeout(
+			function() {
+				$("[data-toggle=confirmation]").confirmation({
+					container:"body",
+					btnOkClass:"btn btn-sm btn-success",
+					btnCancelClass:"btn btn-sm btn-danger",
+					onConfirm:function(event, element) {
+						var id = $(element)[0].getAttribute('data-id');
+						//console.log(id);
+						deleteProduct(id);
+					}
+				});
+			}, 500);
+	});
 
-$("[data-toggle=confirmation]").confirmation({
-	container:"body",	
-	btnOkClass:"btn btn-sm btn-success",
-	btnCancelClass:"btn btn-sm btn-danger",
-	onConfirm:function(event, element) {		
-		var id = $(element)[0].getAttribute('data-id');
-		//console.log(id);
-		deleteProduct(id);
-	}
+	$('#tblProduct').on('order.dt', function() {
+		console.log('order.dt');
+		setTimeout(
+			function() {
+				$("[data-toggle=confirmation]").confirmation({
+					container:"body",
+					btnOkClass:"btn btn-sm btn-success",
+					btnCancelClass:"btn btn-sm btn-danger",
+					onConfirm:function(event, element) {
+						var id = $(element)[0].getAttribute('data-id');
+						//console.log(id);
+						deleteProduct(id);
+					}
+				});
+			}, 500);
+	});*/
+
+	$('#tblProduct').on('click','[data-toggle=confirmation]', function () {
+		$("[data-toggle=confirmation]").confirmation({
+			container: "body",
+			btnOkClass: "btn btn-sm btn-success",
+			btnCancelClass: "btn btn-sm btn-danger",
+			onConfirm: function (event, element) {
+				var id = $(element)[0].getAttribute('data-id');
+				//console.log(id);
+				deleteProduct(id);
+			}
+		});
+	} );
 });
 
 function deleteProduct(idProduct)
@@ -201,17 +239,16 @@ function deleteProduct(idProduct)
 		success: function (response) {
 			dataObj = response;
 
-			if (dataObj.success == true) {				
+			if (dataObj.success == true) {
 				slideMessageMultiConfig('Th�ng tin', dataObj.alert, 'success', 20);
-				$('#tblProduct').DataTable().row($('#pid_' + idProduct)).remove().draw( false );				
-			}
-			else {				
+				$('#tblProduct').DataTable().clearPipeline().draw(false);
+			} else {
 				slideMessageMultiConfig('C?nh b�o', 'Xoa kh�ng th�nh c�ng', 'warning', 40);
 			}
 			return dataObj;
 		},
 		error: function (xhr, textStatus, thrownError) {
-			console.log('333');
+			//console.log('333');
 			console.log(thrownError);
 		}
 	})	
