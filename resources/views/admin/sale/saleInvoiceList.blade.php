@@ -19,7 +19,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="btn-group">
-                                <a  id="btnAddUnit" class="btn green btn-outline sbold uppercase" > Thêm mới
+                                <a  id="btnAddSaleInvoice" class="btn green btn-outline sbold uppercase" > Thêm mới
                                     <i class="fa fa-plus"></i>
                                 </a>
                             </div>
@@ -38,13 +38,14 @@
                         </div>
                     </div>
                 </div>
-                <table class="table table-striped table-hover table-bordered" id="unit-table">
+                <table class="table table-striped table-hover table-bordered" id="sale-invoice-table">
                     <thead>
                     <tr>
                         <th> STT </th>
                         <th sort_key="unit_code"> Số hóa đơn <i class="fa pull-right unsort fa-sort"></i></th>
                         <th sort_key="unit_name"> Ngày hóa đơn <i class="fa pull-right unsort fa-sort"></i></th>
                         <th sort_key="unit_name"> Tổng cộng <i class="fa pull-right unsort fa-sort"></i></th>
+                        <th sort_key="unit_name"> Khách hàng <i class="fa pull-right unsort fa-sort"></i></th>
                         <th> Sửa </th>
                         <th> Xóa </th>
                     </tr>
@@ -63,6 +64,7 @@
                     <tr>
                         <td class="text-center"> <?php  echo $stt; $stt++; ?>  </td>
                         <td id="td-code-{{$row->unit_id}}"> <?php echo $row->unit_code; ?> </td>
+                        <td id="td-name-{{$row->unit_id}}"> <?php echo $row->unit_name; ?> </td>
                         <td id="td-name-{{$row->unit_id}}"> <?php echo $row->unit_name; ?> </td>
                         <td id="td-name-{{$row->unit_id}}"> <?php echo $row->unit_name; ?> </td>
                         <td>

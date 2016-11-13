@@ -4,18 +4,21 @@
 // A $( document ).ready() block.
 $( document ).ready(function() {
     resetForm();
-    showAddUnit();
-    saveUnit();
-    showEditUnit();
-    updateUnit();
-    showDeleteUnit();
-    deleteUnit();
-    pressSaveUnit();
-    reloadDataByUnit();
+    showAddSaleInvoice();
+    saveSaleInvoice();
+    showEditSaleInvoice();
+    updateSaleInvoice();
+    deleteSaleInvoice();
+    pressSaveSaleInvoice();
+    loadData();
 });
 
+
+function loadData(){
+
+}
+
 function resetForm(){
-    $('#code').val('');
     $('#name').val('');
 }
 
@@ -25,23 +28,22 @@ function focusInput(idPopup, idInput){
     })
 }
 
-function showAddUnit(){
-    $(document).on('click', '#btnAddUnit', function() {
-        $('#modalAddUnit').modal('show');
-        focusInput('modalAddUnit', 'code');
+function showAddSaleInvoice(){
+    $(document).on('click', '#btnAddSaleInvoice', function() {
+        $('#modalAddSaleInvoice').modal('show');
+        focusInput('modalAddSaleInvoice', 'name');
+
     });
 }
 
-function saveUnit(){
-    $(document).on('click', '#btnSaveUnit', function() {
-        var code = $('#code').val()
+function saveSaleInvoice(){
+    $(document).on('click', '#btnSaveSaleInvoice', function() {
+        var parentId = $('#parent_id').val()
             , name = $('#name').val()
-            , dataPost = {unit_code: code, unit_name: name}
+            , dataPost = {parent_id: parentId, product_type_name: name}
             ;
-        if(code == ''){
-            $('#code').focus();
-            slideMessageMultiConfig('Cảnh báo', 'Mã không được rỗng', 'warning', 40);
-        } else if(name == ''){
+        console.log(parentId);
+        if(name == ''){
             $('#name').focus();
             slideMessageMultiConfig('Cảnh báo', 'Tên không được rỗng', 'warning', 40);
         } else {
@@ -49,20 +51,20 @@ function saveUnit(){
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                url: path + '/saveUnit/',
+                url: path + '/saveSaleInvoice/',
                 type: 'POST',
                 dataType: 'json',
                 data: dataPost,
                 success: function(response) {
 
                     dataObj = response;
-                    console.log(dataObj);
+                    //console.log(dataObj);
                     if (dataObj.success == true) {
-                        //$('#addUnit').modal('hide');
-                        $('#main-content').html(dataObj.unit);
                         resetForm();
+                        $('#name').focus();
+                        $('#treeSaleInvoice').jstree("destroy");
+                        loadData();
                         slideMessageMultiConfig('Thông tin', dataObj.alert, 'success', 20);
-                        $('#code').focus();
                     }else{
                         slideMessageMultiConfig('Thông tin', dataObj.alert, 'warning', 40);
                     }
@@ -81,20 +83,20 @@ function saveUnit(){
 
 }
 
-function showEditUnit(){
+function showEditSaleInvoice(){
 
-    $(document).on('click', '.td-edit-unit', function() {
+    $(document).on('click', '.td-edit-product-type', function() {
         var id = $(this).attr('data-id');
         console.log(id);
-        $('#edit-unit-' + id).modal('show');
-        focusInput('edit-unit-' + id, 'code-' + id);
+        $('#edit-product-type-' + id).modal('show');
+        focusInput('edit-product-type-' + id, 'code-' + id);
     });
 
 }
 
-function updateUnit(){
+function updateSaleInvoice(){
 
-    $(document).on('click', '.btn-edit-unit', function() {
+    $(document).on('click', '.btn-edit-product-type', function() {
         var id = $(this).attr('data-id')
             , code = $('#code-'+id).val()
             , name = $('#name-'+id).val()
@@ -105,7 +107,7 @@ function updateUnit(){
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            url: path + '/updateUnit/',
+            url: path + '/updateSaleInvoice/',
             type: 'POST',
             dataType: 'json',
             data: dataPost,
@@ -114,11 +116,7 @@ function updateUnit(){
 
                 if (dataObj.success == true) {
                     slideMessageMultiConfig('Thông tin', dataObj.alert, 'success', 20);
-                    //console.log(dataObj.unit.unit_code);
-                    var unit = dataObj.unit;
 
-                    $('#td-code-' + id).html(unit.unit_code);
-                    $('#td-name-' + id).html(unit.unit_name);
 
                     //$('#editDepartment-'+id).modal('hide');
                 }
@@ -137,21 +135,12 @@ function updateUnit(){
     });
 }
 
+function deleteSaleInvoice(){
 
+    $(document).on('click', '#btnDeleteSaleInvoice', function() {
 
-function showDeleteUnit(){
-
-    $(document).on('click', '.td-delete-unit', function() {
-        var id = $(this).attr('data-id');
-        $('#modal-standard-delete-'+id).modal('show');
-    });
-
-}
-
-function deleteUnit(){
-
-    $(document).on('click', '.btn-delete-unit', function() {
-        var id = $(this).attr('data-id')
+        var node = $('#treeSaleInvoice').jstree("get_selected",true);
+        var id = node[0].id
             , dataPost = {id: id}
             ;
 
@@ -159,17 +148,16 @@ function deleteUnit(){
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            url: path + '/deleteUnit/',
+            url: path + '/deleteSaleInvoice/',
             type: 'POST',
             dataType: 'json',
             data: dataPost,
             success: function(response) {
-
                 dataObj = response;
-                console.log(dataObj);
-                $('.modal-backdrop').remove();
+                //console.log(dataObj);
                 if (dataObj.success == true) {
-                    $('#main-content').html(dataObj.unit);
+                    $('#treeSaleInvoice').jstree("destroy");
+                    loadData();
                     slideMessageMultiConfig(lblSuccess, dataObj.alert, 'success', 40);
                 } else {
                     slideMessageMultiConfig(lblWarning, dataObj.alert, 'warning', 40);
@@ -185,31 +173,11 @@ function deleteUnit(){
     });
 }
 
-function pressSaveUnit(){
-    $(document).bind('keypress', '.add-data-Unit', function(e) {
+function pressSaveSaleInvoice(){
+    $(document).bind('keypress', '.add-data-product-type', function(e) {
         if(e.keyCode==13){
             saveUnit();
         }
     });
 
-}
-
-function reloadDataByUnit(){
-    $(document).on('change keyup', '.select-data', function() {
-        var searchVal = $(this).val();
-        var Unit = $('#searchValue').val()
-            , type = $('select[name=fieldValue]').val()
-            , url = KPIS.ApiUrl('kpi_standard/KsCategory/reloadDataByUnit')
-            , dataPost = {Unit: Unit, type: type}
-            ;
-
-        var dataJson = $.loadAjax(url, dataPost),
-            dataObj  = JSON.parse(dataJson);
-        if(dataObj.alert != ''){
-            slideMessageMultiConfig(lblWarning, dataObj.alert, 'danger', 40);
-        }
-
-        $('#main-content').html(dataObj.contentUnitHtml);
-        refreshSelectPicker();
-    });
 }
