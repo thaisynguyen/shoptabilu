@@ -46,7 +46,7 @@ class CategoriesController extends AppController {
 
 
     /*
-     * Controller for Unit
+     * Controller for Unit ******************************************************************
      */
 
     public function unitCategories(Request $request){
@@ -162,7 +162,7 @@ class CategoriesController extends AppController {
     }
 
     /*
-     * Controller for Product Type
+     * Controller for Product Type ******************************************************************
      */
 
     public function productTypeCategories(Request $request){
@@ -282,4 +282,117 @@ class CategoriesController extends AppController {
 
     }
 
+
+    /*
+     * Controller for Subject ******************************************************************
+     */
+    public function subjectCategories(Request $request){
+        $this->clearSession();
+        $data = self::selectAndSortDataFromTable($request, 'subject');
+//        commonUtils::pr($data);die;
+        return view('admin.categories.subject.subjectCategories')->with('data',$data);
+    }
+
+    public function addSubject(){
+        return view('admin.categories.subject.addSubject');
+    }
+
+    public function saveSubject(Request $request){
+        $post = $request->all();
+        $createdUser = Session::get('sid');
+        $data = array(  'subject_name' 	    => $post['subject_name'],
+                        'subject_code' 	    => $post['subject_code'],
+                        'created_user'      => $createdUser);
+
+        $check = DB::table('subject')->where('subject_code', $post['subject_code'])->get();
+        if(count($check) > 0){
+            return json_encode(array(
+                "success"  => false
+                , "alert"  => 'Mã đã bị trùng. Vui lòng thử lại.'
+            ));
+        } else {
+            $subjectId = DB::table('subject')->insertGetId($data);
+            if($subjectId > 0) {
+                $arr = self::selectAndSortDataFromTable($request, 'subject');
+                $subjectHtml = view('admin.categories.subject.subjectContent', ['data' => $arr])->render();
+                return json_encode(array(
+                    "success"               => true
+                    , "alert"               => commonUtils::INSERT_SUCCESSFULLY
+                    , "subject"                => $subjectHtml
+                ));
+            } else {
+//                Session::flash('message-errors', commonUtils::INSERT_UNSUCCESSFULLY);
+                return json_encode(array(
+                    "success"  => false
+                    , "alert"  => commonUtils::INSERT_UNSUCCESSFULLY
+                ));
+            }
+
+
+        }
+    }
+
+
+    public function updateSubject(Request $request){
+        $post = $request->all();
+        $createdUser = Session::get('sid');
+        $id = $post['id'];
+        $data = array(  'subject_name' 	    => $post['name'],
+            'subject_code' 	    => $post['code'],
+            'updated_user'      => $createdUser,
+            'updated_at'      =>date("Y-m-d h:i:sa"));
+
+
+        $check = DB::table('subject')->where('subject_code', $post['code'])
+            ->where('subject_code','!=', $post['hiddencode'])
+            ->first();
+        if(count($check) > 0){
+            return json_encode(array(
+                "success"  => false
+                , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY . 'Mã đơn vị tính đã bị trùng. Vui lòng thử lại.'
+            ));
+        } else {
+            try {
+                $i = DB::table('subject')->where('subject_id', $post['id'])->update($data);
+                return json_encode(array(
+                    "success"  => true
+                    , "alert"  => commonUtils::EDIT_SUCCESSFULLY
+                    , "subject"  => $data
+                ));
+            } catch (Exception $e) {
+                return json_encode(array(
+                    "success"  => false
+                    , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY
+                ));
+            }
+
+        }
+    }
+
+    public function deleteSubject(Request $request){
+        $post = $request->all();
+        $createdUser = Session::get('sid');
+
+        try{
+            $data = array(
+                'inactive' 	      => 1,
+                'deleted_user'    => $createdUser,
+                'deleted_at'      => date("Y-m-d h:i:sa"));
+            $i = DB::table('subject')->where('subject_id', $post['id'])->update($data);
+
+            $arr = self::selectAndSortDataFromTable($request, 'subject');
+            $subjectHtml = view('admin.categories.subject.subjectContent', ['data' => $arr])->render();
+            return json_encode(array(
+                "success"  => true
+                , "alert"  => commonUtils::DELETE_SUCCESSFULLY
+                , "subject"  => $subjectHtml
+            ));
+        }catch(Exception $e){
+            return json_encode(array(
+                "success"  => false
+                , "alert"  => commonUtils::DELETE_UNSUCCESSFULLY
+            ));
+        }
+
+    }
 }

@@ -60,6 +60,13 @@ Route::any('updateProduct','ProductController@updateProduct');
 Route::any('addProduct','ProductController@addProduct');
 
 Route::any('subjectCategories','CategoriesController@subjectCategories');
+Route::any('addSubject','CategoriesController@addSubject');
+Route::any('saveSubject','CategoriesController@saveSubject');
+Route::any('updateSubject','CategoriesController@updateSubject');
+Route::any('deleteSubject','CategoriesController@deleteSubject');
+
+
+
 Route::any('producerCategories','CategoriesController@producerCategories');
 Route::any('companyProfile','CategoriesController@companyProfile');
 Route::any('languageTranslator','CategoriesController@languageTranslator');
