@@ -193,9 +193,6 @@
     {{ HTML::script('public/assets/admintheme/global/plugins/jquery-easypiechart/jquery.easypiechart.min.js') }}
     {{ HTML::script('public/assets/admintheme/global/plugins/jquery.sparkline.min.js') }}
     {{ HTML::script('public/assets/admintheme/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}
-    {{ HTML::script('public/assets/admintheme/global/plugins/bootstrap-markdown/lib/markdown.js') }}
-    {{ HTML::script('public/assets/admintheme/global/plugins/bootstrap-markdown/js/bootstrap-markdown.js') }}
-
     <!-- END PAGE LEVEL PLUGINS -->
 
     <!-- BEGIN THEME GLOBAL SCRIPTS -->
@@ -213,6 +210,8 @@
     {{ HTML::script('public/assets/admintheme/layouts/global/scripts/quick-sidebar.min.js') }}
     {{ HTML::script('public/assets/scripts/bootstrap-notify.js') }}
     {{ HTML::script('public/assets/scripts/bootstrap-notify.min.js') }}
+
+    {{ HTML::script('public/assets/admintheme/pages/scripts/components-date-time-pickers.min.js') }}
 
 
     {{ HTML::script('public/assets/scripts/common.js') }}
