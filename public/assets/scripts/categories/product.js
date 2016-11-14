@@ -148,8 +148,8 @@ $(document).ready(function () {
 			{
 				data: null,
 				render: function ( data, type, row ) {
-					return	'<a class="btn btn-icon-only red" data-id="' + row.product_id + '" data-toggle="confirmation" data-original-title="Are you sure ?" data-placement="top"><i class="fa fa-trash"></i></a>' +
-							'<a href="updateProduct" class="btn btn-icon-only blue"><i class="fa fa-edit"></i></a>';
+					return	'<a class="btn btn-icon-only red" data-id="' + row.product_id + '" data-toggle="confirmation" data-original-title="Bạn có chắc muốn xóa dòng này?" data-placement="top"><i class="fa fa-trash"></i></a>' +
+							'<a href="updateProduct" class="btn btn-icon-only btn-success"><i class="fa fa-edit"></i></a>';
 				},
                 orderable: false
 			}
@@ -160,6 +160,10 @@ $(document).ready(function () {
 				target: 0
 			}
 		},
+		"lengthMenu": [[10, 25, 50], [10, 25, 50]], //[[10, 25, 50, -1], [10, 25, 50, "All"]]
+		"language": {
+            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Vietnamese.json"
+        },
 		/*"buttons": [
             {
                 text: 'Them SP Moi',
@@ -240,10 +244,10 @@ function deleteProduct(idProduct)
 			dataObj = response;
 
 			if (dataObj.success == true) {
-				slideMessageMultiConfig('Th�ng tin', dataObj.alert, 'success', 20);
+				slideMessageMultiConfig('Thông tin', dataObj.alert, 'success', 20);
 				$('#tblProduct').DataTable().clearPipeline().draw(false);
 			} else {
-				slideMessageMultiConfig('C?nh b�o', 'Xoa kh�ng th�nh c�ng', 'warning', 40);
+				slideMessageMultiConfig('Cảnh báo', 'Thao tác Xóa không thành công!!!', 'warning', 40);
 			}
 			return dataObj;
 		},

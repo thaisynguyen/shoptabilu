@@ -5,8 +5,7 @@
     @include('alerts.success')
 
     <?php
-        use Utils\commonUtils;
-        $curpage =  $data->currentPage();
+        use Utils\commonUtils;        
     ?>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 

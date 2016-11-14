@@ -36,31 +36,47 @@ class ProductController extends AppController {
      */
     public function viewProduct(Request $request)
 	{        
-		$post = $request->all();
+		$post = $request->all();			
+		
+		// get name of sort column
+		$sortColumn = $post['order'][0]['column'];
+        $sortColumn = ($sortColumn != 0) ? $sortColumn : 1;
+		$sortColumn = $post['columns'][$sortColumn]['data'];
+		
+		// get direction of sort column
+		$sortDirection = $post['order'][0]['dir'];
+		
+		// get search value
+		$searchValue = $post['search']['value'];
 
-        $sortColumn = ($request->get('column') != '') ? $request->get('column') : 'product.product_id';
-        $sortColumn = ($sortColumn != 'product.product_id') ? $sortColumn : 'product.product_id';
-
-        $sortDimension = ($request->get('sort') != '') ? $request->get('sort') : 'asc';
-        $sortDimension = ($sortDimension == '0' || $sortDimension == 'desc') ? $sortDimension : 'asc';
-
+		// query data follow datatable
         $data = DB::table('product')
                     ->select('product.product_id', 'product.product_name', 'product.barcode', 'product_type.product_type_name', 'producer.producer_name', 'product.weight', 'product.color')
 					->leftJoin('producer', 'product.producer_id', '=', 'producer.producer_id')
 					->leftJoin('product_type', 'product.product_type_id', '=', 'product_type.product_type_id')
 					->where('product.inactive', 0)
-                    ->orderby($sortColumn, $sortDimension)
+					->where('product.product_name', 'like', '%'.$searchValue.'%')
+					->orWhere('product_type.product_type_name', 'like', '%'.$searchValue.'%')
+                    ->orderby($sortColumn, $sortDirection)
                     ->offset($post['start'])
                     ->limit($post['length'])
                     ->get();
 
+		// sum of $data
         $dataTotal = DB::table('product')
-                        ->select('product_id')
-                        ->where('inactive', 0)
+                        ->select('product.product_id')
+						->leftJoin('producer', 'product.producer_id', '=', 'producer.producer_id')
+						->leftJoin('product_type', 'product.product_type_id', '=', 'product_type.product_type_id')
+                        ->where('product.inactive', 0)
+						->where('product.product_name', 'like', '%'.$searchValue.'%')
+						->orWhere('product_type.product_type_name', 'like', '%'.$searchValue.'%')
                         ->get();
         $recordsTotal = count($dataTotal);
 
+		// convert to array
         $data = commonUtils::objectToArray($data);
+		
+		// convert to json
         $data_json = json_encode(array(
             "recordsTotal" => $recordsTotal
         , "recordsFiltered" => $recordsTotal		
@@ -110,9 +126,13 @@ class ProductController extends AppController {
 
     public function updateProduct(Request $request){
         $this->clearSession();
-        $data = self::viewProduct();
-        return view('admin.categories.product.updateProduct')
-            ->with('data',$data);
+		
+		$post = $request->all();
+        $createdUser = Session::get('sid');
+		
+        //$data = self::viewProduct();
+        return view('admin.categories.product.updateProduct');
+            //->with('data',$data);
     }
 	
 	

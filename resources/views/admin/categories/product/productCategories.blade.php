@@ -20,11 +20,11 @@
                 <ul class="page-breadcrumb">
                     <li>
                         <a href="{{url('/adminhome')}}">Trang chủ</a>
-                        <i class="fa fa-caret-right"></i>
+                        <i class="fa fa-circle"></i>
                     </li>
                     <li>
                         <a href="#">Danh mục</a>
-                        <i class="fa fa-caret-right"></i>
+                        <i class="fa fa-circle"></i>
                     </li>
                     <li>
                         <span>Sản phẩm</span>
@@ -38,8 +38,8 @@
                     <div class="portlet light bordered">
                         <div class="portlet-title">
                             <div class="caption font-green">
-                                <i class="icon-briefcase font-green"></i>
-                                <span class="caption-subject bold uppercase">Danh mục Sản phẩm</span>
+                                <i class="icon-settings font-green"></i>
+                                <span class="caption-subject ">Danh mục Sản phẩm</span>
                             </div>
                             <div class="tools"> </div>
                         </div>
