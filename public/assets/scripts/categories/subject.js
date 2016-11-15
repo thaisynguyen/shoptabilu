@@ -17,6 +17,8 @@ $( document ).ready(function() {
 function resetForm(){
     $('#code').val('');
     $('#name').val('');
+    $('#phone').val('');
+    $('#address').val('');
 }
 
 function focusInput(idPopup, idInput){
@@ -36,8 +38,20 @@ function saveSubject(){
     $(document).on('click', '#btnSaveSubject', function() {
         var code = $('#code').val()
             , name = $('#name').val()
-            , dataPost = {unit_code: code, unit_name: name}
+            , phone = $('#phone').val()
+            , address = $('#address').val()
+            , is_customer = ($("input[name='chkSubject']:checked").val() == 1) ? 1 : 0
+            , is_supplier = ($("input[name='chkSubject']:checked").val() == 2) ? 1 : 0
+            , dataPost = {subject_code: code
+                , subject_name: name
+                , subject_telephone: phone
+                , subject_address: address
+                , is_supplier: is_supplier
+                , is_customer: is_customer
+            }
             ;
+        console.log(is_supplier);
+        console.log(is_customer);
         if(code == ''){
             $('#code').focus();
             slideMessageMultiConfig('Cảnh báo', 'Mã không được rỗng', 'warning', 40);
@@ -59,7 +73,7 @@ function saveSubject(){
                     console.log(dataObj);
                     if (dataObj.success == true) {
                         //$('#addSubject').modal('hide');
-                        $('#main-content').html(dataObj.unit);
+                        $('#main-content').html(dataObj.subject);
                         resetForm();
                         slideMessageMultiConfig('Thông tin', dataObj.alert, 'success', 20);
                         $('#code').focus();
@@ -84,10 +98,19 @@ function saveSubject(){
 function showEditSubject(){
 
     $(document).on('click', '.td-edit-subject', function() {
-        var id = $(this).attr('data-id');
-        console.log(id);
+        var id = $(this).attr('data-id')
+
+            , supplier = $(this).attr('supplier-val')
+            , customer = $(this).attr('customer-val')
+            ;
+        if(supplier == 1){
+            $('#chkSupplier-' + id).attr("checked", true);
+        }
+        if(customer == 1){
+            $('#chkCustomer-' + id).attr("checked", true);
+        }
         $('#edit-subject-' + id).modal('show');
-        focusInput('edit-Subject-' + id, 'code-' + id);
+        focusInput('edit-subject-' + id, 'code-' + id);
     });
 
 }
@@ -98,9 +121,19 @@ function updateSubject(){
         var id = $(this).attr('data-id')
             , code = $('#code-'+id).val()
             , name = $('#name-'+id).val()
+            , address = $('#address-'+id).val()
+            , phone = $('#phone-'+id).val()
             , hiddencode = $('#hidden-code-'+id).val()
-            , dataPost = {id: id, code: code, name: name, hiddencode: hiddencode}
+            , dataPost = {id: id
+                        , code: code
+                        , name: name
+                        , address: address
+                        , phone: phone
+                        , hiddencode: hiddencode
+                        }
             , dataObj;
+
+
         $.ajax({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -119,8 +152,6 @@ function updateSubject(){
 
                     $('#td-code-' + id).html(subject.subject_code);
                     $('#td-name-' + id).html(subject.subject_name);
-
-                    //$('#editDepartment-'+id).modal('hide');
                 }
                 else{
                     slideMessageMultiConfig('Cảnh báo', 'Cập nhật không thành công', 'warning', 40);

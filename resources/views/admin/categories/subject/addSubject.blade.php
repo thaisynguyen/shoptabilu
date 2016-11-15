@@ -22,11 +22,11 @@
                 <div class="form-group has-success">
                     <label class="control-label"><?php echo 'Số điện thoại';?> (<span class="input-require">*</span>)</label>
                     <div class="input-icon right">
-                        <input type="text" class="form-control add-data-subject" id="address" required>
+                        <input type="text" class="form-control add-data-subject" id="phone" required>
                     </div>
                 </div>
                 <div class="form-group has-success">
-                    <label class="control-label"><?php echo 'Địa chỉ';?> (<span class="input-require">*</span>)</label>
+                    <label class="control-label"><?php echo 'Địa chỉ';?> </label>
                     <div class="input-icon right">
                         <input type="text" class="form-control add-data-subject" id="address" required>
                     </div>
@@ -35,15 +35,15 @@
                     <label class="control-label"><?php echo 'Khách hàng/Nhà cung cấp';?> (<span class="input-require">*</span>)</label>
                     <div class="md-radio-inline">
                         <div class="md-radio">
-                            <input type="radio" id="checkbox2_8" name="radio2" class="md-radiobtn"  checked="">
-                            <label for="checkbox2_8" style="color: black">
+                            <input type="radio" id="chkCustomer" name="chkSubject" class="md-radiobtn"  checked="" value="1">
+                            <label for="chkCustomer" style="color: black">
                                 <span></span>
                                 <span class="check"></span>
                                 <span class="box"></span> Khách hàng </label>
                         </div>
                         <div class="md-radio">
-                            <input type="radio" id="checkbox2_9" name="radio2" class="md-radiobtn">
-                            <label for="checkbox2_9" style="color: black">
+                            <input type="radio" id="chkSupplier" name="chkSubject" class="md-radiobtn" value="2">
+                            <label for="chkSupplier" style="color: black">
                                 <span></span>
                                 <span class="check"></span>
                                 <span class="box"></span> Nhà cung cấp </label>

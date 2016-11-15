@@ -302,6 +302,10 @@ class CategoriesController extends AppController {
         $createdUser = Session::get('sid');
         $data = array(  'subject_name' 	    => $post['subject_name'],
                         'subject_code' 	    => $post['subject_code'],
+                        'subject_address' 	=> $post['subject_address'],
+                        'subject_telephone' => $post['subject_telephone'],
+                        'is_supplier'       => $post['is_supplier'],
+                        'is_customer'       => $post['is_customer'],
                         'created_user'      => $createdUser);
 
         $check = DB::table('subject')->where('subject_code', $post['subject_code'])->get();
@@ -318,7 +322,7 @@ class CategoriesController extends AppController {
                 return json_encode(array(
                     "success"               => true
                     , "alert"               => commonUtils::INSERT_SUCCESSFULLY
-                    , "subject"                => $subjectHtml
+                    , "subject"             => $subjectHtml
                 ));
             } else {
 //                Session::flash('message-errors', commonUtils::INSERT_UNSUCCESSFULLY);
@@ -338,9 +342,11 @@ class CategoriesController extends AppController {
         $createdUser = Session::get('sid');
         $id = $post['id'];
         $data = array(  'subject_name' 	    => $post['name'],
-            'subject_code' 	    => $post['code'],
-            'updated_user'      => $createdUser,
-            'updated_at'      =>date("Y-m-d h:i:sa"));
+                        'subject_code' 	    => $post['code'],
+                        'subject_telephone' => $post['phone'],
+                        'subject_address' 	=> $post['address'],
+                        'updated_user'      => $createdUser,
+                        'updated_at'        => date("Y-m-d h:i:sa"));
 
 
         $check = DB::table('subject')->where('subject_code', $post['code'])
