@@ -35,14 +35,9 @@
       <file leaf-file-name="updateSubject.blade.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/resources/views/admin/categories/subject/updateSubject.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-13.076923">
+            <state vertical-scroll-proportion="0.0">
               <caret line="44" column="129" selection-start-line="44" selection-start-column="129" selection-end-line="44" selection-end-column="129" />
               <folding>
-                <marker date="1479225704081" expanded="false" signature="2665:2677" placeholder="..." />
-                <marker date="1479225704081" expanded="true" signature="2678:2862" placeholder="..." />
-                <marker date="1479225704081" expanded="true" signature="2940:3372" placeholder="..." />
-                <marker date="1479225704081" expanded="false" signature="3142:3154" placeholder="..." />
-                <marker date="1479225704081" expanded="true" signature="3155:3341" placeholder="..." />
                 <marker date="1479225704081" expanded="true" signature="3481:3725" placeholder="..." />
               </folding>
             </state>
@@ -52,7 +47,7 @@
       <file leaf-file-name="subjectCategories.blade.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/resources/views/admin/categories/subject/subjectCategories.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-11.653846">
+            <state vertical-scroll-proportion="0.0">
               <caret line="39" column="4" selection-start-line="39" selection-start-column="4" selection-end-line="39" selection-end-column="51" />
               <folding />
             </state>
@@ -72,20 +67,17 @@
       <file leaf-file-name="addSubject.blade.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/resources/views/admin/categories/subject/addSubject.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-24.192308">
+            <state vertical-scroll-proportion="0.0">
               <caret line="37" column="123" selection-start-line="37" selection-start-column="122" selection-end-line="37" selection-end-column="123" />
-              <folding>
-                <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#div#4;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#label#0;n#div#1;n#div#0;n#div#4;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="subject.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="subject.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/assets/scripts/categories/subject.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.5068493">
+            <state vertical-scroll-proportion="0.0">
               <caret line="106" column="58" selection-start-line="106" selection-start-column="58" selection-end-line="106" selection-end-column="58" />
               <folding />
             </state>
@@ -95,21 +87,29 @@
       <file leaf-file-name="CategoriesController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/CategoriesController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="4.5">
-              <caret line="346" column="61" selection-start-line="346" selection-start-column="61" selection-end-line="346" selection-end-column="61" />
+            <state vertical-scroll-proportion="-7.2181816">
+              <caret line="195" column="5" selection-start-line="173" selection-start-column="4" selection-end-line="195" selection-end-column="5" />
               <folding>
                 <element signature="e#85#92#0#PHP" expanded="true" />
                 <element signature="e#1945#3467#0#PHP" expanded="false" />
                 <element signature="e#3474#4820#0#PHP" expanded="false" />
                 <element signature="e#4826#5818#0#PHP" expanded="false" />
-                <element signature="e#6117#6985#0#PHP" expanded="false" />
-                <element signature="e#6991#8081#0#PHP" expanded="false" />
                 <element signature="e#8087#9418#0#PHP" expanded="false" />
                 <element signature="e#9424#10198#0#PHP" expanded="false" />
                 <element signature="e#10709#12468#0#PHP" expanded="false" />
                 <marker date="1479224040942" expanded="true" signature="7089:7283" placeholder="SELECT p.pro..product_type..." />
                 <marker date="1479224040942" expanded="true" signature="7579:7636" placeholder="..." />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="commonUtils.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/Utils/commonUtils.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.42114696">
+              <caret line="171" column="38" selection-start-line="171" selection-start-column="38" selection-end-line="171" selection-end-column="38" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -161,7 +161,6 @@
         <option value="$PROJECT_DIR$/public/assets/admintheme/layouts/layout/scripts/layout.min.js" />
         <option value="$PROJECT_DIR$/resources/views/admin/categories/unit/unitCategories.blade.php" />
         <option value="$PROJECT_DIR$/public/assets/scripts/common.js" />
-        <option value="$PROJECT_DIR$/app/Utils/commonUtils.php" />
         <option value="$PROJECT_DIR$/resources/views/admin/categories/productType/addProducType.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/admin/categories/productType/productTypeCategories.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/admin/sale/saleInvoice.blade.php" />
@@ -183,6 +182,7 @@
         <option value="$PROJECT_DIR$/app/Http/Controllers/CategoriesController.php" />
         <option value="$PROJECT_DIR$/resources/views/admin/categories/subject/updateSubject.blade.php" />
         <option value="$PROJECT_DIR$/public/assets/scripts/categories/subject.js" />
+        <option value="$PROJECT_DIR$/app/Utils/commonUtils.php" />
       </list>
     </option>
   </component>
@@ -497,6 +497,24 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="Utils" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="shoptabilu" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="shoptabilu" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="Http" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -614,10 +632,10 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1370" height="744" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Gulp" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.29236642" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.29694656" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -842,13 +860,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Utils/commonUtils.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="162" column="0" selection-start-line="162" selection-start-column="0" selection-end-line="162" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/admin/layouts/adminmaster.blade.php">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -966,7 +977,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="5" column="86" selection-start-line="5" selection-start-column="86" selection-end-line="5" selection-end-column="86" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1004,7 +1014,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/admin/categories/subject/subjectCategories.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-11.653846">
+        <state vertical-scroll-proportion="0.0">
           <caret line="39" column="4" selection-start-line="39" selection-start-column="4" selection-end-line="39" selection-end-column="51" />
           <folding />
         </state>
@@ -1014,26 +1024,45 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-35.192307">
           <caret line="127" column="0" selection-start-line="127" selection-start-column="0" selection-end-line="127" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/categories/subject/addSubject.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="37" column="123" selection-start-line="37" selection-start-column="122" selection-end-line="37" selection-end-column="123" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/categories/subject/updateSubject.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="44" column="129" selection-start-line="44" selection-start-column="129" selection-end-line="44" selection-end-column="129" />
           <folding>
-            <marker date="1479136328153" expanded="true" signature="-1:-1" placeholder="..." />
-            <marker date="1479136328153" expanded="true" signature="-1:-1" placeholder="..." />
-            <marker date="1479136328153" expanded="true" signature="-1:-1" placeholder="..." />
-            <marker date="1479136328153" expanded="true" signature="-1:-1" placeholder="..." />
+            <marker date="1479225704081" expanded="true" signature="3481:3725" placeholder="..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/assets/scripts/categories/subject.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="106" column="58" selection-start-line="106" selection-start-column="58" selection-end-line="106" selection-end-column="58" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/CategoriesController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="4.5">
-          <caret line="346" column="61" selection-start-line="346" selection-start-column="61" selection-end-line="346" selection-end-column="61" />
+        <state vertical-scroll-proportion="-7.2181816">
+          <caret line="195" column="5" selection-start-line="173" selection-start-column="4" selection-end-line="195" selection-end-column="5" />
           <folding>
             <element signature="e#85#92#0#PHP" expanded="true" />
             <element signature="e#1945#3467#0#PHP" expanded="false" />
             <element signature="e#3474#4820#0#PHP" expanded="false" />
             <element signature="e#4826#5818#0#PHP" expanded="false" />
-            <element signature="e#6117#6985#0#PHP" expanded="false" />
-            <element signature="e#6991#8081#0#PHP" expanded="false" />
             <element signature="e#8087#9418#0#PHP" expanded="false" />
             <element signature="e#9424#10198#0#PHP" expanded="false" />
             <element signature="e#10709#12468#0#PHP" expanded="false" />
@@ -1043,36 +1072,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/categories/subject/addSubject.blade.php">
+    <entry file="file://$PROJECT_DIR$/app/Utils/commonUtils.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-24.192308">
-          <caret line="37" column="123" selection-start-line="37" selection-start-column="122" selection-end-line="37" selection-end-column="123" />
-          <folding>
-            <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#div#4;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#label#0;n#div#1;n#div#0;n#div#4;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/categories/subject/updateSubject.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-13.076923">
-          <caret line="44" column="129" selection-start-line="44" selection-start-column="129" selection-end-line="44" selection-end-column="129" />
-          <folding>
-            <marker date="1479225704081" expanded="false" signature="2665:2677" placeholder="..." />
-            <marker date="1479225704081" expanded="true" signature="2678:2862" placeholder="..." />
-            <marker date="1479225704081" expanded="true" signature="2940:3372" placeholder="..." />
-            <marker date="1479225704081" expanded="false" signature="3142:3154" placeholder="..." />
-            <marker date="1479225704081" expanded="true" signature="3155:3341" placeholder="..." />
-            <marker date="1479225704081" expanded="true" signature="3481:3725" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/assets/scripts/categories/subject.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5068493">
-          <caret line="106" column="58" selection-start-line="106" selection-start-column="58" selection-end-line="106" selection-end-column="58" />
+        <state vertical-scroll-proportion="0.42114696">
+          <caret line="171" column="38" selection-start-line="171" selection-start-column="38" selection-end-line="171" selection-end-column="38" />
           <folding />
         </state>
       </provider>
