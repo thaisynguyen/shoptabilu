@@ -22,8 +22,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn blue btn-act btn-smooth" id="btnSaveProductType"><?php echo 'Save';?></button>
-                <button type="button" class="btn default btn-act btn-smooth" data-dismiss="modal"><?php echo 'Close';?></button>
+                <button type="button" class="btn blue btn-act btn-smooth" id="btnSaveProductType"><?php echo 'Lưu';?></button>
+                <button type="button" class="btn default btn-act btn-smooth" data-dismiss="modal"><?php echo 'Đóng';?></button>
             </div>
         </div>
         <!-- /.modal-content -->

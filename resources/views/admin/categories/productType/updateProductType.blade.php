@@ -1,12 +1,12 @@
 <?php
 ?>
 
-<div class="modal fade" id="edit-unit-<?php echo $unit_id;?>" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+<div class="modal fade" id="edit-product-type-<?php echo $product_type_id;?>" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                <h4 class="modal-title text-normal text-bold"><?php echo 'Edit Unit';?></h4>
+                <h4 class="modal-title text-normal text-bold"><?php echo 'Sửa Loại Sản Phẩm';?></h4>
 
 
             </div>
@@ -25,8 +25,8 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" data-dismiss="modal" data-id="<?php echo $unit_id;?>" class="btn blue btn-act btn-edit-unit btn-smooth"><?php echo 'Save';?></button>
-                <button type="button" class="btn default btn-act btn-smooth" data-dismiss="modal"><?php echo 'Close';?></button>
+                <button type="button" data-dismiss="modal" data-id="<?php echo $unit_id;?>" class="btn blue btn-act btn-edit-unit btn-smooth"><?php echo 'Lưu';?></button>
+                <button type="button" class="btn default btn-act btn-smooth" data-dismiss="modal"><?php echo 'Đóng';?></button>
             </div>
         </div>
         <input type="hidden" id="hidden-code-<?php echo $unit_id;?>" required value="<?php echo $unit_code;?>"> </div>
