@@ -103,11 +103,18 @@ function showEditSubject(){
             , supplier = $(this).attr('supplier-val')
             , customer = $(this).attr('customer-val')
             ;
+
         if(supplier == 1){
-            $('#chkSupplier-' + id).attr("checked", true);
+            $('#chkSupplier-' + id).attr("checked", '');
+            $('#chkCustomer-' + id).removeAttr("checked");
+            $('#supplier-' + id).attr("class", 'inc');
+            $('#customer-' + id).removeAttr("class");
         }
-        if(customer == 1){
-            $('#chkCustomer-' + id).attr("checked", true);
+        if(customer == 1) {
+            $('#chkCustomer-' + id).attr("checked", '');
+            $('#chkSupplier-' + id).removeAttr("checked");
+            $('#customer-' + id).attr("class", 'inc');
+            $('#supplier-' + id).removeAttr("class");
         }
         $('#edit-subject-' + id).modal('show');
         focusInput('edit-subject-' + id, 'code-' + id);
@@ -168,19 +175,14 @@ function updateSubject(){
     });
 }
 
-
-
 function showDeleteSubject(){
-
     $(document).on('click', '.td-delete-subject', function() {
         var id = $(this).attr('data-id');
         $('#modal-standard-delete-'+id).modal('show');
     });
-
 }
 
 function deleteSubject(){
-
     $(document).on('click', '.btn-delete-subject', function() {
         var id = $(this).attr('data-id')
             , dataPost = {id: id}

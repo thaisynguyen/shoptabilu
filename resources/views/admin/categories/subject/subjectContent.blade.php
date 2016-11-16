@@ -81,7 +81,7 @@
                             </div>
                         </td>
                         <td>
-                            <a class="td-edit-subject" data-id="{{$row->subject_id}}"> Sửa </a>
+                            <a class="td-edit-subject" data-id="{{$row->subject_id}}" supplier-val="{{$row->is_supplier}}" customer-val="{{$row->is_customer}}" > Sửa </a>
 
                         </td>
                         @include('admin.categories.subject.updateSubject', array('subject_id' => $row->subject_id,
