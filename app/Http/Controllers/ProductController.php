@@ -34,7 +34,7 @@ class ProductController extends AppController {
     /*
      * Controller for Products
      */
-    public function viewProduct(Request $request)
+    public function listProduct(Request $request)
 	{        
 		$post = $request->all();			
 		
@@ -87,10 +87,8 @@ class ProductController extends AppController {
     }
 
     public function productCategories(Request $request){
-        $this->clearSession();
-        //$data = self::viewProduct();
-        return view('admin.categories.product.productCategories');
-						//->with('data',$data);						
+        $this->clearSession();        
+        return view('admin.categories.product.productCategories');						
     }
 
     public function deleteProduct(Request $request)
@@ -124,16 +122,91 @@ class ProductController extends AppController {
         }
     }
 
-    public function updateProduct(Request $request){
-        $this->clearSession();
-		
-		$post = $request->all();
+    public function viewProduct($id){
+        $this->clearSession();			
         $createdUser = Session::get('sid');
 		
-        //$data = self::viewProduct();
-        return view('admin.categories.product.updateProduct');
-            //->with('data',$data);
+        // get product by id
+        $product = DB::table('product')                    
+					->leftJoin('producer', 'product.producer_id', '=', 'producer.producer_id')
+					->leftJoin('product_type', 'product.product_type_id', '=', 'product_type.product_type_id')
+					->where('product.product_id', '=', $id)
+                    ->get();
+		
+		$arrayUnit = DB::table('unit')
+					->select('unit_id AS key', 'unit_name AS value')
+					->where('inactive', '=', 0)
+                    ->get();
+					
+		$arrayProducer = DB::table('producer')
+					->select('producer_id AS key', 'producer_name AS value')
+					->where('inactive', '=', 0)
+                    ->get();
+					
+		// convert to array
+        $arrayUnit = commonUtils::objectToArray($arrayUnit);
+		$arrayProducer = commonUtils::objectToArray($arrayProducer);
+					
+		// get product detail
+		//commonUtils::pr($arrayProducer); die;
+		
+        return view('admin.categories.product.updateProduct')
+						->with('product', $product[0])
+						->with('arrayUnit', $arrayUnit)
+						->with('arrayProducer', $arrayProducer);
     }
 	
+	public function updateProduct(Request $request)
+    {
+        $post = $request->all();
+        $createdUser = Session::get('sid');
+        
+        $data = array(  'product_name' 	    => $post['product_name'],
+                        'product_code' 	    => $post['product_code'],
+						'product_type_id' 	=> $post['product_type_id'],
+						'producer_id' 	    => $post['producer_id'],
+						'base_unit_id' 	    => $post['base_unit_id'],
+						'barcode' 	    	=> $post['barcode'],
+						'trademark' 	    => $post['trademark'],
+						'model' 	    	=> $post['model'],
+						'color' 	    	=> $post['color'],
+						'weight' 	    	=> $post['weight'],
+						'length' 	    	=> $post['length'],
+						'width' 	    	=> $post['width'],
+						'height' 	    	=> $post['height'],
+						'short_description' => $post['short_description'],
+						'long_description' 	=> $post['long_description'],
+                        'updated_user'      => $createdUser,
+                        'updated_at'      	=> date("Y-m-d h:i:sa"));
+
+
+        $check = DB::table('product')
+							->where('product_id', '=',$post['product_id'])							
+							->first();
+							
+        if(count($check) > 0){
+            return json_encode(array(
+                "success"  => false
+                , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY . 'Mã SP dã b? trùng. Vui lòng th? l?i.'
+            ));
+        } else {
+            try {
+                $i = DB::table('product')
+						->where('product_id', '=',$post['product_id'])
+						->update($data);
+						
+                return json_encode(array(
+                    "success"  => true
+                    , "alert"  => commonUtils::EDIT_SUCCESSFULLY
+                    , "unit"  => $data
+                ));
+            } catch (Exception $e) {
+                return json_encode(array(
+                    "success"  => false
+                    , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY
+                ));
+            }
+        }
+    }
 	
 }

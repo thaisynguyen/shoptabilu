@@ -1,5 +1,4 @@
 $(document).ready(function () {
-
 	//
 	// Pipelining function for DataTables. To be used to the `ajax` option of DataTables
 	//
@@ -125,7 +124,10 @@ $(document).ready(function () {
         "processing": true,
         "serverSide": true,
         "ajax": $.fn.dataTable.pipeline( {
-            url: path + "/viewProduct/",
+			headers: {
+				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			},
+            url: path + "/listProduct/",
             pages: 5 // number of pages to cache,
         } ),
 		"createdRow": function( row, data, dataIndex ) {
@@ -149,7 +151,7 @@ $(document).ready(function () {
 				data: null,
 				render: function ( data, type, row ) {
 					return	'<a class="btn btn-icon-only red" data-id="' + row.product_id + '" data-toggle="confirmation" data-original-title="Bạn có chắc muốn xóa dòng này?" data-placement="top"><i class="fa fa-trash"></i></a>' +
-							'<a href="updateProduct" class="btn btn-icon-only btn-success"><i class="fa fa-edit"></i></a>';
+							'<a href="viewProduct/'+ row.product_id +'" class="btn btn-icon-only btn-success"><i class="fa fa-edit"></i></a>';
 				},
                 orderable: false
 			}
@@ -180,40 +182,6 @@ $(document).ready(function () {
 		"pagingType": 'bootstrap_extended' // pagination type
     } );
 
-	/*$('#tblProduct').on('page.dt', function() {
-		console.log('page.dt');
-		setTimeout(
-			function() {
-				$("[data-toggle=confirmation]").confirmation({
-					container:"body",
-					btnOkClass:"btn btn-sm btn-success",
-					btnCancelClass:"btn btn-sm btn-danger",
-					onConfirm:function(event, element) {
-						var id = $(element)[0].getAttribute('data-id');
-						//console.log(id);
-						deleteProduct(id);
-					}
-				});
-			}, 500);
-	});
-
-	$('#tblProduct').on('order.dt', function() {
-		console.log('order.dt');
-		setTimeout(
-			function() {
-				$("[data-toggle=confirmation]").confirmation({
-					container:"body",
-					btnOkClass:"btn btn-sm btn-success",
-					btnCancelClass:"btn btn-sm btn-danger",
-					onConfirm:function(event, element) {
-						var id = $(element)[0].getAttribute('data-id');
-						//console.log(id);
-						deleteProduct(id);
-					}
-				});
-			}, 500);
-	});*/
-
 	$('#tblProduct').on('click','[data-toggle=confirmation]', function () {
 		$("[data-toggle=confirmation]").confirmation({
 			container: "body",
@@ -225,6 +193,15 @@ $(document).ready(function () {
 				deleteProduct(id);
 			}
 		});
+	} );
+	
+	$('#btnBack').click(function() {
+		document.location.href="../productCategories";
+	} );
+	
+	$('#btnUpdate').click(function() {
+		//updateProduct();
+		alert('aaaaaaa');
 	} );
 });
 
@@ -257,5 +234,68 @@ function deleteProduct(idProduct)
 		}
 	})	
 }
+
+function updateProduct()
+{		
+	var product_id = $(this).attr('data-id')
+			, product_code 		= $('[name="product_code"]').val()
+			, product_type_id 	= $('[name="product_type_id"]').val()
+			, product_name		= $('[name="product_name"]').val()
+			, producer_id		= $('[name="producer_id"]').val()
+			, base_unit_id		= $('[name="base_unit_id"]').val()
+			, barcode			= $('[name="barcode"]').val()
+			, trademark			= $('[name="trademark"]').val()
+			, model				= $('[name="model"]').val()
+			, color				= $('[name="color"]').val()
+			, weight			= $('[name="weight"]').val()
+			, length			= $('[name="length"]').val()
+			, width 	    	= $('[name="width"]').val()
+			, height			= $('[name="height"]').val()
+			, short_description	= $('[name="short_description"]').val()
+			, long_description	= $('[name="long_description"]').val()
+            , dataPost = {	product_id: product_id, 
+							product_code: product_code, 
+							product_type_id: product_type_id,
+							product_name: product_name,
+							producer_id: producer_id,
+							base_unit_id: base_unit_id,
+							barcode: barcode,
+							trademark: trademark,
+							model: model,
+							color: color,
+							weight: weight,
+							length: length,
+							width: width,
+							height: height,
+							short_description: short_description,
+							long_description: long_description }
+            , dataObj;
+	$.ajax({
+		headers: {
+			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+		},
+		url: path + '/updateProduct/',
+		type: 'POST',
+		dataType: 'json',
+		data: dataPost,
+		success: function(response) {
+			dataObj  = response;
+
+			if (dataObj.success == true) {
+				slideMessageMultiConfig('Thông tin', dataObj.alert, 'success', 20);
+				document.location.href="../productCategories";
+			}
+			else{
+				slideMessageMultiConfig('Cảnh báo', 'Cập nhật không thành công', 'warning', 40);
+			}
+			return dataObj;
+		},
+		error: function(xhr, textStatus, thrownError) {
+
+			console.log(thrownError);
+		}
+	})	
+}
+
 
 

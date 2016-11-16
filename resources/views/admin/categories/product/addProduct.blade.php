@@ -8,6 +8,7 @@
         use Utils\commonUtils;        
     ?>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <div class="page-content-wrapper">
         <!-- BEGIN CONTENT BODY -->
         <div class="page-content">
@@ -46,184 +47,217 @@
                                 <div class="caption">
                                     <i class="fa fa-shopping-cart"></i>Mã SP: {{$product->product_id}}</div>
                                 <div class="actions btn-set">
-                                    <button id="btnBack" type="button" name="btnBack" class="btn btn-secondary-outline">
-                                        <i class="fa fa-angle-left"></i> Back</button>                                    
-                                    <button id="btnUpdate" class="btn btn-success">
-                                        <i class="fa fa-check"></i> Save</button>                                    
+                                    <button type="button" name="back" class="btn btn-secondary-outline">
+                                        <i class="fa fa-angle-left"></i> Back</button>
+                                    <button class="btn btn-secondary-outline">
+                                        <i class="fa fa-reply"></i> Reset</button>
+                                    <button class="btn btn-success">
+                                        <i class="fa fa-check"></i> Save</button>
+                                    <button class="btn btn-success">
+                                        <i class="fa fa-check-circle"></i> Save & Continue Edit</button>
+                                    <div class="btn-group">
+                                        <a class="btn btn-success dropdown-toggle" href="javascript:;" data-toggle="dropdown">
+                                            <i class="fa fa-share"></i> More
+                                            <i class="fa fa-angle-down"></i>
+                                        </a>
+                                        <div class="dropdown-menu pull-right">
+                                            <li>
+                                                <a href="javascript:;"> Duplicate </a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:;"> Delete </a>
+                                            </li>
+                                            <li class="dropdown-divider"> </li>
+                                            <li>
+                                                <a href="javascript:;"> Print </a>
+                                            </li>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="portlet-body">
                                 <div class="tabbable-bordered">
                                     <ul class="nav nav-tabs">
                                         <li class="active">
-                                            <a href="#tab_general" data-toggle="tab">Thông tin chung</a>
+                                            <a href="#tab_general" data-toggle="tab"> General </a>
                                         </li>
                                         <li>
-                                            <a href="#tab_detail" data-toggle="tab">Chi tiết</a>
+                                            <a href="#tab_meta" data-toggle="tab"> Meta </a>
                                         </li>
                                         <li>
-                                            <a href="#tab_images" data-toggle="tab">Hình ảnh</a>
-                                        </li>                                        
+                                            <a href="#tab_images" data-toggle="tab"> Images </a>
+                                        </li>
+                                        <li>
+                                            <a href="#tab_reviews" data-toggle="tab"> Reviews
+                                                <span class="badge badge-success"> 3 </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#tab_history" data-toggle="tab"> History </a>
+                                        </li>
                                     </ul>
                                     <div class="tab-content">
                                         <div class="tab-pane active" id="tab_general">
                                             <div class="form-body">
-												<div class="row">
-													<div class="col-md-6">
-														<div class="form-group">
-															<label class="col-md-3 control-label">Mã SP:
-																<span class="required"> * </span>
-															</label>
-															<div class="col-md-9">
-																<input type="text" class="form-control" name="product_code" placeholder="" value="{{ $product->product_code }}"></div>
-														</div>
-													</div>
-													<div class="col-md-6">
-														<div class="form-group">
-															<label class="col-md-3 control-label">Loai SP:
-																<span class="required"> * </span>
-															</label>
-															<div class="col-md-9">																
-																<select class="table-group-action-input form-control input-medium" name="product[tax_class]">
-																	<option value="">Select...</option>
-																	<option value="1">None</option>
-																	<option value="0">Taxable Goods</option>
-																	<option value="0">Shipping</option>
-																	<option value="0">USA</option>
-																</select>
-															</div>
-														</div>														
-													</div>
-												</div>
-												
-												<div class="row">
-													<div class="col-md-6">
-														<div class="form-group">
-															<label class="col-md-3 control-label">Tên SP:
-																<span class="required"> * </span>
-															</label>
-															<div class="col-md-9">
-																<input type="text" class="form-control" name="product_name" placeholder="" value="{{ $product->product_name }}"></div>
-														</div>
-													</div>
-													<div class="col-md-6">
-														<div class="form-group">
-															<label class="col-md-3 control-label">Nhà SX:
-																<span class="required"> * </span>
-															</label>
-															<div class="col-md-9">
-																{{ commonUtils::renderCombobox($arrayProducer, $product->producer_id, 'table-group-action-input form-control input-medium', 'producer_id', 'producer_id', 'Chọn NSX...')}}																
-															</div>
-														</div>
-													</div>
-												</div>
-												
-												<div class="row">
-													<div class="col-md-6">
-														<div class="form-group">
-															<label class="col-md-3 control-label">Barcode:
-																<span class="required"> * </span>
-															</label>
-															<div class="col-md-9">
-																<input type="text" class="form-control" name="barcode" placeholder="" value="{{ $product->barcode }}"></div>
-														</div>
-													</div>
-													<div class="col-md-6">
-														<div class="form-group">
-															<label class="col-md-3 control-label">ĐVT:
-																<span class="required"> * </span>
-															</label>
-															<div class="col-md-9">
-																{{ commonUtils::renderCombobox($arrayUnit, $product->base_unit_id, 'table-group-action-input form-control input-medium', 'base_unit_id', 'base_unit_id', 'Chọn ĐVT...')}}
-															</div>
-														</div>
-													</div>
-												</div>
-												            
-												<div class="row">
-													<div class="col-md-6">
-														<div class="form-group">
-															<label class="col-md-3 control-label">Thương hiệu:
-																<span class="required"> * </span>
-															</label>
-															<div class="col-md-9">
-																<input type="text" class="form-control" name="trademark" placeholder="" value="{{ $product->trademark }}"></div>
-														</div>
-													</div>
-													<div class="col-md-6">
-														<div class="form-group">
-															<label class="col-md-3 control-label">Kiểu mẫu:
-																<span class="required"> * </span>
-															</label>
-															<div class="col-md-9">
-																<input type="text" class="form-control" name="model" placeholder="" value="{{ $product->model }}"></div>
-														</div>
-													</div>
-												</div>
-												
-												<div class="row">
-													<div class="col-md-6">
-														<div class="form-group">
-															<label class="col-md-3 control-label">Màu sắc:
-																<span class="required"> * </span>
-															</label>
-															<div class="col-md-9">
-																<input type="text" class="form-control" name="color" placeholder="" value="{{ $product->color }}"></div>
-														</div>
-													</div>
-													<div class="col-md-6">
-														<div class="form-group">
-															<label class="col-md-3 control-label">Cân nặng:
-																<span class="required"> * </span>
-															</label>
-															<div class="col-md-9">
-																<input type="text" class="form-control" name="weight" placeholder="" value="{{ $product->weight }}"></div>
-														</div>
-													</div>
-												</div>
-												
-												<div class="row">
-													<div class="col-md-12">
-														<div class="form-group">
-															<label class="col-md-2 control-label">Kích thước:
-																<span class="required"> * </span>
-															</label>
-															<div class="col-md-10">
-																<div class="input-group input-daterange" >
-																	<input type="text" class="form-control" name="length" placeholder="Dài" value="{{ $product->length }}">
-																	<span class="input-group-addon"> x </span>
-																	<input type="text" class="form-control" name="width" placeholder="Rộng" value="{{ $product->width }}">
-																	<span class="input-group-addon"> x </span>
-																	<input type="text" class="form-control" name="height" placeholder="Cao" value="{{ $product->height }}">
-																</div>
-															</div>
-															
-														</div>
-													</div>													
-												</div>
-												
-												<div class="form-group">
-                                                    <label class="col-md-2 control-label">Mô tả ngắn:
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label">Name:
                                                         <span class="required"> * </span>
                                                     </label>
                                                     <div class="col-md-10">
-                                                        <textarea class="form-control" name="short_description">{{ $product->short_description }}</textarea>
+                                                        <input type="text" class="form-control" name="product[name]" placeholder=""> </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label">Description:
+                                                        <span class="required"> * </span>
+                                                    </label>
+                                                    <div class="col-md-10">
+                                                        <textarea class="form-control" name="product[description]"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label">Short Description:
+                                                        <span class="required"> * </span>
+                                                    </label>
+                                                    <div class="col-md-10">
+                                                        <textarea class="form-control" name="product[short_description]"></textarea>
                                                         <span class="help-block"> shown in product listing </span>
                                                     </div>
                                                 </div>
-												
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label">Mô tả dài:
+                                                    <label class="col-md-2 control-label">Categories:
                                                         <span class="required"> * </span>
                                                     </label>
                                                     <div class="col-md-10">
-                                                        <textarea class="form-control" name="long_description">{{ $product->long_description }}</textarea>
+                                                        <div class="form-control height-auto">
+                                                            <div class="scroller" style="height:275px;" data-always-visible="1">
+                                                                <ul class="list-unstyled">
+                                                                    <li>
+                                                                        <label>
+                                                                            <input type="checkbox" name="product[categories][]" value="1">Mens</label>
+                                                                        <ul class="list-unstyled">
+                                                                            <li>
+                                                                                <label>
+                                                                                    <input type="checkbox" name="product[categories][]" value="1">Footwear</label>
+                                                                            </li>
+                                                                            <li>
+                                                                                <label>
+                                                                                    <input type="checkbox" name="product[categories][]" value="1">Clothing</label>
+                                                                            </li>
+                                                                            <li>
+                                                                                <label>
+                                                                                    <input type="checkbox" name="product[categories][]" value="1">Accessories</label>
+                                                                            </li>
+                                                                            <li>
+                                                                                <label>
+                                                                                    <input type="checkbox" name="product[categories][]" value="1">Fashion Outlet</label>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </li>
+                                                                    <li>
+                                                                        <label>
+                                                                            <input type="checkbox" name="product[categories][]" value="1">Football Shirts</label>
+                                                                        <ul class="list-unstyled">
+                                                                            <li>
+                                                                                <label>
+                                                                                    <input type="checkbox" name="product[categories][]" value="1">Premier League</label>
+                                                                            </li>
+                                                                            <li>
+                                                                                <label>
+                                                                                    <input type="checkbox" name="product[categories][]" value="1">Football League</label>
+                                                                            </li>
+                                                                            <li>
+                                                                                <label>
+                                                                                    <input type="checkbox" name="product[categories][]" value="1">Serie A</label>
+                                                                            </li>
+                                                                            <li>
+                                                                                <label>
+                                                                                    <input type="checkbox" name="product[categories][]" value="1">Bundesliga</label>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </li>
+                                                                    <li>
+                                                                        <label>
+                                                                            <input type="checkbox" name="product[categories][]" value="1">Brands</label>
+                                                                        <ul class="list-unstyled">
+                                                                            <li>
+                                                                                <label>
+                                                                                    <input type="checkbox" name="product[categories][]" value="1">Adidas</label>
+                                                                            </li>
+                                                                            <li>
+                                                                                <label>
+                                                                                    <input type="checkbox" name="product[categories][]" value="1">Nike</label>
+                                                                            </li>
+                                                                            <li>
+                                                                                <label>
+                                                                                    <input type="checkbox" name="product[categories][]" value="1">Airwalk</label>
+                                                                            </li>
+                                                                            <li>
+                                                                                <label>
+                                                                                    <input type="checkbox" name="product[categories][]" value="1">Kangol</label>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <span class="help-block"> select one or more categories </span>
                                                     </div>
-												</div>
-                                                
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label">Available Date:
+                                                        <span class="required"> * </span>
+                                                    </label>
+                                                    <div class="col-md-10">
+                                                        <div class="input-group input-large date-picker input-daterange" data-date="10/11/2012" data-date-format="mm/dd/yyyy">
+                                                            <input type="text" class="form-control" name="product[available_from]">
+                                                            <span class="input-group-addon"> to </span>
+                                                            <input type="text" class="form-control" name="product[available_to]"> </div>
+                                                        <span class="help-block"> availability daterange. </span>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label">SKU:
+                                                        <span class="required"> * </span>
+                                                    </label>
+                                                    <div class="col-md-10">
+                                                        <input type="text" class="form-control" name="product[sku]" placeholder=""> </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label">Price:
+                                                        <span class="required"> * </span>
+                                                    </label>
+                                                    <div class="col-md-10">
+                                                        <input type="text" class="form-control" name="product[price]" placeholder=""> </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label">Tax Class:
+                                                        <span class="required"> * </span>
+                                                    </label>
+                                                    <div class="col-md-10">
+                                                        <select class="table-group-action-input form-control input-medium" name="product[tax_class]">
+                                                            <option value="">Select...</option>
+                                                            <option value="1">None</option>
+                                                            <option value="0">Taxable Goods</option>
+                                                            <option value="0">Shipping</option>
+                                                            <option value="0">USA</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-md-2 control-label">Status:
+                                                        <span class="required"> * </span>
+                                                    </label>
+                                                    <div class="col-md-10">
+                                                        <select class="table-group-action-input form-control input-medium" name="product[status]">
+                                                            <option value="">Select...</option>
+                                                            <option value="1">Published</option>
+                                                            <option value="0">Not Published</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="tab-pane" id="tab_detail">
+                                        <div class="tab-pane" id="tab_meta">
                                             <div class="form-body">
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label">Meta Title:</label>

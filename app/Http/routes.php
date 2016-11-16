@@ -54,18 +54,17 @@ Route::any('updateProductType','CategoriesController@updateProductType');
 Route::any('deleteProductType','CategoriesController@deleteProductType');
 
 Route::any('productCategories','ProductController@productCategories');
-Route::any('viewProduct','ProductController@viewProduct');
+Route::any('listProduct','ProductController@listProduct');
 Route::any('deleteProduct','ProductController@deleteProduct');
-Route::any('updateProduct','ProductController@updateProduct');
 Route::any('addProduct','ProductController@addProduct');
+Route::any('viewProduct/{id}','ProductController@viewProduct');
+Route::any('updateProduct','ProductController@updateProduct');
 
 Route::any('subjectCategories','CategoriesController@subjectCategories');
 Route::any('addSubject','CategoriesController@addSubject');
 Route::any('saveSubject','CategoriesController@saveSubject');
 Route::any('updateSubject','CategoriesController@updateSubject');
 Route::any('deleteSubject','CategoriesController@deleteSubject');
-
-
 
 Route::any('producerCategories','CategoriesController@producerCategories');
 Route::any('companyProfile','CategoriesController@companyProfile');

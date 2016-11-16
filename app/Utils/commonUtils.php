@@ -166,14 +166,14 @@ class commonUtils
         $ret = '';
         foreach($data as $index => $category)
         {
-//        echo 'id:'.$category['id'] . '-parent: ' .$parent . "<pre>";
+//          echo 'id:'.$category['id'] . '-parent: ' .$parent . "<pre>";
             if($category['parent_id'] == $parent)
             {
                 if($parentName != ''){
-                    $ret .= '<option value="' . $category['id']  . '">' . $parentName . ' > ' .$category['text']  . '</option>';
+                    $ret .= '<option value="' . $category['id'] . '">' . $parentName . ' > ' .$category['text'] . '</option>';
 
                 } else {
-                    $ret .= '<option value="' . $category['id']  . '">' . $parentName . $category['text']  . '</option>';
+                    $ret .= '<option value="' . $category['id']  . '">' . $parentName . $category['text'] . '</option>';
 
                 }
                 if(isset($category['children'])){
@@ -390,5 +390,22 @@ class commonUtils
 
     }
 
+    public static function renderCombobox($array, $selectedValue, $classname, $id, $name, $startValue = "") {
+		$result = '';
+		$result .=  '<select  class="'.$classname.'" id="'.$id.'" name="'.$name.'">';
+		
+		if ($startValue != "")	
+			$result .=  '<option value="">'.$startValue.'</option>';
+		
+		foreach($array as $row){
+			if ($row['key'] == $selectedValue)
+				$result .= '<option value="'.$row['key'].'" selected>'.$row['value'].'</option>';
+			else
+				$result .= '<option value="'.$row['key'].'">'.$row['value'].'</option>';
+        }
+        $result .= '</select>';
+		
+		return $result;
+    }	
 }
 
