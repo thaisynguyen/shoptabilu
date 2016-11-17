@@ -2,6 +2,7 @@
 ?>
 
 <div class="modal fade" id="edit-subject-<?php echo $subject_id;?>" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -35,16 +36,16 @@
                     <label class="control-label"><?php echo 'Khách hàng/Nhà cung cấp';?> (<span class="input-require">*</span>)</label>
                     <div class="md-radio-inline">
                         <div class="md-radio">
-                            <input type="radio" id="chkCustomer-<?php echo $subject_id;?>" name="chkSubject" class="md-radiobtn" value="1">
+                            <input type="radio" id="chkCustomer" name="chkSubject" class="md-radiobtn"  checked="" value="1">
                             <label for="chkCustomer" style="color: black">
-                                <span id="customer-<?php echo $subject_id;?>"></span>
+                                <span></span>
                                 <span class="check"></span>
                                 <span class="box"></span> Khách hàng </label>
                         </div>
                         <div class="md-radio">
-                            <input type="radio" id="chkSupplier-<?php echo $subject_id;?>" name="chkSubject" class="md-radiobtn" value="2">
+                            <input type="radio" id="chkSupplier" name="chkSubject" class="md-radiobtn" value="2">
                             <label for="chkSupplier" style="color: black">
-                                <span id="supplier-<?php echo $subject_id;?>"></span>
+                                <span></span>
                                 <span class="check"></span>
                                 <span class="box"></span> Nhà cung cấp </label>
                         </div>
@@ -53,7 +54,7 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" data-dismiss="modal" class="btn blue btn-act btn-edit-subject btn-smooth"><?php echo 'Lưu';?></button>
+                <button type="button" data-dismiss="modal" data-id="{{$subject_id}}"  class="btn blue btn-act btn-edit-subject btn-smooth"><?php echo 'Lưu';?></button>
                 <button type="button" class="btn default btn-act btn-smooth" data-dismiss="modal"><?php echo 'Đóng';?></button>
             </div>
         </div>
@@ -62,3 +63,8 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+<script>
+    $('input[type=radio]').change( function() {
+        console.log($("input[name='chkSubject']:checked").val());
+    });
+</script>

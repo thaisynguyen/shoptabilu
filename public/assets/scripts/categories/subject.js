@@ -50,8 +50,6 @@ function saveSubject(){
                 , is_customer: is_customer
             }
             ;
-        console.log(is_supplier);
-        console.log(is_customer);
         if(code == ''){
             $('#code').focus();
             slideMessageMultiConfig('Cảnh báo', 'Mã không được rỗng', 'warning', 40);
@@ -105,16 +103,10 @@ function showEditSubject(){
             ;
 
         if(supplier == 1){
-            $('#chkSupplier-' + id).attr("checked", '');
-            $('#chkCustomer-' + id).removeAttr("checked");
-            $('#supplier-' + id).attr("class", 'inc');
-            $('#customer-' + id).removeAttr("class");
+            $('#chkSupplier').attr("checked", true);
         }
         if(customer == 1) {
-            $('#chkCustomer-' + id).attr("checked", '');
-            $('#chkSupplier-' + id).removeAttr("checked");
-            $('#customer-' + id).attr("class", 'inc');
-            $('#supplier-' + id).removeAttr("class");
+            $('#chkCustomer').attr("checked", true);
         }
         $('#edit-subject-' + id).modal('show');
         focusInput('edit-subject-' + id, 'code-' + id);
@@ -130,16 +122,19 @@ function updateSubject(){
             , name = $('#name-'+id).val()
             , address = $('#address-'+id).val()
             , phone = $('#phone-'+id).val()
+            , is_customer = ($("input[name='chkSubject']:checked").val() == 1) ? 1 : 0
+            , is_supplier = ($("input[name='chkSubject']:checked").val() == 2) ? 1 : 0
             , hiddencode = $('#hidden-code-'+id).val()
             , dataPost = {id: id
                         , code: code
                         , name: name
                         , address: address
                         , phone: phone
+                        , is_supplier: is_supplier
+                        , is_customer: is_customer
                         , hiddencode: hiddencode
                         }
             , dataObj;
-
 
         $.ajax({
             headers: {
@@ -156,9 +151,11 @@ function updateSubject(){
                     slideMessageMultiConfig('Thông tin', dataObj.alert, 'success', 20);
                     //console.log(dataObj.subject.subject_code);
                     var subject = dataObj.subject;
-
-                    $('#td-code-' + id).html(subject.subject_code);
-                    $('#td-name-' + id).html(subject.subject_name);
+                    $('#main-content').html(dataObj.subject);
+                    //$('#td-code-' + id).html(subject.subject_code);
+                    //$('#td-name-' + id).html(subject.subject_name);
+                    //$('#td-customer-' + id).html(subject.is_customer);
+                    //$('#td-supplier-' + id).html(subject.is_supplier);
                 }
                 else{
                     slideMessageMultiConfig('Cảnh báo', 'Cập nhật không thành công', 'warning', 40);

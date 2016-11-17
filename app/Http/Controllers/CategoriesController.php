@@ -345,6 +345,8 @@ class CategoriesController extends AppController {
                         'subject_code' 	    => $post['code'],
                         'subject_telephone' => $post['phone'],
                         'subject_address' 	=> $post['address'],
+                        'is_customer' 	    => $post['is_customer'],
+                        'is_supplier' 	    => $post['is_supplier'],
                         'updated_user'      => $createdUser,
                         'updated_at'        => date("Y-m-d h:i:sa"));
 
@@ -359,11 +361,13 @@ class CategoriesController extends AppController {
             ));
         } else {
             try {
+                $arr = self::selectAndSortDataFromTable($request, 'subject');
+                $subjectHtml = view('admin.categories.subject.subjectContent', ['data' => $arr])->render();
                 $i = DB::table('subject')->where('subject_id', $post['id'])->update($data);
                 return json_encode(array(
                     "success"  => true
                     , "alert"  => commonUtils::EDIT_SUCCESSFULLY
-                    , "subject"  => $data
+                    , "subject"  => $subjectHtml
                 ));
             } catch (Exception $e) {
                 return json_encode(array(
