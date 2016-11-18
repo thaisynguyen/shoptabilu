@@ -32,23 +32,29 @@
                     <div class="input-icon right">
                         <input type="text" class="form-control" id="address-<?php echo $subject_id;?>" required value="<?php echo $subject_address;?>"> </div>
                 </div>
+                <?php
+                $checkedSup = $is_supplier == 1 ? 'checked' : '';
+                $checkedCus = $is_customer == 1 ? 'checked' : '';
+                ?>
                 <div class="has-success">
                     <label class="control-label"><?php echo 'Khách hàng/Nhà cung cấp';?> (<span class="input-require">*</span>)</label>
+
                     <div class="md-radio-inline">
                         <div class="md-radio">
-                            <input type="radio" id="chkCustomer" name="chkSubject" class="md-radiobtn"  checked="" value="1">
-                            <label for="chkCustomer" style="color: black">
-                                <span></span>
+                            <input type="radio" data-id="{{$subject_id}}" value="1" id="chkCustomer-{{$subject_id}}" name="status-goal-{{$subject_id}}" class="md-radiobtn customer" <?php echo $checkedCus;?>>
+                            <label for="chkCustomer-{{$subject_id}}">
+                                <span class="inc"></span>
                                 <span class="check"></span>
                                 <span class="box"></span> Khách hàng </label>
                         </div>
                         <div class="md-radio">
-                            <input type="radio" id="chkSupplier" name="chkSubject" class="md-radiobtn" value="2">
-                            <label for="chkSupplier" style="color: black">
-                                <span></span>
+                            <input type="radio" data-id="{{$subject_id}}" value="0" id="chkSupplier-{{$subject_id}}" name="status-goal-{{$subject_id}}" class="md-radiobtn supplier" <?php echo $checkedSup;?>>
+                            <label for="chkSupplier-{{$subject_id}}">
+                                <span class="inc"></span>
                                 <span class="check"></span>
                                 <span class="box"></span> Nhà cung cấp </label>
                         </div>
+
                     </div>
                 </div>
 
@@ -63,8 +69,3 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
-<script>
-    $('input[type=radio]').change( function() {
-        console.log($("input[name='chkSubject']:checked").val());
-    });
-</script>

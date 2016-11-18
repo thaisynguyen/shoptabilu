@@ -102,12 +102,6 @@ function showEditSubject(){
             , customer = $(this).attr('customer-val')
             ;
 
-        if(supplier == 1){
-            $('#chkSupplier').attr("checked", true);
-        }
-        if(customer == 1) {
-            $('#chkCustomer').attr("checked", true);
-        }
         $('#edit-subject-' + id).modal('show');
         focusInput('edit-subject-' + id, 'code-' + id);
     });

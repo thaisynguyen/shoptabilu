@@ -35,14 +35,14 @@
                     <label class="control-label"><?php echo 'Khách hàng/Nhà cung cấp';?> (<span class="input-require">*</span>)</label>
                     <div class="md-radio-inline">
                         <div class="md-radio">
-                            <input type="radio" id="chkCustomer" name="chkSubject" class="md-radiobtn"  checked="" value="1">
+                            <input type="radio" id="chkCustomer" name="chkSubject1" class="md-radiobtn"  checked="" value="1">
                             <label for="chkCustomer" style="color: black">
                                 <span></span>
                                 <span class="check"></span>
                                 <span class="box"></span> Khách hàng </label>
                         </div>
                         <div class="md-radio">
-                            <input type="radio" id="chkSupplier" name="chkSubject" class="md-radiobtn" value="2">
+                            <input type="radio" id="chkSupplier" name="chkSubject1" class="md-radiobtn" value="2">
                             <label for="chkSupplier" style="color: black">
                                 <span></span>
                                 <span class="check"></span>
