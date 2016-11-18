@@ -12,6 +12,8 @@ $( document ).ready(function() {
     deleteSubject();
     pressSaveSubject();
     reloadDataBySubject();
+
+
 });
 
 function resetForm(){
@@ -106,6 +108,15 @@ function showEditSubject(){
         focusInput('edit-subject-' + id, 'code-' + id);
     });
 
+    $(document).on('click', '.md-radiobtn', function() {
+        var id = $(this).attr('data-id')
+
+            , subject = $(this).attr('value')
+            ;
+        $('#hidden-select-' + id).val(subject);
+       //console.log(subject);
+    });
+
 }
 
 function updateSubject(){
@@ -116,8 +127,9 @@ function updateSubject(){
             , name = $('#name-'+id).val()
             , address = $('#address-'+id).val()
             , phone = $('#phone-'+id).val()
-            , is_customer = ($("input[name='chkSubject']:checked").val() == 1) ? 1 : 0
-            , is_supplier = ($("input[name='chkSubject']:checked").val() == 2) ? 1 : 0
+            , nameSubject = 'nameSubject-'+id
+            , is_customer = ($('#hidden-select-' + id).val() == 1) ? 1 : 0
+            , is_supplier = ($('#hidden-select-' + id).val() == 2) ? 1 : 0
             , hiddencode = $('#hidden-code-'+id).val()
             , dataPost = {id: id
                         , code: code
@@ -150,6 +162,16 @@ function updateSubject(){
                     //$('#td-name-' + id).html(subject.subject_name);
                     //$('#td-customer-' + id).html(subject.is_customer);
                     //$('#td-supplier-' + id).html(subject.is_supplier);
+                    if(is_customer == 1){
+                        $('#td-customer-' + id).find('span:first').addClass('checked');
+                        $('#td-supplier-' + id).find('span:first').removeClass('checked');
+                    }
+
+                    if(is_supplier == 1){
+                        $('#td-customer-' + id).find('span:first').removeClass('checked');
+                        $('#td-supplier-' + id).find('span:first').addClass('checked');
+                    }
+
                 }
                 else{
                     slideMessageMultiConfig('Cảnh báo', 'Cập nhật không thành công', 'warning', 40);

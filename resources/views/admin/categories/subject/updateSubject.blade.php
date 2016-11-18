@@ -41,14 +41,14 @@
 
                     <div class="md-radio-inline">
                         <div class="md-radio">
-                            <input type="radio" data-id="{{$subject_id}}" value="1" id="chkCustomer-{{$subject_id}}" name="status-goal-{{$subject_id}}" class="md-radiobtn customer" <?php echo $checkedCus;?>>
+                            <input type="radio" data-id="{{$subject_id}}" value="1" id="chkCustomer-{{$subject_id}}" name="nameSubject-{{$subject_id}}" class="md-radiobtn customer" <?php echo $checkedCus;?>>
                             <label for="chkCustomer-{{$subject_id}}">
                                 <span class="inc"></span>
                                 <span class="check"></span>
                                 <span class="box"></span> Khách hàng </label>
                         </div>
                         <div class="md-radio">
-                            <input type="radio" data-id="{{$subject_id}}" value="0" id="chkSupplier-{{$subject_id}}" name="status-goal-{{$subject_id}}" class="md-radiobtn supplier" <?php echo $checkedSup;?>>
+                            <input type="radio" data-id="{{$subject_id}}" value="2" id="chkSupplier-{{$subject_id}}" name="nameSubject-{{$subject_id}}" class="md-radiobtn supplier" <?php echo $checkedSup;?>>
                             <label for="chkSupplier-{{$subject_id}}">
                                 <span class="inc"></span>
                                 <span class="check"></span>
@@ -65,6 +65,7 @@
             </div>
         </div>
         <input type="hidden" id="hidden-code-<?php echo $subject_id;?>" required value="<?php echo $subject_code;?>"> </div>
+        <input type="hidden" id="hidden-select-<?php echo $subject_id;?>" required value=""> </div>
         <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->
