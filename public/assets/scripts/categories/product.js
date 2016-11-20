@@ -140,7 +140,9 @@ $(document).ready(function () {
                 className: 'control',
                 orderable: false
 			},
+
 			{"data": "product_id"},
+			{"data": "product_code"},
 			{"data": "product_name"},
 			{"data": "barcode"},
 			{"data": "product_type_name"},
@@ -196,12 +198,12 @@ $(document).ready(function () {
 	} );
 	
 	$('#btnBack').click(function() {
-		document.location.href="../productCategories";
+		document.location.href = path + "/productCategories";
+
 	} );
 	
 	$('#btnUpdate').click(function() {
-		//updateProduct();
-		alert('aaaaaaa');
+		updateProduct();
 	} );
 });
 
@@ -236,13 +238,13 @@ function deleteProduct(idProduct)
 }
 
 function updateProduct()
-{		
-	var product_id = $(this).attr('data-id')
+{
+	var product_id = $('#product_id').val()
 			, product_code 		= $('[name="product_code"]').val()
-			, product_type_id 	= $('[name="product_type_id"]').val()
+			, product_type_id 	= $('#product_type_id :selected').val()
 			, product_name		= $('[name="product_name"]').val()
-			, producer_id		= $('[name="producer_id"]').val()
-			, base_unit_id		= $('[name="base_unit_id"]').val()
+			, producer_id		= $('#producer_id :selected').val()
+			, base_unit_id		= $('#base_unit_id :selected').val()
 			, barcode			= $('[name="barcode"]').val()
 			, trademark			= $('[name="trademark"]').val()
 			, model				= $('[name="model"]').val()
@@ -278,12 +280,13 @@ function updateProduct()
 		type: 'POST',
 		dataType: 'json',
 		data: dataPost,
+		cache: false,
 		success: function(response) {
 			dataObj  = response;
 
 			if (dataObj.success == true) {
-				slideMessageMultiConfig('Thông tin', dataObj.alert, 'success', 20);
-				document.location.href="../productCategories";
+				//slideMessageMultiConfig('Thông tin', dataObj.alert, 'success', 20);
+				document.location.href = path + "/productCategories";
 			}
 			else{
 				slideMessageMultiConfig('Cảnh báo', 'Cập nhật không thành công', 'warning', 40);

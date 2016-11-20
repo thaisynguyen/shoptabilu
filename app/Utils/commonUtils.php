@@ -390,15 +390,17 @@ class commonUtils
 
     }
 
-    public static function renderCombobox($array, $selectedValue, $classname, $id, $name, $startValue = "") {
+    public static function renderCombobox($data, $selectedID, $classname, $id, $name, $startValue = "")
+    {
 		$result = '';
 		$result .=  '<select  class="'.$classname.'" id="'.$id.'" name="'.$name.'">';
 		
 		if ($startValue != "")	
 			$result .=  '<option value="">'.$startValue.'</option>';
 		
-		foreach($array as $row){
-			if ($row['key'] == $selectedValue)
+		foreach($data as $row)
+        {
+			if ($row['key'] == $selectedID)
 				$result .= '<option value="'.$row['key'].'" selected>'.$row['value'].'</option>';
 			else
 				$result .= '<option value="'.$row['key'].'">'.$row['value'].'</option>';
@@ -406,6 +408,55 @@ class commonUtils
         $result .= '</select>';
 		
 		return $result;
-    }	
+    }
+
+    public static function renderTreeItem($data, $parentID, $parentName, $selectedID)
+    {
+        $result     = '';
+        $selected   = '';
+
+        foreach ($data as $row)
+        {
+            if ($row['key_parent'] == $parentID)
+            {
+                if ($row['key'] == $selectedID)
+                {
+                    $selected = 'selected';
+                }
+                else
+                {
+                    $selected = '';
+                }
+
+                if ($parentName == '')
+                {
+                    $result .= '<option value="'.$row['key'].'" '.$selected.'>'.$row['value'].'</option>';
+                }
+                else
+                {
+                    $result .= '<option value="'.$row['key'].'" '.$selected.'>'.$parentName.' -> '.$row['value'].'</option>';
+                }
+
+                $result .= self::renderTreeItem($data, $row['key'], $row['value'], $selectedID);
+            }
+        }
+
+        return $result;
+    }
+
+    public static function renderTreeComboBox($data, $rootValue = "", $selectedID, $classname, $id, $name, $startValue = "")
+    {
+        $result = '';
+        $result .=  '<select  class="'.$classname.'" id="'.$id.'" name="'.$name.'">';
+
+        if ($startValue != "")
+            $result .=  '<option value="">'.$startValue.'</option>';
+
+        $result .= self::renderTreeItem($data, $rootValue, $parentName = "", $selectedID);
+
+        $result .= '</select>';
+        return $result;
+    }
+
 }
 

@@ -48,6 +48,7 @@
                                 <thead>
                                 <tr>
                                     <th></th>
+                                    <th >Product ID</th>
                                     <th >Mã SP</th>
                                     <th >Tên SP</th>
                                     <th >Barcode</th>

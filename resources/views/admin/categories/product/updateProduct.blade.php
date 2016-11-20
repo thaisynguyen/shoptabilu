@@ -52,6 +52,9 @@
                                         <i class="fa fa-check"></i> Save</button>                                    
                                 </div>
                             </div>
+
+                            <input type="hidden" id="product_id" required value="{{$product->product_id}}"> </div>
+
                             <div class="portlet-body">
                                 <div class="tabbable-bordered">
                                     <ul class="nav nav-tabs">
@@ -71,9 +74,7 @@
 												<div class="row">
 													<div class="col-md-6">
 														<div class="form-group">
-															<label class="col-md-3 control-label">Mã SP:
-																<span class="required"> * </span>
-															</label>
+															<label class="col-md-3 control-label">Mã SP:</label>
 															<div class="col-md-9">
 																<input type="text" class="form-control" name="product_code" placeholder="" value="{{ $product->product_code }}"></div>
 														</div>
@@ -83,14 +84,8 @@
 															<label class="col-md-3 control-label">Loai SP:
 																<span class="required"> * </span>
 															</label>
-															<div class="col-md-9">																
-																<select class="table-group-action-input form-control input-medium" name="product[tax_class]">
-																	<option value="">Select...</option>
-																	<option value="1">None</option>
-																	<option value="0">Taxable Goods</option>
-																	<option value="0">Shipping</option>
-																	<option value="0">USA</option>
-																</select>
+															<div class="col-md-9">
+                                                                {{ commonUtils::renderTreeComboBox($arrayProductType, '',$product->product_type_id, 'table-group-action-input form-control input-medium', 'product_type_id', 'product_type_id', '')}}
 															</div>
 														</div>														
 													</div>
@@ -121,9 +116,7 @@
 												<div class="row">
 													<div class="col-md-6">
 														<div class="form-group">
-															<label class="col-md-3 control-label">Barcode:
-																<span class="required"> * </span>
-															</label>
+															<label class="col-md-3 control-label">Barcode:</label>
 															<div class="col-md-9">
 																<input type="text" class="form-control" name="barcode" placeholder="" value="{{ $product->barcode }}"></div>
 														</div>
@@ -143,18 +136,14 @@
 												<div class="row">
 													<div class="col-md-6">
 														<div class="form-group">
-															<label class="col-md-3 control-label">Thương hiệu:
-																<span class="required"> * </span>
-															</label>
+															<label class="col-md-3 control-label">Thương hiệu:</label>
 															<div class="col-md-9">
 																<input type="text" class="form-control" name="trademark" placeholder="" value="{{ $product->trademark }}"></div>
 														</div>
 													</div>
 													<div class="col-md-6">
 														<div class="form-group">
-															<label class="col-md-3 control-label">Kiểu mẫu:
-																<span class="required"> * </span>
-															</label>
+															<label class="col-md-3 control-label">Kiểu mẫu:</label>
 															<div class="col-md-9">
 																<input type="text" class="form-control" name="model" placeholder="" value="{{ $product->model }}"></div>
 														</div>
@@ -164,18 +153,14 @@
 												<div class="row">
 													<div class="col-md-6">
 														<div class="form-group">
-															<label class="col-md-3 control-label">Màu sắc:
-																<span class="required"> * </span>
-															</label>
+															<label class="col-md-3 control-label">Màu sắc:</label>
 															<div class="col-md-9">
 																<input type="text" class="form-control" name="color" placeholder="" value="{{ $product->color }}"></div>
 														</div>
 													</div>
 													<div class="col-md-6">
 														<div class="form-group">
-															<label class="col-md-3 control-label">Cân nặng:
-																<span class="required"> * </span>
-															</label>
+															<label class="col-md-3 control-label">Cân nặng:</label>
 															<div class="col-md-9">
 																<input type="text" class="form-control" name="weight" placeholder="" value="{{ $product->weight }}"></div>
 														</div>
@@ -185,9 +170,7 @@
 												<div class="row">
 													<div class="col-md-12">
 														<div class="form-group">
-															<label class="col-md-2 control-label">Kích thước:
-																<span class="required"> * </span>
-															</label>
+															<label class="col-md-2 control-label">Kích thước:</label>
 															<div class="col-md-10">
 																<div class="input-group input-daterange" >
 																	<input type="text" class="form-control" name="length" placeholder="Dài" value="{{ $product->length }}">
@@ -203,9 +186,7 @@
 												</div>
 												
 												<div class="form-group">
-                                                    <label class="col-md-2 control-label">Mô tả ngắn:
-                                                        <span class="required"> * </span>
-                                                    </label>
+                                                    <label class="col-md-2 control-label">Mô tả ngắn:</label>
                                                     <div class="col-md-10">
                                                         <textarea class="form-control" name="short_description">{{ $product->short_description }}</textarea>
                                                         <span class="help-block"> shown in product listing </span>
@@ -213,9 +194,7 @@
                                                 </div>
 												
                                                 <div class="form-group">
-                                                    <label class="col-md-2 control-label">Mô tả dài:
-                                                        <span class="required"> * </span>
-                                                    </label>
+                                                    <label class="col-md-2 control-label">Mô tả dài:</label>
                                                     <div class="col-md-10">
                                                         <textarea class="form-control" name="long_description">{{ $product->long_description }}</textarea>
                                                     </div>
@@ -276,8 +255,8 @@
                                                 <tbody>
                                                 <tr>
                                                     <td>
-                                                        <a href="../assets/pages/media/works/img1.jpg" class="fancybox-button" data-rel="fancybox-button">
-                                                            <img class="img-responsive" src="../assets/pages/media/works/img1.jpg" alt=""> </a>
+                                                        <a href="#" class="fancybox-button" data-rel="fancybox-button">
+                                                            <img class="img-responsive" src="{{url('/public/assets/admintheme/pages/media/works/img1.jpg')}}" alt=""> </a>
                                                     </td>
                                                     <td>
                                                         <input type="text" class="form-control" name="product[images][1][label]" value="Thumbnail image"> </td>
@@ -302,8 +281,8 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <a href="../assets/pages/media/works/img2.jpg" class="fancybox-button" data-rel="fancybox-button">
-                                                            <img class="img-responsive" src="../assets/pages/media/works/img2.jpg" alt=""> </a>
+                                                        <a href="#" class="fancybox-button" data-rel="fancybox-button">
+                                                            <img class="img-responsive" src="{{url('/public/assets/admintheme/pages/media/works/img2.jpg')}}" alt=""> </a>
                                                     </td>
                                                     <td>
                                                         <input type="text" class="form-control" name="product[images][2][label]" value="Product image #1"> </td>
@@ -328,8 +307,8 @@
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <a href="../assets/pages/media/works/img3.jpg" class="fancybox-button" data-rel="fancybox-button">
-                                                            <img class="img-responsive" src="../assets/pages/media/works/img3.jpg" alt=""> </a>
+                                                        <a href="#" class="fancybox-button" data-rel="fancybox-button">
+                                                            <img class="img-responsive" src="{{url('/public/assets/admintheme/pages/media/works/img3.jpg')}}" alt=""> </a>
                                                     </td>
                                                     <td>
                                                         <input type="text" class="form-control" name="product[images][3][label]" value="Product image #2"> </td>

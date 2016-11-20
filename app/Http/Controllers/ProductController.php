@@ -51,12 +51,14 @@ class ProductController extends AppController {
 
 		// query data follow datatable
         $data = DB::table('product')
-                    ->select('product.product_id', 'product.product_name', 'product.barcode', 'product_type.product_type_name', 'producer.producer_name', 'product.weight', 'product.color')
+                    ->select('product.product_id', 'product.product_code', 'product.product_name', 'product.barcode', 'product_type.product_type_name', 'producer.producer_name', 'product.weight', 'product.color')
 					->leftJoin('producer', 'product.producer_id', '=', 'producer.producer_id')
 					->leftJoin('product_type', 'product.product_type_id', '=', 'product_type.product_type_id')
 					->where('product.inactive', 0)
-					->where('product.product_name', 'like', '%'.$searchValue.'%')
-					->orWhere('product_type.product_type_name', 'like', '%'.$searchValue.'%')
+                    ->where(function($query) use ($searchValue){
+                         $query->where('product.product_name', 'like', '%'.$searchValue.'%')
+                               ->orWhere('product_type.product_type_name', 'like', '%'.$searchValue.'%');
+                    })
                     ->orderby($sortColumn, $sortDirection)
                     ->offset($post['start'])
                     ->limit($post['length'])
@@ -68,8 +70,10 @@ class ProductController extends AppController {
 						->leftJoin('producer', 'product.producer_id', '=', 'producer.producer_id')
 						->leftJoin('product_type', 'product.product_type_id', '=', 'product_type.product_type_id')
                         ->where('product.inactive', 0)
-						->where('product.product_name', 'like', '%'.$searchValue.'%')
-						->orWhere('product_type.product_type_name', 'like', '%'.$searchValue.'%')
+                        ->where(function($query) use ($searchValue){
+                             $query->where('product.product_name', 'like', '%'.$searchValue.'%')
+                                ->orWhere('product_type.product_type_name', 'like', '%'.$searchValue.'%');
+                        })
                         ->get();
         $recordsTotal = count($dataTotal);
 
@@ -124,7 +128,7 @@ class ProductController extends AppController {
 
     public function viewProduct($id){
         $this->clearSession();			
-        $createdUser = Session::get('sid');
+        //$createdUser = Session::get('sid');
 		
         // get product by id
         $product = DB::table('product')                    
@@ -142,18 +146,25 @@ class ProductController extends AppController {
 					->select('producer_id AS key', 'producer_name AS value')
 					->where('inactive', '=', 0)
                     ->get();
+
+        $arrayProductType = DB::table('product_type')
+            ->select('product_type_id AS key', 'parent_id AS key_parent', 'product_type_name AS value')
+            ->where('inactive', '=', 0)
+            ->get();
 					
 		// convert to array
         $arrayUnit = commonUtils::objectToArray($arrayUnit);
 		$arrayProducer = commonUtils::objectToArray($arrayProducer);
+        $arrayProductType = commonUtils::objectToArray($arrayProductType);
 					
 		// get product detail
-		//commonUtils::pr($arrayProducer); die;
+		//commonUtils::pr($arrayProductType); die;
 		
         return view('admin.categories.product.updateProduct')
 						->with('product', $product[0])
 						->with('arrayUnit', $arrayUnit)
-						->with('arrayProducer', $arrayProducer);
+						->with('arrayProducer', $arrayProducer)
+                        ->with('arrayProductType', $arrayProductType);
     }
 	
 	public function updateProduct(Request $request)
@@ -179,33 +190,34 @@ class ProductController extends AppController {
                         'updated_user'      => $createdUser,
                         'updated_at'      	=> date("Y-m-d h:i:sa"));
 
+//        $check = DB::table('product')
+//							->where('product_code', '=',$post['product_code'])
+//                            ->where('product_id', '!=',$post['product_id'])
+//							->first();
 
-        $check = DB::table('product')
-							->where('product_id', '=',$post['product_id'])							
-							->first();
-							
-        if(count($check) > 0){
-            return json_encode(array(
-                "success"  => false
-                , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY . 'Mã SP dã b? trùng. Vui lòng th? l?i.'
-            ));
-        } else {
-            try {
-                $i = DB::table('product')
-						->where('product_id', '=',$post['product_id'])
-						->update($data);
-						
+        try {
+            $i = DB::table('product')
+                    ->where('product_id', '=', $post['product_id'])
+                    ->update($data);
+            if($i > 0){
+//                    echo '222'; die;
                 return json_encode(array(
                     "success"  => true
-                    , "alert"  => commonUtils::EDIT_SUCCESSFULLY
-                    , "unit"  => $data
+                , "alert"  => commonUtils::EDIT_SUCCESSFULLY
                 ));
-            } catch (Exception $e) {
+            } else {
+            //    echo '333'; die;
                 return json_encode(array(
                     "success"  => false
-                    , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY
+                , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY
                 ));
             }
+        } catch (Exception $e) {
+            //echo '444'; die;
+            return json_encode(array(
+                "success"  => false
+                , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY
+            ));
         }
     }
 	
