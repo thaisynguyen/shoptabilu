@@ -97,7 +97,6 @@ class CategoriesController extends AppController {
         }
     }
 
-
     public function updateUnit(Request $request){
         $post = $request->all();
         $createdUser = Session::get('sid');
@@ -160,6 +159,7 @@ class CategoriesController extends AppController {
         }
 
     }
+
 
     /*
      * Controller for Product Type ******************************************************************
@@ -336,7 +336,6 @@ class CategoriesController extends AppController {
         }
     }
 
-
     public function updateSubject(Request $request){
         $post = $request->all();
         $createdUser = Session::get('sid');
@@ -397,6 +396,135 @@ class CategoriesController extends AppController {
                 , "alert"  => commonUtils::DELETE_SUCCESSFULLY
                 , "subject"  => $subjectHtml
             ));
+        }catch(Exception $e){
+            return json_encode(array(
+                "success"  => false
+                , "alert"  => commonUtils::DELETE_UNSUCCESSFULLY
+            ));
+        }
+
+    }
+
+    /*
+     * Controller for Producer ******************************************************************
+     */
+    public function producerCategories(Request $request){
+        $this->clearSession();
+        $data = self::selectAndSortDataFromTable($request, 'producer');
+//        commonUtils::pr($data);die;
+        return view('admin.categories.producer.producerCategories')->with('data',$data);
+    }
+
+    public function addProducer(){
+        return view('admin.categories.producer.addProducer');
+    }
+
+    public function saveProducer(Request $request){
+        $post = $request->all();
+        $createdUser = Session::get('sid');
+        $data = array(  'producer_name' 	    => $post['producer_name'],
+                        'producer_code' 	    => $post['producer_code'],
+                        'created_user'          => $createdUser);
+
+        $check = DB::table('producer')->where('producer_code', $post['producer_code'])->get();
+        if(count($check) > 0){
+            return json_encode(array(
+                "success"  => false
+                , "alert"  => 'Mã nhà cung cấp đã bị trùng. Vui lòng thử lại.'
+            ));
+//            return redirect('addUnit');
+        } else {
+            $producerId = DB::table('producer')->insertGetId($data);
+            if($producerId > 0) {
+                $arr = self::selectAndSortDataFromTable($request, 'producer');
+                $producerHtml = view('admin.categories.producer.producerContent', ['data' => $arr])->render();
+                return json_encode(array(
+                    "success"               => true
+                    , "alert"               => commonUtils::INSERT_SUCCESSFULLY
+                    , "producer"            => $producerHtml
+                ));
+            } else {
+//                Session::flash('message-errors', commonUtils::INSERT_UNSUCCESSFULLY);
+                return json_encode(array(
+                    "success"  => false
+                , "alert"  => commonUtils::INSERT_UNSUCCESSFULLY
+                ));
+            }
+
+//            return redirect('addUnit');
+
+        }
+    }
+
+    public function updateProducer(Request $request){
+        $post = $request->all();
+        $createdUser = Session::get('sid');
+        $id = $post['id'];
+        $data = array(  'producer_name' 	    => $post['name'],
+                        'producer_code' 	    => $post['code'],
+                        'updated_user'          => $createdUser,
+                        'updated_at'            =>date("Y-m-d h:i:sa"));
+
+
+        $check = DB::table('producer')->where('producer_code', $post['code'])
+                                    ->where('producer_code','!=', $post['hiddencode'])
+                                    ->first();
+        if(count($check) > 0){
+            return json_encode(array(
+                "success"  => false
+                , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY . 'Mã đơn vị tính đã bị trùng. Vui lòng thử lại.'
+            ));
+        } else {
+            try {
+                $i = DB::table('producer')->where('producer_id', $post['id'])->update($data);
+                if($i > 0){
+                    return json_encode(array(
+                        "success"  => true
+                        , "alert"  => commonUtils::EDIT_SUCCESSFULLY
+                        , "producer"  => $data
+                    ));
+                } else {
+                    return json_encode(array(
+                        "success"  => false
+                        , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY
+                    ));
+                }
+
+            } catch (Exception $e) {
+                return json_encode(array(
+                    "success"  => false
+                    , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY
+                ));
+            }
+
+        }
+    }
+
+    public function deleteProducer(Request $request){
+        $post = $request->all();
+        $createdUser = Session::get('sid');
+
+        try{
+            $data = array(
+                'inactive' 	      => 1,
+                'deleted_user'    => $createdUser,
+                'deleted_at'      => date("Y-m-d h:i:sa"));
+            $i = DB::table('producer')->where('producer_id', $post['id'])->update($data);
+            if($i > 0){
+                $arr = self::selectAndSortDataFromTable($request, 'producer');
+                $producerHtml = view('admin.categories.producer.producerContent', ['data' => $arr])->render();
+                return json_encode(array(
+                    "success"  => true
+                    , "alert"  => commonUtils::DELETE_SUCCESSFULLY
+                    , "producer"  => $producerHtml
+                ));
+            } else {
+                return json_encode(array(
+                    "success"  => false
+                    , "alert"  => commonUtils::DELETE_UNSUCCESSFULLY
+                ));
+            }
+
         }catch(Exception $e){
             return json_encode(array(
                 "success"  => false
