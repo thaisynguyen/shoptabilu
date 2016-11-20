@@ -533,4 +533,31 @@ class CategoriesController extends AppController {
         }
 
     }
+
+
+    /*
+     * Controller for Company Profile ******************************************************************
+     */
+    public function companyProfile(Request $request){
+        $this->clearSession();
+        $tableName = 'company_profile';
+        $sortDimension = ($request->get('sort') != '') ? $request->get('sort') : 'asc';
+        $sortColumn = ($request->get('column') != '') ? $request->get('column') : 'company_id';
+
+        $sortDimension = ($sortDimension == '0' || $sortDimension == 'desc') ? $sortDimension : 'asc';
+        $sortColumn = ($sortColumn != 'company_id') ? $sortColumn : 'company_id';
+
+        $data = DB::table($tableName)
+            ->orderby($sortColumn, $sortDimension)
+            ->paginate(commonUtils::ITEM_PER_PAGE_DEFAULT);
+
+        $parametersSort = array(
+            'sort'      => $sortDimension,
+            'column'    => $sortColumn
+        );
+
+        $data->appends($parametersSort);
+//        commonUtils::pr($data);die;
+        return view('admin.categories.companyProfile.companyProfile')->with('data',$data);
+    }
 }
