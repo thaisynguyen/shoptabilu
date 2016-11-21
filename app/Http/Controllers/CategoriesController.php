@@ -541,13 +541,25 @@ class CategoriesController extends AppController {
     public function companyProfile(Request $request){
         $this->clearSession();
         $tableName = 'company_profile';
+
+        $data = DB::table($tableName)->first();
+//        commonUtils::pr($data->subject);die;
+        return view('admin.categories.companyProfile.companyProfile')->with('data', $data);
+    }
+
+    /*
+     * Controller for Company Profile ******************************************************************
+     */
+    public function userCategories(Request $request){
+        $this->clearSession();
+        $alias = 'user';
         $sortDimension = ($request->get('sort') != '') ? $request->get('sort') : 'asc';
-        $sortColumn = ($request->get('column') != '') ? $request->get('column') : 'company_id';
+        $sortColumn = ($request->get('column') != '') ? $request->get('column') : $alias . '_id';
 
         $sortDimension = ($sortDimension == '0' || $sortDimension == 'desc') ? $sortDimension : 'asc';
-        $sortColumn = ($sortColumn != 'company_id') ? $sortColumn : 'company_id';
+        $sortColumn = ($sortColumn != $alias . '_id') ? $sortColumn : $alias . '_id';
 
-        $data = DB::table($tableName)
+        $data = DB::table('users')   ->where('inactive', 0)
             ->orderby($sortColumn, $sortDimension)
             ->paginate(commonUtils::ITEM_PER_PAGE_DEFAULT);
 
@@ -557,7 +569,6 @@ class CategoriesController extends AppController {
         );
 
         $data->appends($parametersSort);
-//        commonUtils::pr($data);die;
-        return view('admin.categories.companyProfile.companyProfile')->with('data',$data);
+        return view('admin.categories.user.userCategories')->with('data',$data);
     }
 }

@@ -5,6 +5,7 @@
 
 <?php
     use Utils\commonUtils;
+    $curpage =  $data->currentPage();
 ?>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="page-content-wrapper">
@@ -24,23 +25,25 @@
                     <i class="fa fa-circle"></i>
                 </li>
                 <li>
-                    <span>Hồ sơ công ty</span>
+                    <span>Quản lý người dùng</span>
                 </li>
             </ul>
         </div>
         <!-- END PAGE BAR -->
         </BR>
-        @include('admin.categories.companyProfile.companyContent')
+        @include('admin.categories.user.userContent')
     </div>
     <!-- END CONTENT BODY -->
 
 </div>
 
+    @include('admin.categories.user.addUser')
 @stop
 
 @section('custom_js')
     <script>
         var path = '{{url('/')}}';
+        sortOnPageLoad();
     </script>
-    {{ HTML::script('public/assets/scripts/categories/companyProfile.js') }}
+    {{ HTML::script('public/assets/scripts/categories/user.js') }}
 @stop

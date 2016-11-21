@@ -1,3 +1,8 @@
+$( document ).ready(function() {
+    //updateData();
+    //loadData();
+});
+
 $(function() {
     $('save').click(function(){
         var code = $('#code').val()
@@ -42,4 +47,32 @@ $(function() {
 
         }
     });
+
+
 });
+
+function loadData(){
+    var dataPost = {id: 0}
+        , dataObj;
+
+    $.ajax({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        url: path + '/loadCompany/',
+        type: 'POST',
+        dataType: 'json',
+        data: dataPost,
+        success: function(response) {
+
+            dataObj = response.data;
+            $('#main-content').html(response.option);
+            slideMessageMultiConfig('Thông tin', dataObj.alert, 'success', 20);
+        },
+        error: function(xhr, textStatus, thrownError) {
+
+            console.log(thrownError);
+        }
+    });
+
+}

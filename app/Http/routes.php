@@ -75,7 +75,7 @@ Route::any('deleteProducer','CategoriesController@deleteProducer');
 Route::any('companyProfile','CategoriesController@companyProfile');
 Route::any('languageTranslator','CategoriesController@languageTranslator');
 Route::any('languageTranslatorList','CategoriesController@languageTranslatorList');
-Route::any('userManagement','CategoriesController@userManagement');
+Route::any('userManagement','CategoriesController@userCategories');
 
 
 // SALE
