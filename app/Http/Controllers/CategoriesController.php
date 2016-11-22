@@ -547,6 +547,51 @@ class CategoriesController extends AppController {
         return view('admin.categories.companyProfile.companyProfile')->with('data', $data);
     }
 
+    public function saveCompanyProfile(Request $request){
+        $post = $request->all();
+        $id = $post['company_id'];
+        $logo = $post['logo'];
+        $logo = explode("\\", $logo);
+        $logo = $logo[count($logo) - 1];
+        $uploaddir = '/public/assets/admintheme/upload/images/';
+        $uploadFile = $uploaddir . basename($logo);
+        move_uploaded_file($logo, $uploadFile);
+        $data = array(  'subject' 	    => $post['subject'],
+                        'title' 	    => $post['title'],
+                        'address' 	    => $post['address'],
+                        'phone_number' 	=> $post['phone_number'],
+                        'fax' 	        => $post['fax'],
+                        'tax_code' 	    => $post['tax_code'],
+                        'website' 	    => $post['website'],
+                        'email' 	    => $post['email'],
+                        'image_name' 	=> $logo,
+                        'modified'      => date("Y-m-d h:i:sa"));
+
+
+
+            try {
+                $i = DB::table('company_profile')->where('company_id', $id)->update($data);
+                if($i > 0){
+                    return json_encode(array(
+                        "success"  => true
+                        , "alert"  => commonUtils::EDIT_SUCCESSFULLY
+                        , "producer"  => $data
+                    ));
+                } else {
+                    return json_encode(array(
+                        "success"  => false
+                        , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY
+                    ));
+                }
+
+            } catch (Exception $e) {
+                return json_encode(array(
+                    "success"  => false
+                    , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY
+                ));
+            }
+
+    }
     /*
      * Controller for Company Profile ******************************************************************
      */

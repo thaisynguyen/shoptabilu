@@ -73,6 +73,8 @@ Route::any('updateProducer','CategoriesController@updateProducer');
 Route::any('deleteProducer','CategoriesController@deleteProducer');
 
 Route::any('companyProfile','CategoriesController@companyProfile');
+Route::any('saveCompanyProfile','CategoriesController@saveCompanyProfile');
+
 Route::any('languageTranslator','CategoriesController@languageTranslator');
 Route::any('languageTranslatorList','CategoriesController@languageTranslatorList');
 Route::any('userManagement','CategoriesController@userCategories');
