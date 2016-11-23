@@ -12,7 +12,7 @@
                     <i class="fa fa-gift"></i> HỒ SƠ CÔNG TY </div>
             </div>
             <div class="portlet-body form">
-                <form role="form" class="form-horizontal">
+                <form id="frmCompany" role="form" class="form-horizontal" enctype="multipart/form-data">
                     <div class="form-body">
                         <div class="form-group">
                             <label class="col-md-4 control-label">Tên</label>
@@ -92,7 +92,7 @@
                             <div class="col-md-offset-4 col-md-8">
                                 <button id="btnCancel" type="button" class="btn default">Hủy</button>
                                 <button id="btnSave" type="button" class="btn blue">Lưu</button>
-                                <input type="hidden" id="company_id" required value="{{$data->company_id}}"> </div>
+                                <input type="hidden" id="company_id" name="company_id" required value="{{$data->company_id}}"> </div>
                             </div>
                         </div>
                     </div>

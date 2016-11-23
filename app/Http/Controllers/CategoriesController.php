@@ -549,13 +549,14 @@ class CategoriesController extends AppController {
 
     public function saveCompanyProfile(Request $request){
         $post = $request->all();
+        $file = $post['file'];
+
         $id = $post['company_id'];
-        $logo = $post['logo'];
-        $logo = explode("\\", $logo);
-        $logo = $logo[count($logo) - 1];
-        $uploaddir = '/public/assets/admintheme/upload/images/';
-        $uploadFile = $uploaddir . basename($logo);
-        move_uploaded_file($logo, $uploadFile);
+
+        $uploaddir = public_path() . '\\assets\\admintheme\\upload\\images\\';
+        $localFileName  = $file->getClientOriginalName();
+//        echo $uploaddir; die;
+        $file->move($uploaddir, $localFileName);
         $data = array(  'subject' 	    => $post['subject'],
                         'title' 	    => $post['title'],
                         'address' 	    => $post['address'],
@@ -564,7 +565,7 @@ class CategoriesController extends AppController {
                         'tax_code' 	    => $post['tax_code'],
                         'website' 	    => $post['website'],
                         'email' 	    => $post['email'],
-                        'image_name' 	=> $logo,
+                        'image_name' 	=> $localFileName,
                         'modified'      => date("Y-m-d h:i:sa"));
 
 
