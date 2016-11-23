@@ -159,15 +159,6 @@
 				<a href="{{url('/companyProfile')}}" class="nav-link ">
 					<span class="title">Hồ sơ công ty</span>
 				</a>
-			<li {{(Request::is('*languageTranslator') ? 'class="nav-item start active open"' : 'class="nav-item"') }}>
-				<a href="{{url('/languageTranslator')}}" class="nav-link ">
-					<span class="title">Dịch đa ngôn ngữ</span>
-				</a>
-			</li>
-			<li {{(Request::is('*languageTranslatorList') ? 'class="nav-item start active open"' : 'class="nav-item"') }}>
-				<a href="{{url('/languageTranslatorList')}}" class="nav-link ">
-					<span class="title">Danh sách dịch đa ngôn ngữ</span>
-				</a>
 			</li>
 			<li {{(Request::is('*userManagement') ? 'class="nav-item start active open"' : 'class="nav-item"') }}>
 				<a href="{{url('/userManagement')}}" class="nav-link ">
