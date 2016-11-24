@@ -73,8 +73,8 @@
                         <div class="form-group">
                             <label class="col-md-4 control-label">Logo</label>
                             <div class="col-md-8">
-                                <div class="input-icon right" class="border: 1px">
-                                    <img src="{{url('public/assets/admintheme/upload/images/' . $data->image_name)}}" alt="Logo" width="150" height="150">
+                                <div class="input-icon right" class="border: 1px" >
+                                    <img id="image" src="{{url('public/assets/admintheme/upload/images/' . $data->image_name)}}" alt="Logo" width="154" height="30">
                                 </div>
                             </div>
                         </div>
@@ -93,6 +93,7 @@
                                 <button id="btnCancel" type="button" class="btn default">Hủy</button>
                                 <button id="btnSave" type="button" class="btn blue">Lưu</button>
                                 <input type="hidden" id="company_id" name="company_id" required value="{{$data->company_id}}"> </div>
+                                <input type="hidden" id="image_file" name="image_file" required value="{{$data->image_name}}"> </div>
                             </div>
                         </div>
                     </div>

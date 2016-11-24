@@ -37,6 +37,7 @@
     $username       =  Session::get('susername');
     $nameOfUser     =  Session::get('sname');
     $sDataUser      =  Session::get('sDataUser');
+    $logo           =  Session::get('sLogo');
 ?>
 @include('popup.userProfile', array('name' => $nameOfUser))
 @include('popup.updateUserProfile', array('name' => $nameOfUser, 'username' => $username))
@@ -48,7 +49,7 @@
         <!-- BEGIN LOGO -->
         <div class="page-logo">
             <a href="index.html">
-                <img src="{{url('/public/assets/admintheme/layouts/layout/img/logoKB1.png')}}" alt="logo" class="logo-default" /> </a>
+                <img src="{{url('/public/assets/admintheme/layouts/layout/img/' . $logo)}}" alt="logo" class="logo-default" /> </a>
             <div class="menu-toggler sidebar-toggler"> </div>
         </div>
         <!-- END LOGO -->

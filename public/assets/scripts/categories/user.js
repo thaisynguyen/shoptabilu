@@ -15,6 +15,7 @@ $( document ).ready(function() {
 });
 
 function resetForm(){
+    $('#email').val('');
     $('#code').val('');
     $('#name').val('');
 }
@@ -28,7 +29,7 @@ function focusInput(idPopup, idInput){
 function showAddUser(){
     $(document).on('click', '#btnAddUser', function() {
         $('#modalAddUser').modal('show');
-        focusInput('modalAddUser', 'code');
+        focusInput('modalAddUser', 'email');
     });
 }
 
@@ -36,7 +37,9 @@ function saveUser(){
     $(document).on('click', '#btnSaveUser', function() {
         var code = $('#code').val()
             , name = $('#name').val()
-            , dataPost = {user_code: code, user_name: name}
+            , email = $('#email').val()
+            , is_admin = $('#is_admin').val()
+            , dataPost = {user_code: code, user_name: name, email: email, is_admin: is_admin}
             ;
         if(code == ''){
             $('#code').focus();
@@ -44,6 +47,9 @@ function saveUser(){
         } else if(name == ''){
             $('#name').focus();
             slideMessageMultiConfig('Cảnh báo', 'Tên không được rỗng', 'warning', 40);
+        } else if(email == ''){
+            $('#email').focus();
+            slideMessageMultiConfig('Cảnh báo', 'Email không được rỗng', 'warning', 40);
         } else {
             $.ajax({
                 headers: {
@@ -99,7 +105,9 @@ function updateUser(){
             , code = $('#code-'+id).val()
             , name = $('#name-'+id).val()
             , hiddencode = $('#hidden-code-'+id).val()
-            , dataPost = {id: id, code: code, name: name, hiddencode: hiddencode}
+            , email = $('#email').val()
+            , is_admin = $('#is_admin').val()
+            , dataPost = {user_code: code, user_name: name, email: email, is_admin: is_admin}
             , dataObj;
         $.ajax({
             headers: {
@@ -119,6 +127,8 @@ function updateUser(){
 
                     $('#td-code-' + id).html(user.user_code);
                     $('#td-name-' + id).html(user.user_name);
+                    $('#td-email-' + id).html(user.email);
+                    $('#td-admin-' + id).html(user.is_admin);
 
                     //$('#editDepartment-'+id).modal('hide');
                 }

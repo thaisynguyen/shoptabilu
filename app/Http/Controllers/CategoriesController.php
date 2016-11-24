@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Route;
 use Mockery\Exception;
 use Session;
 use Illuminate\Http\Request;
-use App\Http\Requests\CreateUnitRequest;
 use Utils\commonUtils;
 use App\Services\CustomPaginator;
 
@@ -46,7 +45,7 @@ class CategoriesController extends AppController {
 
 
     /*
-     * Controller for Unit ******************************************************************
+     * Controller for user ******************************************************************
      */
 
     public function unitCategories(Request $request){
@@ -240,8 +239,8 @@ class CategoriesController extends AppController {
                 , "productType" => $arr
             ));
         } else {
-            $unitId = DB::table('product_type')->insertGetId($data);
-            if($unitId > 0) {
+            $productTypeId = DB::table('product_type')->insertGetId($data);
+            if($productTypeId > 0) {
                 $smsSuccess = commonUtils::INSERT_SUCCESSFULLY;
                 return json_encode(array(
                     "success"               => true
@@ -549,14 +548,21 @@ class CategoriesController extends AppController {
 
     public function saveCompanyProfile(Request $request){
         $post = $request->all();
-        $file = $post['file'];
+
+        $image = $localFileName = $post['image_file'];
 
         $id = $post['company_id'];
 
         $uploaddir = public_path() . '\\assets\\admintheme\\upload\\images\\';
-        $localFileName  = $file->getClientOriginalName();
+        if(isset($post['file'])){
+            $file = $post['file'];
+            $localFileName  = $file->getClientOriginalName();
+//            Image::make($file->getRealPath())->resize(154, 30)->save($uploaddir);
+            $file->move($uploaddir, $localFileName);
+        }
+
 //        echo $uploaddir; die;
-        $file->move($uploaddir, $localFileName);
+
         $data = array(  'subject' 	    => $post['subject'],
                         'title' 	    => $post['title'],
                         'address' 	    => $post['address'],
@@ -593,9 +599,11 @@ class CategoriesController extends AppController {
             }
 
     }
+
     /*
-     * Controller for Company Profile ******************************************************************
+     * Controller for User ******************************************************************
      */
+
     public function userCategories(Request $request){
         $this->clearSession();
         $alias = 'user';
@@ -616,5 +624,110 @@ class CategoriesController extends AppController {
 
         $data->appends($parametersSort);
         return view('admin.categories.user.userCategories')->with('data',$data);
+    }
+
+    public function addUser(){
+        return view('admin.categories.unit.addUser');
+    }
+
+    public function saveUser(Request $request){
+        $post = $request->all();
+        $createdUser = Session::get('sid');
+        $data = array(  'user_name' 	    => $post['user_name'],
+                        'user_code' 	    => $post['user_code'],
+                        'email' 	        => $post['email'],
+                        'is_admin' 	        => $post['is_admin'],
+                        'created_user'      => $createdUser);
+
+        $check = DB::table('user')->where('email', $post['email'])->get();
+        if(count($check) > 0){
+            return json_encode(array(
+                "success"  => false
+                , "alert"  => 'Email đã bị trùng. Vui lòng thử lại.'
+            ));
+//            return redirect('addUnit');
+        } else {
+            $userId = DB::table('user')->insertGetId($data);
+            if($userId > 0) {
+                $arr = self::selectAndSortDataFromTable($request, 'user');
+                $userHtml = view('admin.categories.user.userContent', ['data' => $arr])->render();
+                return json_encode(array(
+                    "success"               => true
+                    , "alert"               => commonUtils::INSERT_SUCCESSFULLY
+                    , "user"                => $userHtml
+                ));
+            } else {
+//                Session::flash('message-errors', commonUtils::INSERT_UNSUCCESSFULLY);
+                return json_encode(array(
+                    "success"  => false
+                    , "alert"  => commonUtils::INSERT_UNSUCCESSFULLY
+                ));
+            }
+        }
+    }
+
+    public function updateUser(Request $request){
+        $post = $request->all();
+        $createdUser = Session::get('sid');
+        $id = $post['id'];
+        $data = array(  'user_name' 	    => $post['name'],
+                        'user_code' 	    => $post['code'],
+                        'email' 	        => $post['email'],
+                        'is_admin' 	        => $post['is_admin'],
+                        'updated_user'      => $createdUser,
+                        'updated_at'        => date("Y-m-d h:i:sa"));
+
+
+        $check = DB::table('user')->where('email', $post['email'])
+                ->where('email','!=', $post['hiddencode'])
+                ->first();
+        if(count($check) > 0){
+            return json_encode(array(
+                "success"  => false
+                , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY . 'Mã đơn vị tính đã bị trùng. Vui lòng thử lại.'
+            ));
+        } else {
+            try {
+                $i = DB::table('user')->where('user_id', $post['id'])->update($data);
+                return json_encode(array(
+                    "success"  => true
+                    , "alert"  => commonUtils::EDIT_SUCCESSFULLY
+                    , "user"  => $data
+                ));
+            } catch (Exception $e) {
+                return json_encode(array(
+                    "success"  => false
+                    , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY
+                ));
+            }
+
+        }
+    }
+
+    public function deleteUser(Request $request){
+        $post = $request->all();
+        $createdUser = Session::get('sid');
+
+        try{
+            $data = array(
+                'inactive' 	      => 1,
+                'deleted_user'    => $createdUser,
+                'deleted_at'      => date("Y-m-d h:i:sa"));
+            $i = DB::table('user')->where('user_id', $post['id'])->update($data);
+
+            $arr = self::selectAndSortDataFromTable($request, 'user');
+            $userHtml = view('admin.categories.user.userContent', ['data' => $arr])->render();
+            return json_encode(array(
+                "success"  => true
+            , "alert"  => commonUtils::DELETE_SUCCESSFULLY
+            , "user"  => $userHtml
+            ));
+        }catch(Exception $e){
+            return json_encode(array(
+                "success"  => false
+            , "alert"  => commonUtils::DELETE_UNSUCCESSFULLY
+            ));
+        }
+
     }
 }
