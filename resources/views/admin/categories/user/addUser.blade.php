@@ -8,14 +8,24 @@
             </div>
             <div class="modal-body text-normal">
                 <div class="form-group has-success">
+                    <label class="control-label"><?php echo 'Email';?> (<span class="input-require">*</span>)</label>
+                    <div class="input-icon right">
+                        <input type="text" class="form-control add-data-user" id="email" name="email" required> </div>
+                </div>
+                <div class="form-group has-success">
                     <label class="control-label"><?php echo 'Mã';?> (<span class="input-require">*</span>)</label>
                     <div class="input-icon right">
-                        <input type="text" class="form-control add-data-user" id="code" required> </div>
+                        <input type="text" class="form-control add-data-user" id="code" name="code" required> </div>
                 </div>
                 <div class="form-group has-success">
                     <label class="control-label"><?php echo 'Tên';?> (<span class="input-require">*</span>)</label>
                     <div class="input-icon right">
-                        <input type="text" class="form-control add-data-user" id="name" required> </div>
+                        <input type="text" class="form-control add-data-user" id="name" name="name" required> </div>
+                </div>
+                <div class="form-group has-success">
+                    <label class="control-label"><?php echo 'Admin';?> (<span class="input-require">*</span>)</label>
+                    <input type="checkbox" class="form-control add-data-user" id="is_admin" name="is_admin" required>
+
                 </div>
             </div>
             <div class="modal-footer">

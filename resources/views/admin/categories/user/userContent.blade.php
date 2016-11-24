@@ -64,18 +64,24 @@
 
                     <tr>
                         <td class="text-center"> <?php  echo $stt; $stt++; ?>  </td>
-                        <td id="td-code-{{$row->user_id}}"> <?php echo $row->email; ?> </td>
-                        <td id="td-code-{{$row->user_id}}"> <?php echo $row->code; ?> </td>
-                        <td id="td-name-{{$row->user_id}}"> <?php echo $row->name; ?> </td>
-                        <td id="td-name-{{$row->user_id}}"> <?php echo $row->is_admin; ?> </td>
-                        <td id="td-name-{{$row->user_id}}"> <?php echo $row->last_logon; ?> </td>
+                        <td id="td-code-{{$row->user_id}}"> {{$row->email}} </td>
+                        <td id="td-code-{{$row->user_id}}"> {{$row->code}} </td>
+                        <td id="td-name-{{$row->user_id}}"> {{$row->name}} </td>
+                        <td id="td-name-{{$row->user_id}}" class="text-center">
+                            <div class="checker">
+                                <span class="<?php echo ($row->is_admin == 1) ? 'checked' : ''; ?> ">
+                                    <input type="checkbox" class="checkboxes" value="{{$row->is_admin}}">
+                                </span>
+                            </div> </td>
+                        <td id="td-name-{{$row->user_id}}"> {{$row->last_logon}} </td>
                         <td>
                             <a class="td-edit-user" data-id="{{$row->user_id}}"> Sửa </a>
-
                         </td>
                         @include('admin.categories.user.updateUser', array('user_id' => $row->user_id,
                                                                             'user_code' => $row->code,
                                                                             'user_name' => $row->name,
+                                                                            'email' => $row->email,
+                                                                            'is_admin' => $row->is_admin,
 
                         ))
                         @include('admin.categories.user.deleteUser', array('user_id' => $row->user_id,
