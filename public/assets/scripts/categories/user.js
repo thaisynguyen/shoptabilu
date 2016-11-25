@@ -65,10 +65,11 @@ function saveUser(){
                     console.log(dataObj);
                     if (dataObj.success == true) {
                         //$('#addUser').modal('hide');
+
                         $('#main-content').html(dataObj.user);
                         resetForm();
                         slideMessageMultiConfig('Thông tin', dataObj.alert, 'success', 20);
-                        $('#code').focus();
+                        $('#email').focus();
                     }else{
                         slideMessageMultiConfig('Thông tin', dataObj.alert, 'warning', 40);
                     }

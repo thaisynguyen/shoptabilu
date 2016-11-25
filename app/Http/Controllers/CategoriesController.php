@@ -633,13 +633,12 @@ class CategoriesController extends AppController {
     public function saveUser(Request $request){
         $post = $request->all();
         $createdUser = Session::get('sid');
-        $data = array(  'user_name' 	    => $post['user_name'],
-                        'user_code' 	    => $post['user_code'],
+        $data = array(  'name' 	            => $post['user_name'],
+                        'code' 	            => $post['user_code'],
                         'email' 	        => $post['email'],
                         'is_admin' 	        => $post['is_admin'],
-                        'created_user'      => $createdUser);
-
-        $check = DB::table('user')->where('email', $post['email'])->get();
+        );
+        $check = DB::table('users')->where('email', $post['email'])->get();
         if(count($check) > 0){
             return json_encode(array(
                 "success"  => false
@@ -647,10 +646,19 @@ class CategoriesController extends AppController {
             ));
 //            return redirect('addUnit');
         } else {
-            $userId = DB::table('user')->insertGetId($data);
+            $userId = DB::table('users')->insertGetId($data);
             if($userId > 0) {
-                $arr = self::selectAndSortDataFromTable($request, 'user');
-                $userHtml = view('admin.categories.user.userContent', ['data' => $arr])->render();
+                $alias = 'user';
+                $sortDimension = ($request->get('sort') != '') ? $request->get('sort') : 'asc';
+                $sortColumn = ($request->get('column') != '') ? $request->get('column') : $alias . '_id';
+
+                $sortDimension = ($sortDimension == '0' || $sortDimension == 'desc') ? $sortDimension : 'asc';
+                $sortColumn = ($sortColumn != $alias . '_id') ? $sortColumn : $alias . '_id';
+                $data = DB::table('users')   ->where('inactive', 0)
+                    ->orderby($sortColumn, $sortDimension)
+                    ->paginate(commonUtils::ITEM_PER_PAGE_DEFAULT);
+                $userHtml = view('admin.categories.user.userContent', ['data' => $data])->render();
+
                 return json_encode(array(
                     "success"               => true
                     , "alert"               => commonUtils::INSERT_SUCCESSFULLY
@@ -670,15 +678,14 @@ class CategoriesController extends AppController {
         $post = $request->all();
         $createdUser = Session::get('sid');
         $id = $post['id'];
-        $data = array(  'user_name' 	    => $post['name'],
-                        'user_code' 	    => $post['code'],
+        $data = array(  'name' 	            => $post['name'],
+                        'code' 	            => $post['code'],
                         'email' 	        => $post['email'],
                         'is_admin' 	        => $post['is_admin'],
-                        'updated_user'      => $createdUser,
-                        'updated_at'        => date("Y-m-d h:i:sa"));
+                        'modified'        => date("Y-m-d h:i:sa"));
 
 
-        $check = DB::table('user')->where('email', $post['email'])
+        $check = DB::table('users')->where('email', $post['email'])
                 ->where('email','!=', $post['hiddencode'])
                 ->first();
         if(count($check) > 0){
@@ -688,7 +695,7 @@ class CategoriesController extends AppController {
             ));
         } else {
             try {
-                $i = DB::table('user')->where('user_id', $post['id'])->update($data);
+                $i = DB::table('users')->where('user_id', $post['id'])->update($data);
                 return json_encode(array(
                     "success"  => true
                     , "alert"  => commonUtils::EDIT_SUCCESSFULLY
@@ -711,21 +718,20 @@ class CategoriesController extends AppController {
         try{
             $data = array(
                 'inactive' 	      => 1,
-                'deleted_user'    => $createdUser,
                 'deleted_at'      => date("Y-m-d h:i:sa"));
-            $i = DB::table('user')->where('user_id', $post['id'])->update($data);
+            $i = DB::table('users')->where('user_id', $post['id'])->update($data);
 
-            $arr = self::selectAndSortDataFromTable($request, 'user');
+            $arr = self::userCategories($request);
             $userHtml = view('admin.categories.user.userContent', ['data' => $arr])->render();
             return json_encode(array(
                 "success"  => true
-            , "alert"  => commonUtils::DELETE_SUCCESSFULLY
-            , "user"  => $userHtml
+                , "alert"  => commonUtils::DELETE_SUCCESSFULLY
+                , "user"  => $userHtml
             ));
         }catch(Exception $e){
             return json_encode(array(
                 "success"  => false
-            , "alert"  => commonUtils::DELETE_UNSUCCESSFULLY
+                , "alert"  => commonUtils::DELETE_UNSUCCESSFULLY
             ));
         }
 

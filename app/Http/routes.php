@@ -77,7 +77,11 @@ Route::any('saveCompanyProfile','CategoriesController@saveCompanyProfile');
 
 Route::any('languageTranslator','CategoriesController@languageTranslator');
 Route::any('languageTranslatorList','CategoriesController@languageTranslatorList');
+
 Route::any('userManagement','CategoriesController@userCategories');
+Route::any('saveUser','CategoriesController@saveUser');
+Route::any('updateUser','CategoriesController@updateUser');
+Route::any('deleteUser','CategoriesController@deleteUser');
 
 
 // SALE
