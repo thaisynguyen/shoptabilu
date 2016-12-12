@@ -59,7 +59,7 @@ class ProductController extends AppController {
                          $query->where('product.product_name', 'like', '%'.$searchValue.'%')
                                ->orWhere('product_type.product_type_name', 'like', '%'.$searchValue.'%');
                     })
-                    ->orderby($sortColumn, $sortDirection)
+                    ->orderBy($sortColumn, $sortDirection)
                     ->offset($post['start'])
                     ->limit($post['length'])
                     ->get();
@@ -127,15 +127,7 @@ class ProductController extends AppController {
     }
 
     public function viewProduct($id){
-        $this->clearSession();			
-        //$createdUser = Session::get('sid');
-		
-        // get product by id
-        $product = DB::table('product')                    
-					->leftJoin('producer', 'product.producer_id', '=', 'producer.producer_id')
-					->leftJoin('product_type', 'product.product_type_id', '=', 'product_type.product_type_id')
-					->where('product.product_id', '=', $id)
-                    ->get();
+        $this->clearSession();			        		
 		
 		$arrayUnit = DB::table('unit')
 					->select('unit_id AS key', 'unit_name AS value')
@@ -160,18 +152,35 @@ class ProductController extends AppController {
 		// get product detail
 		//commonUtils::pr($arrayProductType); die;
 		
-        return view('admin.categories.product.updateProduct')
-						->with('product', $product[0])
-						->with('arrayUnit', $arrayUnit)
-						->with('arrayProducer', $arrayProducer)
-                        ->with('arrayProductType', $arrayProductType);
+		if ($id != -1) // check is update or add View   -1: Add, other: Update
+		{
+			// get product by id
+			$product = DB::table('product')                    
+						->leftJoin('producer', 'product.producer_id', '=', 'producer.producer_id')
+						->leftJoin('product_type', 'product.product_type_id', '=', 'product_type.product_type_id')
+						->where('product.product_id', '=', $id)
+						->get();
+			
+			return view('admin.categories.product.updateProduct')
+							->with('product', $product[0])
+							->with('arrayUnit', $arrayUnit)
+							->with('arrayProducer', $arrayProducer)
+							->with('arrayProductType', $arrayProductType);
+		}
+		else
+		{
+			return view('admin.categories.product.addProduct')
+							->with('arrayUnit', $arrayUnit)
+							->with('arrayProducer', $arrayProducer)
+							->with('arrayProductType', $arrayProductType);
+		}
     }
 	
 	public function updateProduct(Request $request)
     {
         $post = $request->all();
         $createdUser = Session::get('sid');
-        
+		
         $data = array(  'product_name' 	    => $post['product_name'],
                         'product_code' 	    => $post['product_code'],
 						'product_type_id' 	=> $post['product_type_id'],
@@ -199,24 +208,268 @@ class ProductController extends AppController {
             $i = DB::table('product')
                     ->where('product_id', '=', $post['product_id'])
                     ->update($data);
+					
             if($i > 0){
-//                    echo '222'; die;
                 return json_encode(array(
                     "success"  => true
                 , "alert"  => commonUtils::EDIT_SUCCESSFULLY
                 ));
-            } else {
-            //    echo '333'; die;
+            } else {                
                 return json_encode(array(
                     "success"  => false
                 , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY
-                ));
+                ));	
             }
-        } catch (Exception $e) {
-            //echo '444'; die;
+        } catch (Exception $e) {            
             return json_encode(array(
                 "success"  => false
                 , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY
+            ));
+        }
+    }
+	
+	public function addProduct(Request $request)
+    {
+        $post = $request->all();
+        $createdUser = Session::get('sid');
+		
+        $data = array(  'product_name' 	    => $post['product_name'],
+                        'product_code' 	    => $post['product_code'],
+						'product_type_id' 	=> $post['product_type_id'],
+						'producer_id' 	    => $post['producer_id'],
+						'base_unit_id' 	    => $post['base_unit_id'],
+						'barcode' 	    	=> $post['barcode'],
+						'trademark' 	    => $post['trademark'],
+						'model' 	    	=> $post['model'],
+						'color' 	    	=> $post['color'],
+						'weight' 	    	=> $post['weight'],
+						'length' 	    	=> $post['length'],
+						'width' 	    	=> $post['width'],
+						'height' 	    	=> $post['height'],
+						'short_description' => $post['short_description'],
+						'long_description' 	=> $post['long_description'],
+                        'updated_user'      => $createdUser,
+                        'updated_at'      	=> date("Y-m-d h:i:sa"));
+						
+		try {
+			$productId = DB::table('product')->insertGetId($data);
+			if($productId > 0) {
+				return json_encode(array(
+					"success"               => true
+					, "alert"               => commonUtils::INSERT_SUCCESSFULLY
+				));
+			} else {
+				return json_encode(array(
+					"success"  => false
+					, "alert"  => commonUtils::INSERT_UNSUCCESSFULLY
+				));
+			}			
+        } catch (Exception $e) {            
+            return json_encode(array(
+                "success"  => false
+                , "alert"  => commonUtils::INSERT_UNSUCCESSFULLY
+            ));
+        }
+    }
+	
+	public function getArrUnit()
+	{
+		$arrayUnit = DB::table('unit')
+					->select('unit_id AS key', 'unit_name AS value')
+					->where('inactive', '=', 0)
+                    ->get();
+					
+		// convert to array
+        $arrayUnit = commonUtils::objectToArray($arrayUnit);
+		
+		return $arrayUnit;
+	}
+	
+	public function getArrCurrency()
+	{
+		$arrayCurrency = DB::table('currency')
+					->select('currency_id AS key', 'currency_code AS value')
+					->where('inactive', '=', 0)
+                    ->get();
+					
+		// convert to array
+        $arrayCurrency = commonUtils::objectToArray($arrayCurrency);
+		
+		return $arrayCurrency;
+	}
+	
+	public function getAllArrayCombobox(Request $request)
+	{
+		$data_json = json_encode(array(           
+			"arrUnit" => self::getArrUnit()
+			, "arrCurrency" => self::getArrCurrency()
+        ));
+
+        return $data_json;
+	}
+	
+	
+	/*
+     * Controller for Products Detail
+     */
+    public function listProductDetail(Request $request)
+	{        
+		$post = $request->all();
+
+		// query data follow datatable
+        $data = DB::table('product_detail')
+                    ->select(	'product_detail.product_detail_id',
+								'product_detail.barcodeid',
+								'product_detail.quantity',								
+								'unit.unit_code',													
+								'currency.currency_code',
+								'product_detail.purchase_price',
+								'product_detail.sale_price',
+								DB::raw("DATE_FORMAT(product_detail.apply_date, '%d-%m-%Y') as apply_date"),
+								//'product_detail.apply_date',
+								'product_detail.warranty_label',
+								'product_detail.warranty_period',
+								'product_detail.description',
+								'unit.unit_id',
+								'currency.currency_id')
+					->leftJoin('product', 'product.product_id', '=', 'product_detail.product_id')
+					->leftJoin('unit', 'unit.unit_id', '=', 'product_detail.unit_id')
+					->leftJoin('currency', 'currency.currency_id', '=', 'product_detail.currency_id')
+					->where('product_detail.inactive', 0)
+					->where('product_detail.product_id', $post['product_id'])                    
+                    ->orderBy('product_detail_id', 'asc')                    
+                    ->get();
+
+		// convert to array
+        $data = commonUtils::objectToArray($data);
+		$data = commonUtils::arrayToIndexedArray($data);
+		
+		//commonUtils::pr($data); die;			
+		
+		// convert to json
+        $data_json = json_encode(array(          
+			"data" => $data
+        ));
+
+        return $data_json;
+    }
+	
+	public function deleteProductDetail(Request $request)
+    {
+        $post = $request->all();
+        $createdUser = Session::get('sid');
+
+        try{
+            $data = array(
+                'inactive' 	      => 1,
+                'deleted_user'    => $createdUser,
+                'deleted_at'      => date("Y-m-d h:i:sa"));
+									
+            $i = DB::table('product_detail')->where('product_detail_id', $post['id'])->update($data);			
+            if($i > 0){
+                return json_encode(array(
+                    "success"  => true
+                    , "alert"  => commonUtils::DELETE_SUCCESSFULLY
+                ));
+            } else {
+                return json_encode(array(
+                    "success"  => false
+                    , "alert"  => commonUtils::DELETE_UNSUCCESSFULLY
+                ));
+            }
+        }catch(Exception $e){
+            return json_encode(array(
+                "success"  => false
+                , "alert"  => commonUtils::DELETE_UNSUCCESSFULLY
+            ));
+        }
+    }
+	
+	public function updateProductDetail(Request $request)
+    {
+        $post = $request->all();
+        $createdUser = Session::get('sid');
+		
+        $data = array(  'product_detail_id' => $post['product_detail_id'],
+                        'barcodeid'  		=> $post['barcodeid'],
+						'quantity'  		=> $post['quantity'],
+						'unit_id'  			=> $post['unit_id'],
+						'currency_id'  		=> $post['currency_id'],
+						'purchase_price'  	=> $post['purchase_price'],
+						'sale_price'  		=> $post['sale_price'],
+						'apply_date'  		=> commonUtils::formatDateYMDDelimiter($post['apply_date'],"-"),
+						'warranty_label'  	=> $post['warranty_label'],
+						'warranty_period'  	=> $post['warranty_period'],
+						'description'   	=> $post['description'],
+                        'updated_user'      => $createdUser,
+                        'updated_at'      	=> date("Y-m-d h:i:sa"));
+
+//        $check = DB::table('product')
+//							->where('product_code', '=',$post['product_code'])
+//                            ->where('product_id', '!=',$post['product_id'])
+//							->first();
+
+        try {
+            $i = DB::table('product_detail')
+                    ->where('product_detail_id', '=', $post['product_detail_id'])
+                    ->update($data);
+					
+            if($i > 0){
+                return json_encode(array(
+                    "success"  => true
+                , "alert"  => commonUtils::EDIT_SUCCESSFULLY
+                ));
+            } else {                
+                return json_encode(array(
+                    "success"  => false
+                , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY
+                ));	
+            }
+        } catch (Exception $e) {            
+            return json_encode(array(
+                "success"  => false
+                , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY
+            ));
+        }
+    }
+	
+	public function addProductDetail(Request $request)
+    {
+        $post = $request->all();
+        $createdUser = Session::get('sid');
+				
+        $data = array(  'product_id'  		=> $post['product_id'],
+						'barcodeid'  		=> $post['barcodeid'],
+						'quantity'  		=> $post['quantity'],
+						'unit_id'  			=> $post['unit_id'],
+						'currency_id'  		=> $post['currency_id'],
+						'purchase_price'  	=> $post['purchase_price'],
+						'sale_price'  		=> $post['sale_price'],
+						'apply_date'  		=> commonUtils::formatDateYMDDelimiter($post['apply_date'],"-"),
+						'warranty_label'  	=> $post['warranty_label'],
+						'warranty_period'  	=> $post['warranty_period'],
+						'description'   	=> $post['description'],
+                        'updated_user'      => $createdUser,
+                        'updated_at'      	=> date("Y-m-d h:i:sa"));
+       
+        try {
+			$productDetailId = DB::table('product_detail')->insertGetId($data);
+			if($productDetailId > 0) {				
+				return json_encode(array(
+					"success"               => true
+					, "product_detail_id"	=> $productDetailId
+					, "alert"               => commonUtils::INSERT_SUCCESSFULLY
+				));
+			} else {
+				return json_encode(array(
+					"success"  => false
+					, "alert"  => commonUtils::INSERT_UNSUCCESSFULLY
+				));
+			}			
+        } catch (Exception $e) {            
+            return json_encode(array(
+                "success"  => false
+                , "alert"  => commonUtils::INSERT_UNSUCCESSFULLY
             ));
         }
     }

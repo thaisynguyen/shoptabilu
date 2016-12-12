@@ -1,4 +1,4 @@
-@extends('admin.layouts.admindashboard')
+@extends('admin.layouts.adminproduct')
 
 @section('section')
     @include('alerts.errors')
@@ -33,9 +33,7 @@
             </BR>
 
             <!-- BEGIN PAGE TITLE-->
-            <h3 class="page-title"> Products Edit
-                <small>products edit</small>
-            </h3>
+            <h3 class="page-title font-green"> Cập Nhật Sản Phẩm </h3>
             <!-- END PAGE TITLE-->
 
             <div class="row">
@@ -44,12 +42,12 @@
                         <div class="portlet">
                             <div class="portlet-title">
                                 <div class="caption">
-                                    <i class="fa fa-shopping-cart"></i>Mã SP: {{$product->product_id}}</div>
+                                    <i class="fa fa-shopping-cart"></i>Mã SP: {{$product->product_code}}</div>
                                 <div class="actions btn-set">
                                     <button id="btnBack" type="button" name="btnBack" class="btn btn-secondary-outline">
                                         <i class="fa fa-angle-left"></i> Back</button>                                    
-                                    <button id="btnUpdate" class="btn btn-success">
-                                        <i class="fa fa-check"></i> Save</button>                                    
+                                    <button id="btnUpdate" type="button" class="btn btn-success">
+                                        <i class="fa fa-check"></i> Save</button>
                                 </div>
                             </div>
 
@@ -74,9 +72,11 @@
 												<div class="row">
 													<div class="col-md-6">
 														<div class="form-group">
-															<label class="col-md-3 control-label">Mã SP:</label>
+															<label class="col-md-3 control-label">Mã SP:
+																<span class="required"> * </span>
+															</label>
 															<div class="col-md-9">
-																<input type="text" class="form-control" name="product_code" placeholder="" value="{{ $product->product_code }}"></div>
+																<input type="text" class="form-control" id="product_code" name="product_code" placeholder="" value="{{ $product->product_code }}"></div>
 														</div>
 													</div>
 													<div class="col-md-6">
@@ -98,7 +98,7 @@
 																<span class="required"> * </span>
 															</label>
 															<div class="col-md-9">
-																<input type="text" class="form-control" name="product_name" placeholder="" value="{{ $product->product_name }}"></div>
+																<input type="text" class="form-control" id="product_name" name="product_name" placeholder="" value="{{ $product->product_name }}"></div>
 														</div>
 													</div>
 													<div class="col-md-6">
@@ -118,7 +118,7 @@
 														<div class="form-group">
 															<label class="col-md-3 control-label">Barcode:</label>
 															<div class="col-md-9">
-																<input type="text" class="form-control" name="barcode" placeholder="" value="{{ $product->barcode }}"></div>
+																<input type="text" class="form-control" id="barcode" name="barcode" placeholder="" value="{{ $product->barcode }}"></div>
 														</div>
 													</div>
 													<div class="col-md-6">
@@ -138,14 +138,14 @@
 														<div class="form-group">
 															<label class="col-md-3 control-label">Thương hiệu:</label>
 															<div class="col-md-9">
-																<input type="text" class="form-control" name="trademark" placeholder="" value="{{ $product->trademark }}"></div>
+																<input type="text" class="form-control" id="trademark" name="trademark" placeholder="" value="{{ $product->trademark }}"></div>
 														</div>
 													</div>
 													<div class="col-md-6">
 														<div class="form-group">
 															<label class="col-md-3 control-label">Kiểu mẫu:</label>
 															<div class="col-md-9">
-																<input type="text" class="form-control" name="model" placeholder="" value="{{ $product->model }}"></div>
+																<input type="text" class="form-control" id="model" name="model" placeholder="" value="{{ $product->model }}"></div>
 														</div>
 													</div>
 												</div>
@@ -155,14 +155,18 @@
 														<div class="form-group">
 															<label class="col-md-3 control-label">Màu sắc:</label>
 															<div class="col-md-9">
-																<input type="text" class="form-control" name="color" placeholder="" value="{{ $product->color }}"></div>
+																<input type="text" class="form-control" id="color" name="color" placeholder="" value="{{ $product->color }}"></div>
 														</div>
 													</div>
 													<div class="col-md-6">
 														<div class="form-group">
 															<label class="col-md-3 control-label">Cân nặng:</label>
 															<div class="col-md-9">
-																<input type="text" class="form-control" name="weight" placeholder="" value="{{ $product->weight }}"></div>
+																<div class="input-group input-daterange" >																									
+																	<input type="text" class="form-control" id="weight"  name="weight" placeholder="Cân nặng" value="{{ $product->weight }}">
+																	<span class="input-group-addon">(kg)</span>																																		
+																</div>															
+															</div>
 														</div>
 													</div>
 												</div>
@@ -172,15 +176,15 @@
 														<div class="form-group">
 															<label class="col-md-2 control-label">Kích thước:</label>
 															<div class="col-md-10">
-																<div class="input-group input-daterange" >
-																	<input type="text" class="form-control" name="length" placeholder="Dài" value="{{ $product->length }}">
-																	<span class="input-group-addon"> x </span>
-																	<input type="text" class="form-control" name="width" placeholder="Rộng" value="{{ $product->width }}">
-																	<span class="input-group-addon"> x </span>
-																	<input type="text" class="form-control" name="height" placeholder="Cao" value="{{ $product->height }}">
+																<div class="input-group input-daterange" >																									
+																	<input type="text" class="form-control" id="length"  name="length" placeholder="Dài" value="{{ $product->length }}">
+																	<span class="input-group-addon">(cm)</span>																	
+																	<input type="text" class="form-control" id="width" name="width" placeholder="Rộng" value="{{ $product->width }}">
+																	<span class="input-group-addon">(cm)</span>
+																	<input type="text" class="form-control" id="height" name="height" placeholder="Cao" value="{{ $product->height }}">
+																	<span class="input-group-addon">(cm)</span>
 																</div>
-															</div>
-															
+															</div>															
 														</div>
 													</div>													
 												</div>
@@ -188,44 +192,102 @@
 												<div class="form-group">
                                                     <label class="col-md-2 control-label">Mô tả ngắn:</label>
                                                     <div class="col-md-10">
-                                                        <textarea class="form-control" name="short_description">{{ $product->short_description }}</textarea>
-                                                        <span class="help-block"> shown in product listing </span>
+                                                        <textarea class="form-control" id="short_description" name="short_description">{{ $product->short_description }}</textarea>
+                                                        <!--span class="help-block"> shown in product listing </span-->
                                                     </div>
                                                 </div>
 												
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label">Mô tả dài:</label>
                                                     <div class="col-md-10">
-                                                        <textarea class="form-control" name="long_description">{{ $product->long_description }}</textarea>
+                                                        <textarea class="form-control" id="long_description" name="long_description">{{ $product->long_description }}</textarea>
                                                     </div>
 												</div>
-                                                
+
                                             </div>
                                         </div>
                                         <div class="tab-pane" id="tab_detail">
-                                            <div class="form-body">
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label">Meta Title:</label>
-                                                    <div class="col-md-10">
-                                                        <input type="text" class="form-control maxlength-handler" name="product[meta_title]" maxlength="100" placeholder="">
-                                                        <span class="help-block"> max 100 chars </span>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label">Meta Keywords:</label>
-                                                    <div class="col-md-10">
-                                                        <textarea class="form-control maxlength-handler" rows="8" name="product[meta_keywords]" maxlength="1000"></textarea>
-                                                        <span class="help-block"> max 1000 chars </span>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label">Meta Description:</label>
-                                                    <div class="col-md-10">
-                                                        <textarea class="form-control maxlength-handler" rows="8" name="product[meta_description]" maxlength="255"></textarea>
-                                                        <span class="help-block"> max 255 chars </span>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <!-- BEGIN EXAMPLE TABLE PORTLET-->
+											<div class="portlet light portlet-fit bordered">
+												<!--div class="portlet-title">
+													<div class="caption">
+														<i class="icon-settings font-red"></i>
+														<span class="caption-subject font-red sbold uppercase">Editable Table</span>
+													</div>
+													<div class="actions">
+														<div class="btn-group btn-group-devided" data-toggle="buttons">
+															<label class="btn btn-transparent red btn-outline btn-circle btn-sm active">
+																<input type="radio" name="options" class="toggle" id="option1">Actions</label>
+															<label class="btn btn-transparent red btn-outline btn-circle btn-sm">
+																<input type="radio" name="options" class="toggle" id="option2">Settings</label>
+														</div>
+													</div>
+												</div-->
+												<div class="portlet-body">
+													<div class="table-toolbar">
+														<div class="row">
+															<div class="col-md-6">
+																<div class="btn-group">
+																	<div class="actions btn-set">
+																		<button id="tblProductDetail_new" class="btn green"> Thêm
+																			<i class="fa fa-plus"></i>
+																		</button>
+																		<button id="tblProductDetail_update" class="btn green"> Sửa
+																			<i class="fa fa-pencil-square-o"></i>
+																		</button>
+																		<button id="tblProductDetail_delete" class="btn green"> Xóa
+																			<i class="fa fa-minus"></i>
+																		</button>
+																		<button id="tblProductDetail_save" class="btn green"> Lưu
+																			<i class="fa fa-check"></i>
+																		</button>
+																		<button id="tblProductDetail_cancel" class="btn green"> Hủy
+																			<i class="fa fa-remove"></i>
+																		</button>
+																	</div>
+																</div>
+															</div>
+															<div class="col-md-6">
+																<!--div class="btn-group pull-right">
+																	<button class="btn green btn-outline dropdown-toggle" data-toggle="dropdown">Tools
+																		<i class="fa fa-angle-down"></i>
+																	</button>
+																	<ul class="dropdown-menu pull-right">
+																		<li>
+																			<a href="javascript:;"> Print </a>
+																		</li>
+																		<li>
+																			<a href="javascript:;"> Save as PDF </a>
+																		</li>
+																		<li>
+																			<a href="javascript:;"> Export to Excel </a>
+																		</li>
+																	</ul>
+																</div-->
+															</div>
+														</div>
+													</div>
+													<table id="tblProductDetail" class="table table-striped table-hover table-bordered">
+														<thead>
+															<tr>																																
+																<th> ID </th>
+																<th> Barcode </th>
+																<th> Số lượng </th>
+																<th> ĐVT </th>
+																<th> Tiền tệ </th>																
+																<th> Giá mua </th>
+																<th> Giá bán </th>
+																<th>Ngày áp dụng</th>
+																<th> Mã BH </th>
+																<th> TG BH </th>																
+																<th> Mô tả</th>																
+															</tr>
+														</thead>
+													</table>
+												</div>
+											</div>
+											
+											<!-- END EXAMPLE TABLE PORTLET-->
                                         </div>
                                         <div class="tab-pane" id="tab_images">
                                             <div class="alert alert-success margin-bottom-10">
@@ -464,5 +526,5 @@
         var path = '{{url('/')}}';
     </script>
 
-    {{ HTML::script('public/assets/scripts/categories/product.js') }}
+    {{ HTML::script('public/assets/scripts/categories/productDetail.js') }}
 @stop

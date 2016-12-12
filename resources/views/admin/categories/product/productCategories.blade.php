@@ -1,4 +1,4 @@
-@extends('admin.layouts.admindashboard')
+@extends('admin.layouts.adminproduct')
 
 @section('section')
     @include('alerts.errors')
@@ -41,7 +41,11 @@
                                 <i class="icon-settings font-green"></i>
                                 <span class="caption-subject ">Danh mục Sản phẩm</span>
                             </div>
-                            <div class="tools"> </div>
+                            <div class="tools"> 
+								<button id="btnNew" class="btn green"> Thêm
+									<i class="fa fa-plus"></i>
+								</button>
+							</div>
                         </div>
                         <div class="portlet-body">
                             <table id="tblProduct" class="table table-striped table-bordered table-hover dt-responsive nowrap" width="100%">
