@@ -90,6 +90,11 @@ Route::any('saveUser','CategoriesController@saveUser');
 Route::any('updateUser','CategoriesController@updateUser');
 Route::any('deleteUser','CategoriesController@deleteUser');
 
+Route::any('currencyCategories','CategoriesController@currencyCategories');
+Route::any('addCurrency','CategoriesController@addCurrency');
+Route::any('saveCurrency','CategoriesController@saveCurrency');
+Route::any('updateCurrency','CategoriesController@updateCurrency');
+Route::any('deleteCurrency','CategoriesController@deleteCurrency');
 
 // SALE
 

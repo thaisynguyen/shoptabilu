@@ -35,10 +35,11 @@ function showAddUser(){
 
 function saveUser(){
     $(document).on('click', '#btnSaveUser', function() {
+        console.log($("#is_admin").is(':checked'));
         var code = $('#code').val()
             , name = $('#name').val()
             , email = $('#email').val()
-            , is_admin = $('#is_admin').val()
+            , is_admin = ($("#is_admin").is(':checked')== true) ? 1 : 0
             , dataPost = {user_code: code, user_name: name, email: email, is_admin: is_admin}
             ;
         if(code == ''){
