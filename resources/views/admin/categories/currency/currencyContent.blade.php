@@ -11,7 +11,7 @@
             <div class="portlet-title">
                 <div class="caption">
                     <i class="icon-settings font-red"></i>
-                    <span class="caption-subject font-red sbold uppercase">DANH MỤC ĐƠN VỊ TÍNH</span>
+                    <span class="caption-subject font-red sbold uppercase">DANH MỤC TIỀN TỆ</span>
                 </div>
             </div>
             <div class="portlet-body">
@@ -19,7 +19,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="btn-group">
-                                <a  id="btnAddUnit" class="btn green btn-outline sbold uppercase" > Thêm mới
+                                <a  id="btnAddCurrency" class="btn green btn-outline sbold uppercase" > Thêm mới
                                     <i class="fa fa-plus"></i>
                                 </a>
                             </div>
@@ -38,12 +38,12 @@
                         </div>
                     </div>
                 </div>
-                <table class="table table-striped table-hover table-bordered" id="unit-table">
+                <table class="table table-striped table-hover table-bordered" id="currency-table">
                     <thead>
                     <tr>
                         <th> STT </th>
-                        <th sort_key="unit_code"> Mã <i class="fa pull-right unsort fa-sort"></i></th>
-                        <th sort_key="unit_name"> Tên <i class="fa pull-right unsort fa-sort"></i></th>
+                        <th sort_key="currency_code"> Mã <i class="fa pull-right unsort fa-sort"></i></th>
+                        <th sort_key="currency_name"> Tên <i class="fa pull-right unsort fa-sort"></i></th>
                         <th> Sửa </th>
                         <th> Xóa </th>
                     </tr>
@@ -61,24 +61,24 @@
 
                     <tr>
                         <td class="text-center"> <?php  echo $stt; $stt++; ?>  </td>
-                        <td id="td-code-{{$row->unit_id}}"> <?php echo $row->unit_code; ?> </td>
-                        <td id="td-name-{{$row->unit_id}}"> <?php echo $row->unit_name; ?> </td>
+                        <td id="td-code-{{$row->currency_id}}"> <?php echo $row->currency_code; ?> </td>
+                        <td id="td-name-{{$row->currency_id}}"> <?php echo $row->currency_name; ?> </td>
                         <td>
-                            <a class="td-edit-unit" data-id="{{$row->unit_id}}"> Sửa </a>
+                            <a class="td-edit-currency" data-id="{{$row->currency_id}}"> Sửa </a>
 
                         </td>
-                        @include('admin.categories.unit.updateUnit', array('unit_id' => $row->unit_id,
-                                                                            'unit_code' => $row->unit_code,
-                                                                            'unit_name' => $row->unit_name,
+                        @include('admin.categories.currency.updateCurrency', array('currency_id' => $row->currency_id,
+                                                                            'currency_code' => $row->currency_code,
+                                                                            'currency_name' => $row->currency_name,
 
                         ))
-                        @include('admin.categories.unit.deleteUnit', array('unit_id' => $row->unit_id,
-                                                                            'unit_code' => $row->unit_code,
-                                                                            'unit_name' => $row->unit_name,
+                        @include('admin.categories.currency.deleteCurrency', array('currency_id' => $row->currency_id,
+                                                                            'currency_code' => $row->currency_code,
+                                                                            'currency_name' => $row->currency_name,
 
                         ))
                         <td>
-                            <a class='td-delete-unit' data-id="{{$row->unit_id}}"> Xóa </a>
+                            <a class='td-delete-currency' data-id="{{$row->currency_id}}"> Xóa </a>
                         </td>
                     </tr>
                     <?php
@@ -88,7 +88,7 @@
                     <div class="col-md-12">
                         <div class="pull-right">
                             <?php
-                            echo $data->setPath(action('CategoriesController@unitCategories'))->render();
+                            echo $data->setPath(action('CategoriesController@currencyCategories'))->render();
                             ?>
                         </div>
                     </div>

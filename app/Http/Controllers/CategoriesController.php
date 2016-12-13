@@ -774,6 +774,7 @@ class CategoriesController extends AppController {
     public function saveCurrency(Request $request){
         $post = $request->all();
         $createdUser = Session::get('sid');
+
         $data = array(  'currency_name' 	    => $post['currency_name'],
                         'currency_code' 	    => $post['currency_code'],
                         'created_user'          => $createdUser);
@@ -786,10 +787,10 @@ class CategoriesController extends AppController {
             ));
 //            return redirect('addUnit');
         } else {
-            $unitId = DB::table('currency')->insertGetId($data);
-            if($unitId > 0) {
+            $id = DB::table('currency')->insertGetId($data);
+            if($id > 0) {
                 $arr = self::selectAndSortDataFromTable($request, 'currency');
-                $currencyHtml = view('admin.categories.currency.unitContent', ['data' => $arr])->render();
+                $currencyHtml = view('admin.categories.currency.currencyContent', ['data' => $arr])->render();
                 return json_encode(array(
                     "success"                   => true
                     , "alert"                   => commonUtils::INSERT_SUCCESSFULLY
@@ -853,14 +854,14 @@ class CategoriesController extends AppController {
                 'inactive' 	      => 1,
                 'deleted_user'    => $createdUser,
                 'deleted_at'      => date("Y-m-d h:i:sa"));
-            $i = DB::table('unit')->where('unit_id', $post['id'])->update($data);
+            $i = DB::table('currency')->where('currency_id', $post['id'])->update($data);
 
-            $arr = self::selectAndSortDataFromTable($request, 'unit');
-            $unitHtml = view('admin.categories.unit.unitContent', ['data' => $arr])->render();
+            $arr = self::selectAndSortDataFromTable($request, 'currency');
+            $currencyHtml = view('admin.categories.currency.currencyContent', ['data' => $arr])->render();
             return json_encode(array(
                 "success"  => true
             , "alert"  => commonUtils::DELETE_SUCCESSFULLY
-            , "unit"  => $unitHtml
+            , "currency"  => $currencyHtml
             ));
         }catch(Exception $e){
             return json_encode(array(

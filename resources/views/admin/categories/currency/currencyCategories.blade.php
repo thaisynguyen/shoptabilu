@@ -25,19 +25,19 @@
                     <i class="fa fa-circle"></i>
                 </li>
                 <li>
-                    <span>Đơn vị tính</span>
+                    <span>Tiền tệ</span>
                 </li>
             </ul>
         </div>
         <!-- END PAGE BAR -->
         </BR>
-        @include('admin.categories.unit.unitContent')
+        @include('admin.categories.currency.currencyContent')
     </div>
     <!-- END CONTENT BODY -->
 
 </div>
 
-    @include('admin.categories.unit.addUnit')
+    @include('admin.categories.currency.addCurrency')
 @stop
 
 @section('custom_js')
@@ -45,5 +45,5 @@
         var path = '{{url('/')}}';
         sortOnPageLoad();
     </script>
-    {{ HTML::script('public/assets/scripts/categories/unit.js') }}
+    {{ HTML::script('public/assets/scripts/categories/currency.js') }}
 @stop
