@@ -1,5 +1,5 @@
 <div class="modal fade" id="modalAddSaleInvoice" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog" style="width: 1000px">
+    <div class="modal-dialog" style="width: 1100px">
         {{Form::open()}}
         <div class="modal-content">
             <div class="modal-header">
@@ -7,62 +7,63 @@
                 <h4 class="modal-title text-normal text-bold"><?php echo 'Thêm Mới Hóa Đơn Bán Hàng';?></h4>
             </div>
             <div class="modal-body text-normal">
-                <div class="form-group has-success">
-                    <label class="control-label"><?php echo 'Barcode';?> (<span class="input-require">*</span>)</label>
-                    <div class="input-icon right">
-                        <input type="text" class="form-control add-data-sale-invoice" id="barcodeid" required> </div>
+                <div class="form-group">
+                    <div class="row">
+                        <label class="col-md-3 control-label"><?php echo 'Barcode';?> (<span class="input-require">*</span>)</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control add-data-sale-invoice" id="barcodeid" required>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-group has-success">
                     <div class="row">
-                        <div class="col-md-6">
-                            <label class="control-label"><?php echo 'Số hóa đơn';?> (<span class="input-require">*</span>)</label>
-                            <div class="input-icon right">
-                                <input type="text" class="form-control add-data-sale-invoice" id="sales-serial-number" required>
-                            </div>
+                        <label class="col-md-3 control-label"><?php echo 'Số hóa đơn';?> (<span class="input-require">*</span>)</label>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control add-data-sale-invoice" id="sales-serial-number" required>
                         </div>
-                        <div class="col-md-6">
-                            <label class="control-label"><?php echo 'Ngày hóa đơn';?> (<span class="input-require">*</span>)</label>
-                            <div class="input-icon right">
-                                <div class="input-group date date-picker " id="sales-invoice-date" data-date-format="dd-mm-yyyy" required>
-                                    <input type="text" class="form-control" readonly="" name="datepicker">
-                                    <span class="input-group-btn">
-                                        <button class="btn default" type="button">
-                                            <i class="fa fa-calendar"></i>
-                                        </button>
-                                    </span>
+                        <label class="col-md-3 control-label"><?php echo 'Ngày hóa đơn';?> (<span class="input-require">*</span>)</label>
+                        <div class="col-md-3">
+                            <div class="input-group date date-picker " id="sales-invoice-date" data-date-format="dd-mm-yyyy" required>
+                                <input type="text" class="form-control" readonly="" name="datepicker">
+                                        <span class="input-group-btn">
+                                            <button class="btn default" type="button">
+                                                <i class="fa fa-calendar"></i>
+                                            </button>
+                                        </span>
 
-                                </div>
                             </div>
                         </div>
+
                     </div>
-
-                </div>
-                <div class="form-group has-success">
-                    <label class="control-label"><?php echo 'Khách Hàng';?> (<span class="input-require">*</span>)</label>
-                    <div class="input-icon right">
-                        <input type="text" class="form-control add-data-sale-invoice" id="customer" required> </div>
                 </div>
                 <div class="form-group has-success">
                     <div class="row">
-                        <div class="col-md-6">
-                            <label class="control-label"><?php echo '% Giảm giá(trên tổng HĐ)';?> (<span class="input-require">*</span>)</label>
-                            <div class="input-icon right">
-                                <input type="text" class="form-control add-data-sale-invoice" id="discount-rate" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="control-label"><?php echo 'Tiền giảm giá(trên tổng HĐ)';?> (<span class="input-require">*</span>)</label>
-                            <div class="input-icon right">
-                                <input type="text" class="form-control add-data-sale-invoice" id="discount-amount" required>
-                            </div>
+
+                        <label class="col-md-3 control-label"><?php echo 'Khách Hàng';?> (<span class="input-require">*</span>)</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control add-data-sale-invoice" id="customer" required>
                         </div>
                     </div>
                 </div>
                 <div class="form-group has-success">
-                    <label class="control-label"><?php echo 'Tổng cộng';?> (<span class="input-require">*</span>)</label>
-                    <div class="input-icon right">
-                        <input type="text" class="form-control add-data-sale-invoice" id="name" required>
+                    <div class="row">
+                        <label class="col-md-3 control-label"><?php echo '% Giảm giá(trên tổng HĐ)';?> (<span class="input-require">*</span>)</label>
+                        <div class="col-md-3 input-icon right">
+                            <input type="text" class="form-control add-data-sale-invoice" id="discount-rate" required>
+                        </div>
+                        <label class="col-md-3 control-label"><?php echo 'Tiền giảm giá(trên tổng HĐ)';?> (<span class="input-require">*</span>)</label>
+                        <div class="col-md-3 input-icon right">
+                            <input type="text" class="form-control add-data-sale-invoice" id="discount-amount" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group has-success">
+                    <div class="row">
+                        <label class="col-md-3 control-label"><?php echo 'Tổng cộng';?> (<span class="input-require">*</span>)</label>
+                        <div class="col-md-3 input-icon right">
+                            <input type="text" class="form-control add-data-sale-invoice" id="name" required>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -82,7 +83,46 @@
                     <th> Xóa </th>
                 </tr>
                 </thead>
+                <?php $stt = 0;?>
                 <tbody id="added-product-list">
+                    <tr>
+                        <td>
+                            <?php echo $stt += 1;?>
+                        </td>
+                        <td>
+                            <select class="form-control">
+                                <option value="one">One</option>
+                                <option value="two">Two</option>
+                                <option value="three">Three</option>
+                                <option value="four">Four</option>
+                                <option value="five">Five</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="product_name" required>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="unit_price" required>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="quantity" required>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="amount" required>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="discount" required>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="discount_amount" required>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="total" required>
+                        </td>
+                        <td>
+                            <a class='td-delete-row' > Xóa </a>
+                        </td>
+                    </tr>
 
 
                 </tbody>

@@ -42,6 +42,7 @@
                     <thead>
                     <tr>
                         <th> STT </th>
+                        <th sort_key="unit_code"> Barcode <i class="fa pull-right unsort fa-sort"></i></th>
                         <th sort_key="unit_code"> Số hóa đơn <i class="fa pull-right unsort fa-sort"></i></th>
                         <th sort_key="unit_name"> Ngày hóa đơn <i class="fa pull-right unsort fa-sort"></i></th>
                         <th sort_key="unit_name"> Tổng cộng <i class="fa pull-right unsort fa-sort"></i></th>
@@ -63,6 +64,7 @@
 
                     <tr>
                         <td class="text-center"> <?php  echo $stt; $stt++; ?>  </td>
+                        <td id="td-barcode-{{$row->unit_id}}"> <?php echo $row->unit_code; ?> </td>
                         <td id="td-code-{{$row->unit_id}}"> <?php echo $row->unit_code; ?> </td>
                         <td id="td-name-{{$row->unit_id}}"> <?php echo $row->unit_name; ?> </td>
                         <td id="td-name-{{$row->unit_id}}"> <?php echo $row->unit_name; ?> </td>
