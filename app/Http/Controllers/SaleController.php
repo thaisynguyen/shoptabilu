@@ -50,9 +50,42 @@ class SaleController extends AppController {
 
     public function saleInvoice(Request $request){
         $this->clearSession();
-        $data = self::selectAndSortDataFromTable($request, 'unit');
-//        commonUtils::pr($data);die;
-        return view('admin.sale.saleInvoice')->with('data',$data);
+        $data = self::selectAndSortDataFromTable($request, 'sales_invoice');
+
+        $sql = 'SELECT p.product_type_id AS id
+                      , p.parent_id
+                      , p.product_type_name AS text
+                FROM product_type AS p
+                WHERE p.inactive = 0
+        ';
+        $productType = DB::select(DB::raw($sql));
+        $sqlProduct = 'SELECT DISTINCT p.*
+                FROM product AS p
+                WHERE p.inactive = 0
+        ';
+        $product = DB::select(DB::raw($sqlProduct));
+
+        $productTypeObject = commonUtils::objectToArray($productType);
+//        commonUtils::pr($productTypeObject);die;
+        $productType = commonUtils::buildTreeProductType($productTypeObject, 0);
+        $optionProductType = '<select id="parent_id" class="bs-select form-control bs-select-hidden">
+                                <option value="">(none)</option>';
+        $optionProductType .= commonUtils::buildTreeComboProductType($productType, 0, '');
+        $optionProductType .= '</select>';
+
+//        $productObject = commonUtils::objectToArray($product);
+        $optionProduct = '<select id="product_id" class="bs-select form-control bs-select-hidden">
+                                <option value="">(none)</option>';
+
+        foreach($product as $p){
+            $optionProduct .= '<option value="' . $p->product_id . '" > ' . $p->product_name  . '</option>';
+        }
+        $optionProduct .= '</select>';
+
+        return view('admin.sale.saleInvoice')->with('data', $data)
+                                             ->with('optionProductType', $optionProductType)
+                                             ->with('optionProduct', $optionProduct)
+                                            ;
     }
 
 

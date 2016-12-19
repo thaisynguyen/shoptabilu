@@ -1,5 +1,5 @@
 <div class="modal fade" id="modalAddSaleInvoice" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog" style="width: 1100px">
+    <div class="modal-dialog" style="width: 1200px">
         {{Form::open()}}
         <div class="modal-content">
             <div class="modal-header">
@@ -72,7 +72,7 @@
                 <thead>
                 <tr>
                     <th> STT </th>
-                    <th> Loại sản phẩm <i class="fa pull-right unsort fa-sort"></i></th>
+                    <th> Mã sản phẩm <i class="fa pull-right unsort fa-sort"></i></th>
                     <th> Tên sản phẩm <i class="fa pull-right unsort fa-sort"></i></th>
                     <th> Đơn giá <i class="fa pull-right unsort fa-sort"></i></th>
                     <th> Số lượng <i class="fa pull-right unsort fa-sort"></i></th>
@@ -81,46 +81,48 @@
                     <th> Giảm giá <i class="fa pull-right unsort fa-sort"></i></th>
                     <th> Tổng cộng <i class="fa pull-right unsort fa-sort"></i></th>
                     <th> Xóa </th>
+                    <th> Thêm </th>
                 </tr>
                 </thead>
                 <?php $stt = 0;?>
                 <tbody id="added-product-list">
-                    <tr>
+                    <tr id="row-product">
                         <td>
                             <?php echo $stt += 1;?>
                         </td>
                         <td>
-                            <select class="form-control">
-                                <option value="one">One</option>
-                                <option value="two">Two</option>
-                                <option value="three">Three</option>
-                                <option value="four">Four</option>
-                                <option value="five">Five</option>
-                            </select>
+
+                                <?php
+                                    echo $optionProduct;
+                                ?>
+
                         </td>
                         <td>
                             <input type="text" class="form-control" id="product_name" required>
                         </td>
                         <td>
-                            <input type="text" class="form-control" id="unit_price" required>
+                            <input type="number" class="form-control" id="unit_price" required>
                         </td>
                         <td>
-                            <input type="text" class="form-control" id="quantity" required>
+                            <input type="number" class="form-control" id="quantity" required>
                         </td>
                         <td>
-                            <input type="text" class="form-control" id="amount" required>
+                            <input type="number" class="form-control" id="amount" required readonly>
                         </td>
                         <td>
-                            <input type="text" class="form-control" id="discount" required>
+                            <input type="number" class="form-control" id="discount" required>
                         </td>
                         <td>
-                            <input type="text" class="form-control" id="discount_amount" required>
+                            <input type="number" class="form-control" id="discount_amount" required>
                         </td>
                         <td>
-                            <input type="text" class="form-control" id="total" required>
+                            <input type="number" class="form-control" id="total" required readonly>
                         </td>
                         <td>
                             <a class='td-delete-row' > Xóa </a>
+                        </td>
+                        <td>
+                            <a class='td-add-row' > Thêm </a>
                         </td>
                     </tr>
 

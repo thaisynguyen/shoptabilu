@@ -173,6 +173,31 @@ class commonUtils
         return $branch;
     }
 
+
+    public static function buildTreeComboProductType($data, $parent = null, $parentName)
+    {
+        $ret = '';
+        foreach($data as $index => $category)
+        {
+//        echo 'id:'.$category['id'] . '-parent: ' .$parent . "<pre>";
+            if($category['parent_id'] == $parent)
+            {
+                if($parentName != ''){
+                    $ret .= '<option value="' . $category['id']  . '">' . $parentName . ' > ' .$category['text']  . '</option>';
+
+                } else {
+                    $ret .= '<option value="' . $category['id']  . '">' . $parentName . $category['text']  . '</option>';
+
+                }
+                if(isset($category['children'])){
+                    $ret .= self::buildTreeComboProductType($category['children'], $category['id'], $category['text']);
+                }
+
+            }
+        }
+        return $ret;
+    }
+
     public static function buildTreeComboBox($data, $parent = null, $parentName)
     {
         $ret = '';
