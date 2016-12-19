@@ -135,6 +135,18 @@ class commonUtils
         $temp = substr($value, 6, 4) . '/' . substr($value, 3, 2) . '/' . substr($value, 0, 2);
         return $temp;
     }
+	
+	/**
+     * Format date dd-mm-yyyy to view yyyy-mm-dd
+	 * @param $value
+	 * @param $delimiter
+     * @return string
+     */
+    public static function formatDateYMDDelimiter($value, $delimiter = "-")
+    {
+        $temp = substr($value, 6, 4) . $delimiter . substr($value, 3, 2) . $delimiter . substr($value, 0, 2);
+        return $temp;
+    }
 
     public static function formatDateYMDT($value)
     {
@@ -455,6 +467,30 @@ class commonUtils
         $result .= self::renderTreeItem($data, $rootValue, $parentName = "", $selectedID);
 
         $result .= '</select>';
+        return $result;
+    }
+	
+	/**
+     * Convert Array(key,value) to Indexed Array(value)
+     * @param $array
+     * @return array
+     */
+    public static function arrayToIndexedArray($array)
+    {
+		$result = array();
+		
+        if (is_array($array)) {
+            foreach ($array as $key => $value) {
+				if (is_array($value)) {                    
+					array_push($result, self::arrayToIndexedArray($value));
+                }
+				else
+				{
+					array_push($result, $value);
+				}
+                                            
+            }
+        }        
         return $result;
     }
 

@@ -195,16 +195,11 @@ $(document).ready(function () {
 				deleteProduct(id);
 			}
 		});
-	} );
+	} );	
 	
-	$('#btnBack').click(function() {
-		document.location.href = path + "/productCategories";
-
-	} );
-	
-	$('#btnUpdate').click(function() {
-		updateProduct();
-	} );
+	$('#btnNew').click(function() {
+		document.location.href = path + "/viewProduct/-1";
+	});
 });
 
 function deleteProduct(idProduct)
@@ -237,68 +232,6 @@ function deleteProduct(idProduct)
 	})	
 }
 
-function updateProduct()
-{
-	var product_id = $('#product_id').val()
-			, product_code 		= $('[name="product_code"]').val()
-			, product_type_id 	= $('#product_type_id :selected').val()
-			, product_name		= $('[name="product_name"]').val()
-			, producer_id		= $('#producer_id :selected').val()
-			, base_unit_id		= $('#base_unit_id :selected').val()
-			, barcode			= $('[name="barcode"]').val()
-			, trademark			= $('[name="trademark"]').val()
-			, model				= $('[name="model"]').val()
-			, color				= $('[name="color"]').val()
-			, weight			= $('[name="weight"]').val()
-			, length			= $('[name="length"]').val()
-			, width 	    	= $('[name="width"]').val()
-			, height			= $('[name="height"]').val()
-			, short_description	= $('[name="short_description"]').val()
-			, long_description	= $('[name="long_description"]').val()
-            , dataPost = {	product_id: product_id, 
-							product_code: product_code, 
-							product_type_id: product_type_id,
-							product_name: product_name,
-							producer_id: producer_id,
-							base_unit_id: base_unit_id,
-							barcode: barcode,
-							trademark: trademark,
-							model: model,
-							color: color,
-							weight: weight,
-							length: length,
-							width: width,
-							height: height,
-							short_description: short_description,
-							long_description: long_description }
-            , dataObj;
-	$.ajax({
-		headers: {
-			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-		},
-		url: path + '/updateProduct/',
-		type: 'POST',
-		dataType: 'json',
-		data: dataPost,
-		cache: false,
-		success: function(response) {
-			dataObj  = response;
-
-			if (dataObj.success == true) {
-				//slideMessageMultiConfig('Thông tin', dataObj.alert, 'success', 20);
-				document.location.href = path + "/productCategories";
-			}
-			else{
-				slideMessageMultiConfig('Cảnh báo', 'Cập nhật không thành công', 'warning', 40);
-			}
-			return dataObj;
-		},
-		error: function(xhr, textStatus, thrownError) {
-
-			console.log(thrownError);
-		}
-	})	
-}
 
 
 

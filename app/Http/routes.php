@@ -57,8 +57,15 @@ Route::any('productCategories','ProductController@productCategories');
 Route::any('listProduct','ProductController@listProduct');
 Route::any('deleteProduct','ProductController@deleteProduct');
 Route::any('addProduct','ProductController@addProduct');
-Route::any('viewProduct/{id}','ProductController@viewProduct');
 Route::any('updateProduct','ProductController@updateProduct');
+Route::any('viewProduct/{id}','ProductController@viewProduct');
+Route::any('getAllArrayCombobox','ProductController@getAllArrayCombobox');
+
+Route::any('listProductDetail','ProductController@listProductDetail');
+Route::any('deleteProductDetail','ProductController@deleteProductDetail');
+Route::any('addProductDetail','ProductController@addProductDetail');
+Route::any('updateProductDetail','ProductController@updateProductDetail');
+
 
 Route::any('subjectCategories','CategoriesController@subjectCategories');
 Route::any('addSubject','CategoriesController@addSubject');
@@ -83,6 +90,11 @@ Route::any('saveUser','CategoriesController@saveUser');
 Route::any('updateUser','CategoriesController@updateUser');
 Route::any('deleteUser','CategoriesController@deleteUser');
 
+Route::any('currencyCategories','CategoriesController@currencyCategories');
+Route::any('addCurrency','CategoriesController@addCurrency');
+Route::any('saveCurrency','CategoriesController@saveCurrency');
+Route::any('updateCurrency','CategoriesController@updateCurrency');
+Route::any('deleteCurrency','CategoriesController@deleteCurrency');
 
 // SALE
 

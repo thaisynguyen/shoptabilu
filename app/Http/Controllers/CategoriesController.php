@@ -45,7 +45,7 @@ class CategoriesController extends AppController {
 
 
     /*
-     * Controller for user ******************************************************************
+     * Controller for Unit ******************************************************************
      */
 
     public function unitCategories(Request $request){
@@ -721,8 +721,26 @@ class CategoriesController extends AppController {
                 'deleted_at'      => date("Y-m-d h:i:sa"));
             $i = DB::table('users')->where('user_id', $post['id'])->update($data);
 
-            $arr = self::userCategories($request);
-            $userHtml = view('admin.categories.user.userContent', ['data' => $arr])->render();
+            $this->clearSession();
+            $alias = 'user';
+            $sortDimension = ($request->get('sort') != '') ? $request->get('sort') : 'asc';
+            $sortColumn = ($request->get('column') != '') ? $request->get('column') : $alias . '_id';
+
+            $sortDimension = ($sortDimension == '0' || $sortDimension == 'desc') ? $sortDimension : 'asc';
+            $sortColumn = ($sortColumn != $alias . '_id') ? $sortColumn : $alias . '_id';
+
+            $data = DB::table('users')   ->where('inactive', 0)
+                ->orderby($sortColumn, $sortDimension)
+                ->paginate(commonUtils::ITEM_PER_PAGE_DEFAULT);
+
+            $parametersSort = array(
+                'sort'      => $sortDimension,
+                'column'    => $sortColumn
+            );
+
+            $data->appends($parametersSort);
+//            commonUtils::pr($data);die;
+            $userHtml = view('admin.categories.user.userContent', ['data' => $data])->render();
             return json_encode(array(
                 "success"  => true
                 , "alert"  => commonUtils::DELETE_SUCCESSFULLY
@@ -732,6 +750,123 @@ class CategoriesController extends AppController {
             return json_encode(array(
                 "success"  => false
                 , "alert"  => commonUtils::DELETE_UNSUCCESSFULLY
+            ));
+        }
+
+    }
+
+
+    /*
+     * Controller for Currency ******************************************************************
+     */
+
+    public function currencyCategories(Request $request){
+        $this->clearSession();
+        $data = self::selectAndSortDataFromTable($request, 'currency');
+//        commonUtils::pr($data);die;
+        return view('admin.categories.currency.currencyCategories')->with('data',$data);
+    }
+
+    public function addCurrency(){
+        return view('admin.categories.currency.addCurrency');
+    }
+
+    public function saveCurrency(Request $request){
+        $post = $request->all();
+        $createdUser = Session::get('sid');
+
+        $data = array(  'currency_name' 	    => $post['currency_name'],
+                        'currency_code' 	    => $post['currency_code'],
+                        'created_user'          => $createdUser);
+
+        $check = DB::table('currency')->where('currency_code', $post['currency_code'])->get();
+        if(count($check) > 0){
+            return json_encode(array(
+                "success"  => false
+                , "alert"  => 'Mã tiền tệ đã bị trùng. Vui lòng thử lại.'
+            ));
+//            return redirect('addUnit');
+        } else {
+            $id = DB::table('currency')->insertGetId($data);
+            if($id > 0) {
+                $arr = self::selectAndSortDataFromTable($request, 'currency');
+                $currencyHtml = view('admin.categories.currency.currencyContent', ['data' => $arr])->render();
+                return json_encode(array(
+                    "success"                   => true
+                    , "alert"                   => commonUtils::INSERT_SUCCESSFULLY
+                    , "currency"                => $currencyHtml
+                ));
+            } else {
+//                Session::flash('message-errors', commonUtils::INSERT_UNSUCCESSFULLY);
+                return json_encode(array(
+                    "success"  => false
+                    , "alert"  => commonUtils::INSERT_UNSUCCESSFULLY
+                ));
+            }
+
+//            return redirect('addUnit');
+
+        }
+    }
+
+    public function updateCurrency(Request $request){
+        $post = $request->all();
+        $createdUser = Session::get('sid');
+        $id = $post['id'];
+        $data = array(  'currency_name' 	    => $post['name'],
+            'currency_code' 	    => $post['code'],
+            'updated_user'      => $createdUser,
+            'updated_at'      =>date("Y-m-d h:i:sa"));
+
+
+        $check = DB::table('currency')->where('currency_code', $post['code'])
+                ->where('currency_code','!=', $post['hiddencode'])
+                ->first();
+        if(count($check) > 0){
+            return json_encode(array(
+                "success"  => false
+             , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY . 'Mã tiền tệ đã bị trùng. Vui lòng thử lại.'
+            ));
+        } else {
+            try {
+                $i = DB::table('currency')->where('currency_id', $post['id'])->update($data);
+                return json_encode(array(
+                    "success"  => true
+                    , "alert"  => commonUtils::EDIT_SUCCESSFULLY
+                    , "currency"  => $data
+                ));
+            } catch (Exception $e) {
+                return json_encode(array(
+                    "success"  => false
+                    , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY
+                ));
+            }
+
+        }
+    }
+
+    public function deleteCurrency(Request $request){
+        $post = $request->all();
+        $createdUser = Session::get('sid');
+
+        try{
+            $data = array(
+                'inactive' 	      => 1,
+                'deleted_user'    => $createdUser,
+                'deleted_at'      => date("Y-m-d h:i:sa"));
+            $i = DB::table('currency')->where('currency_id', $post['id'])->update($data);
+
+            $arr = self::selectAndSortDataFromTable($request, 'currency');
+            $currencyHtml = view('admin.categories.currency.currencyContent', ['data' => $arr])->render();
+            return json_encode(array(
+                "success"  => true
+            , "alert"  => commonUtils::DELETE_SUCCESSFULLY
+            , "currency"  => $currencyHtml
+            ));
+        }catch(Exception $e){
+            return json_encode(array(
+                "success"  => false
+            , "alert"  => commonUtils::DELETE_UNSUCCESSFULLY
             ));
         }
 

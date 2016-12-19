@@ -1,54 +1,20 @@
 /**
- * Created by uyenttt on 13/11/2016.
+ * Created by uyenttt on 13/12/2016.
  */
 // A $( document ).ready() block.
 $( document ).ready(function() {
     resetForm();
-    showAddUser();
-    saveUser();
-    showEditUser();
-    updateUser();
-    showDeleteUser();
-    deleteUser();
-    pressSaveUser();
-    reloadDataByUser();
-
-    $("#excel-import-goal").fileinput({
-        uploadUrl: '#',
-        maxFilePreviewSize: 10240,
-        previewFileType: "image",
-        browseClass: "btn btn-success",
-        browseLabel: 'Browse',
-        browseIcon: "<i class=\"fa fa-file-excel-o\"></i> ",
-        removeClass: "btn btn-danger",
-        removeLabel: 'Remove',
-        removeIcon: "<i class=\"glyphicon glyphicon-trash\"></i> ",
-        uploadClass: "btn btn-info",
-        uploadLabel: 'Upload',
-        uploadIcon: "<i class=\"glyphicon glyphicon-upload\"></i> ",
-        allowedFileExtensions: ['xls', 'xlsx'],
-        showPreview: false,
-        /*extra: function() {
-
-         return {profitImpactId: profitImpactId};
-         },*/
-        uploadAsync: true,
-        uploadExtraData: function () {
-            return {
-                //                    bdInteli: xxxx
-            };
-        }
-    });
-
-    $("#excel-import-goal").on('fileuploaded', function(event, data, previewId, index) {
-        var form = data.form, files = data.files, extra = data.extra,
-            response = data.response, reader = data.reader;
-
-    });
+    showAddCurrency();
+    saveCurrency();
+    showEditCurrency();
+    updateCurrency();
+    showDeleteCurrency();
+    deleteCurrency();
+    pressSaveCurrency();
+    reloadDataByCurrency();
 });
 
 function resetForm(){
-    $('#email').val('');
     $('#code').val('');
     $('#name').val('');
 }
@@ -59,25 +25,18 @@ function focusInput(idPopup, idInput){
     })
 }
 
-function showAddUser(){
-    $(document).on('click', '#btnAddUser', function() {
-        $('#modalAddUser').modal('show');
-        focusInput('modalAddUser', 'email');
-    });
-
-    $(document).on('click', '#btnImportUser', function() {
-        $('#modalImportUser').modal('show');
+function showAddCurrency(){
+    $(document).on('click', '#btnAddCurrency', function() {
+        $('#modalAddCurrency').modal('show');
+        focusInput('modalAddCurrency', 'code');
     });
 }
 
-function saveUser(){
-    $(document).on('click', '#btnSaveUser', function() {
-        console.log($("#is_admin").is(':checked'));
+function saveCurrency(){
+    $(document).on('click', '#btnSaveCurrency', function() {
         var code = $('#code').val()
             , name = $('#name').val()
-            , email = $('#email').val()
-            , is_admin = ($("#is_admin").is(':checked')== true) ? 1 : 0
-            , dataPost = {user_code: code, user_name: name, email: email, is_admin: is_admin}
+            , dataPost = {currency_code: code, currency_name: name}
             ;
         if(code == ''){
             $('#code').focus();
@@ -85,15 +44,12 @@ function saveUser(){
         } else if(name == ''){
             $('#name').focus();
             slideMessageMultiConfig('Cảnh báo', 'Tên không được rỗng', 'warning', 40);
-        } else if(email == ''){
-            $('#email').focus();
-            slideMessageMultiConfig('Cảnh báo', 'Email không được rỗng', 'warning', 40);
         } else {
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                url: path + '/saveUser/',
+                url: path + '/saveCurrency/',
                 type: 'POST',
                 dataType: 'json',
                 data: dataPost,
@@ -102,12 +58,11 @@ function saveUser(){
                     dataObj = response;
                     console.log(dataObj);
                     if (dataObj.success == true) {
-                        //$('#addUser').modal('hide');
-
-                        $('#main-content').html(dataObj.user);
+                        //$('#addCurrency').modal('hide');
+                        $('#main-content').html(dataObj.currency);
                         resetForm();
                         slideMessageMultiConfig('Thông tin', dataObj.alert, 'success', 20);
-                        $('#email').focus();
+                        $('#code').focus();
                     }else{
                         slideMessageMultiConfig('Thông tin', dataObj.alert, 'warning', 40);
                     }
@@ -126,33 +81,30 @@ function saveUser(){
 
 }
 
-function showEditUser(){
+function showEditCurrency(){
 
-    $(document).on('click', '.td-edit-user', function() {
+    $(document).on('click', '.td-edit-currency', function() {
         var id = $(this).attr('data-id');
-        console.log(id);
-        $('#edit-user-' + id).modal('show');
-        focusInput('edit-user-' + id, 'code-' + id);
+        $('#edit-currency-' + id).modal('show');
+        focusInput('edit-currency-' + id, 'code-' + id);
     });
 
 }
 
-function updateUser(){
+function updateCurrency(){
 
-    $(document).on('click', '.btn-edit-user', function() {
+    $(document).on('click', '.btn-edit-currency', function() {
         var id = $(this).attr('data-id')
             , code = $('#code-'+id).val()
             , name = $('#name-'+id).val()
             , hiddencode = $('#hidden-code-'+id).val()
-            , email = $('#email').val()
-            , is_admin = $('#is_admin').val()
-            , dataPost = {user_code: code, user_name: name, email: email, is_admin: is_admin}
+            , dataPost = {id: id, code: code, name: name, hiddencode: hiddencode}
             , dataObj;
         $.ajax({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            url: path + '/updateUser/',
+            url: path + '/updateCurrency/',
             type: 'POST',
             dataType: 'json',
             data: dataPost,
@@ -161,13 +113,11 @@ function updateUser(){
 
                 if (dataObj.success == true) {
                     slideMessageMultiConfig('Thông tin', dataObj.alert, 'success', 20);
-                    //console.log(dataObj.user.user_code);
-                    var user = dataObj.user;
+                    //console.log(dataObj.currency.currency_code);
+                    var currency = dataObj.currency;
 
-                    $('#td-code-' + id).html(user.user_code);
-                    $('#td-name-' + id).html(user.user_name);
-                    $('#td-email-' + id).html(user.email);
-                    $('#td-admin-' + id).html(user.is_admin);
+                    $('#td-code-' + id).html(currency.currency_code);
+                    $('#td-name-' + id).html(currency.currency_name);
 
                     //$('#editDepartment-'+id).modal('hide');
                 }
@@ -188,18 +138,18 @@ function updateUser(){
 
 
 
-function showDeleteUser(){
+function showDeleteCurrency(){
 
-    $(document).on('click', '.td-delete-user', function() {
+    $(document).on('click', '.td-delete-currency', function() {
         var id = $(this).attr('data-id');
         $('#modal-standard-delete-'+id).modal('show');
     });
 
 }
 
-function deleteUser(){
+function deleteCurrency(){
 
-    $(document).on('click', '.btn-delete-user', function() {
+    $(document).on('click', '.btn-delete-currency', function() {
         var id = $(this).attr('data-id')
             , dataPost = {id: id}
             ;
@@ -208,7 +158,7 @@ function deleteUser(){
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            url: path + '/deleteUser/',
+            url: path + '/deleteCurrency/',
             type: 'POST',
             dataType: 'json',
             data: dataPost,
@@ -218,7 +168,7 @@ function deleteUser(){
                 console.log(dataObj);
                 $('.modal-backdrop').remove();
                 if (dataObj.success == true) {
-                    $('#main-content').html(dataObj.user);
+                    $('#main-content').html(dataObj.currency);
                     slideMessageMultiConfig(lblSuccess, dataObj.alert, 'success', 40);
                 } else {
                     slideMessageMultiConfig(lblWarning, dataObj.alert, 'warning', 40);
@@ -234,22 +184,22 @@ function deleteUser(){
     });
 }
 
-function pressSaveUser(){
-    $(document).bind('keypress', '.add-data-user', function(e) {
+function pressSaveCurrency(){
+    $(document).bind('keypress', '.add-data-currency', function(e) {
         if(e.keyCode==13){
-            saveUser();
+            saveCurrency();
         }
     });
 
 }
 
-function reloadDataByUser(){
+function reloadDataByCurrency(){
     $(document).on('change keyup', '.select-data', function() {
         var searchVal = $(this).val();
-        var User = $('#searchValue').val()
+        var Currency = $('#searchValue').val()
             , type = $('select[name=fieldValue]').val()
-            , url = KPIS.ApiUrl('kpi_standard/KsCategory/reloadDataByUser')
-            , dataPost = {User: User, type: type}
+            , url = KPIS.ApiUrl('kpi_standard/KsCategory/reloadDataByCurrency')
+            , dataPost = {Currency: Currency, type: type}
             ;
 
         var dataJson = $.loadAjax(url, dataPost),
@@ -258,7 +208,7 @@ function reloadDataByUser(){
             slideMessageMultiConfig(lblWarning, dataObj.alert, 'danger', 40);
         }
 
-        $('#main-content').html(dataObj.contentUserHtml);
+        $('#main-content').html(dataObj.contentCurrencyHtml);
         refreshSelectPicker();
     });
 }
