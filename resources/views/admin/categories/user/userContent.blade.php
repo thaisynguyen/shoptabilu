@@ -24,6 +24,13 @@
                                 </a>
                             </div>
                         </div>
+                        <div class="col-md-6 hidden">
+                            <div class="btn-group">
+                                <a  id="btnImportUser" class="btn green btn-outline sbold uppercase" > Import
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <div class="btn-group pull-right">
                                 <button class="btn green btn-outline dropdown-toggle" data-toggle="dropdown">Tools

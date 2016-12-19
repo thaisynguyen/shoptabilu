@@ -12,6 +12,39 @@ $( document ).ready(function() {
     deleteUser();
     pressSaveUser();
     reloadDataByUser();
+
+    $("#excel-import-goal").fileinput({
+        uploadUrl: '#',
+        maxFilePreviewSize: 10240,
+        previewFileType: "image",
+        browseClass: "btn btn-success",
+        browseLabel: 'Browse',
+        browseIcon: "<i class=\"fa fa-file-excel-o\"></i> ",
+        removeClass: "btn btn-danger",
+        removeLabel: 'Remove',
+        removeIcon: "<i class=\"glyphicon glyphicon-trash\"></i> ",
+        uploadClass: "btn btn-info",
+        uploadLabel: 'Upload',
+        uploadIcon: "<i class=\"glyphicon glyphicon-upload\"></i> ",
+        allowedFileExtensions: ['xls', 'xlsx'],
+        showPreview: false,
+        /*extra: function() {
+
+         return {profitImpactId: profitImpactId};
+         },*/
+        uploadAsync: true,
+        uploadExtraData: function () {
+            return {
+                //                    bdInteli: xxxx
+            };
+        }
+    });
+
+    $("#excel-import-goal").on('fileuploaded', function(event, data, previewId, index) {
+        var form = data.form, files = data.files, extra = data.extra,
+            response = data.response, reader = data.reader;
+
+    });
 });
 
 function resetForm(){
@@ -30,6 +63,10 @@ function showAddUser(){
     $(document).on('click', '#btnAddUser', function() {
         $('#modalAddUser').modal('show');
         focusInput('modalAddUser', 'email');
+    });
+
+    $(document).on('click', '#btnImportUser', function() {
+        $('#modalImportUser').modal('show');
     });
 }
 

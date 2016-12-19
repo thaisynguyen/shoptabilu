@@ -29,6 +29,7 @@
     {{ HTML::style('public/assets/admintheme/layouts/layout/css/themes/darkblue.min.css') }}
     {{ HTML::style('public/assets/admintheme/global/plugins/jstree/themes/default/style.min.css') }}
     {{ HTML::style('public/assets/admintheme/layouts/layout/css/custom.css') }}
+    {{ HTML::style('public/assets/uploadfile/fileinput.css') }}
     <!-- END THEME LAYOUT STYLES -->
 @stop
 
@@ -215,6 +216,7 @@
     {{ HTML::script('public/assets/admintheme/pages/scripts/components-date-time-pickers.min.js') }}
 
 
+    {{ HTML::script('public/assets/uploadfile/fileinput.js') }}
     {{ HTML::script('public/assets/scripts/common.js') }}
 
     {{ HTML::script('public/assets/scripts/md5.js') }}

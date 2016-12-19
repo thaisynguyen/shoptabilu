@@ -38,6 +38,7 @@
 </div>
 
     @include('admin.categories.user.addUser')
+    @include('admin.categories.user.importUser')
 @stop
 
 @section('custom_js')
@@ -45,5 +46,6 @@
         var path = '{{url('/')}}';
         sortOnPageLoad();
     </script>
+
     {{ HTML::script('public/assets/scripts/categories/user.js') }}
 @stop
