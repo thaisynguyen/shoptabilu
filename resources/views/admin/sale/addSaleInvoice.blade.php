@@ -7,25 +7,16 @@
                 <h4 class="modal-title text-normal text-bold"><?php echo 'Thêm Mới Hóa Đơn Bán Hàng';?></h4>
             </div>
             <div class="modal-body text-normal">
-                <div class="form-group">
-                    <div class="row">
-                        <label class="col-md-3 control-label"><?php echo 'Barcode';?> (<span class="input-require">*</span>)</label>
-                        <div class="col-md-9">
-                            <input type="text" class="form-control add-data-sale-invoice" id="barcodeid" required>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="form-group has-success">
                     <div class="row">
                         <label class="col-md-3 control-label"><?php echo 'Số hóa đơn';?> (<span class="input-require">*</span>)</label>
                         <div class="col-md-3">
-                            <input type="text" class="form-control add-data-sale-invoice" id="sales-serial-number" required>
+                            <input type="text" class="form-control add-data-sale-invoice" id="sales-serial-number"  name="sales-serial-number" required>
                         </div>
-                        <label class="col-md-3 control-label"><?php echo 'Ngày hóa đơn';?> (<span class="input-require">*</span>)</label>
+                        <label class="col-md-2 control-label"><?php echo 'Ngày hóa đơn';?> (<span class="input-require">*</span>)</label>
                         <div class="col-md-3">
-                            <div class="input-group date date-picker " id="sales-invoice-date" data-date-format="dd-mm-yyyy" required>
-                                <input type="text" class="form-control" readonly="" name="datepicker">
+                            <div class="input-group date date-picker "  data-date-format="dd/mm/yyyy" required>
+                                <input id="sales-invoice-date" type="text" class="form-control" readonly="" name="datepicker" >
                                         <span class="input-group-btn">
                                             <button class="btn default" type="button">
                                                 <i class="fa fa-calendar"></i>
@@ -41,7 +32,7 @@
                     <div class="row">
 
                         <label class="col-md-3 control-label"><?php echo 'Khách Hàng';?> (<span class="input-require">*</span>)</label>
-                        <div class="col-md-9">
+                        <div class="col-md-8">
                             <input type="text" class="form-control add-data-sale-invoice" id="customer" required>
                         </div>
                     </div>
@@ -52,7 +43,7 @@
                         <div class="col-md-3 input-icon right">
                             <input type="text" class="form-control add-data-sale-invoice" id="discount-rate" required>
                         </div>
-                        <label class="col-md-3 control-label"><?php echo 'Tiền giảm giá(trên tổng HĐ)';?> (<span class="input-require">*</span>)</label>
+                        <label class="col-md-2 control-label"><?php echo 'Tiền giảm giá(trên tổng HĐ)';?> (<span class="input-require">*</span>)</label>
                         <div class="col-md-3 input-icon right">
                             <input type="text" class="form-control add-data-sale-invoice" id="discount-amount" required>
                         </div>
@@ -62,7 +53,7 @@
                     <div class="row">
                         <label class="col-md-3 control-label"><?php echo 'Tổng cộng';?> (<span class="input-require">*</span>)</label>
                         <div class="col-md-3 input-icon right">
-                            <input type="text" class="form-control add-data-sale-invoice" id="name" required>
+                            <input type="text" class="form-control add-data-sale-invoice" id="total-invoice" required readonly>
                         </div>
                     </div>
                 </div>

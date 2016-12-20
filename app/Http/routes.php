@@ -99,6 +99,7 @@ Route::any('deleteCurrency','CategoriesController@deleteCurrency');
 // SALE
 
 Route::any('saleInvoice','SaleController@saleInvoice');
+Route::any('getLastSaleInvoiceId','SaleController@getLastSaleInvoiceId');
 
 //EXPORT
 Route::get('exportTargetCorporation/{gId}/{d}','ExportExcelController@exportTargetCorporation');

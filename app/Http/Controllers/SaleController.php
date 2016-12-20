@@ -45,7 +45,7 @@ class SaleController extends AppController {
 
 
     /*
-     * Controller for Unit
+     * Controller for Sale
      */
 
     public function saleInvoice(Request $request){
@@ -59,12 +59,6 @@ class SaleController extends AppController {
                 WHERE p.inactive = 0
         ';
         $productType = DB::select(DB::raw($sql));
-        $sqlProduct = 'SELECT DISTINCT p.*
-                FROM product AS p
-                WHERE p.inactive = 0
-        ';
-        $product = DB::select(DB::raw($sqlProduct));
-
         $productTypeObject = commonUtils::objectToArray($productType);
 //        commonUtils::pr($productTypeObject);die;
         $productType = commonUtils::buildTreeProductType($productTypeObject, 0);
@@ -73,12 +67,20 @@ class SaleController extends AppController {
         $optionProductType .= commonUtils::buildTreeComboProductType($productType, 0, '');
         $optionProductType .= '</select>';
 
+        $sqlProduct = 'SELECT DISTINCT p.*
+                FROM product AS p
+                WHERE p.inactive = 0
+        ';
+        $product = DB::select(DB::raw($sqlProduct));
+
+
+
 //        $productObject = commonUtils::objectToArray($product);
         $optionProduct = '<select id="product_id" class="bs-select form-control bs-select-hidden">
                                 <option value="">(none)</option>';
 
         foreach($product as $p){
-            $optionProduct .= '<option value="' . $p->product_id . '" > ' . $p->product_name  . '</option>';
+            $optionProduct .= '<option value="' . $p->product_id . '" > ' . $p->product_code . ' | ' . $p->product_name  . '</option>';
         }
         $optionProduct .= '</select>';
 
@@ -88,6 +90,13 @@ class SaleController extends AppController {
                                             ;
     }
 
+    public function getLastSaleInvoiceId(){
+        $result = DB::getPdo()->lastInsertId();
 
+        return json_encode(array(
+            "success"               => true
+            , "sale_invoice_id"     => $result
+        ));
+    }
 
 }

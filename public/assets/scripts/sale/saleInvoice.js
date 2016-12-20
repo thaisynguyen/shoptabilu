@@ -19,7 +19,20 @@ function loadData(){
 }
 
 function resetForm(){
-    $('#name').val('');
+    $('#customer').val('');
+    $('#discount-rate').val('');
+    $('#discount-amount').val('');
+    $('#total-invoice').val('');
+    var fullDate = new Date();
+    var twoDigitMonth = fullDate.getMonth() + 1 + "";
+    if(twoDigitMonth.length == 1)
+        twoDigitMonth = "0" + twoDigitMonth;
+    var twoDigitDate = fullDate.getDate() + "";
+    if(twoDigitDate.length == 1)
+        twoDigitDate = "0" + twoDigitDate;
+    var currentDate = twoDigitDate + "/" + twoDigitMonth + "/" + fullDate.getFullYear();
+    $('#sales-invoice-date').val(currentDate);
+    getLastSaleInvoiceId();
 }
 
 function focusInput(idPopup, idInput){
@@ -31,8 +44,30 @@ function focusInput(idPopup, idInput){
 function showAddSaleInvoice(){
     $(document).on('click', '#btnAddSaleInvoice', function() {
         $('#modalAddSaleInvoice').modal('show');
-        focusInput('modalAddSaleInvoice', 'name');
+        focusInput('modalAddSaleInvoice', 'sales-serial-number');
 
+    });
+}
+function getLastSaleInvoiceId(){
+    $.ajax({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        url: path + '/getLastSaleInvoiceId/',
+        type: 'POST',
+        dataType: 'json',
+        success: function(response) {
+
+            dataObj = response;
+            //console.log(dataObj);
+            if (dataObj.success == true) {
+
+                $('#sales-serial-number').val('BH/' + $('#sales-invoice-date').val() + '/' + parseInt(dataObj.sale_invoice_id) + 1);
+            }
+        },
+        error: function(xhr, textStatus, thrownError) {
+            console.log(thrownError);
+        }
     });
 }
 
@@ -75,12 +110,8 @@ function saveSaleInvoice(){
                     console.log(thrownError);
                 }
             });
-
         }
-
     });
-
-
 }
 
 function showEditSaleInvoice(){
