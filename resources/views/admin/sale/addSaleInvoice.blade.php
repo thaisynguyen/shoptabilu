@@ -33,7 +33,20 @@
 
                         <label class="col-md-3 control-label"><?php echo 'Khách Hàng';?> (<span class="input-require">*</span>)</label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control add-data-sale-invoice" id="customer" required>
+                            <select id="customer" class="bs-select form-control bs-select-hidden">
+                                <?php
+                                foreach($customer as $item){
+                                ?>
+                                <option value="{{$item->subject_id}}">{{$item->subject_name}}</option>
+                                <?php
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="col-md-1">
+                            <a  id="btnAddCustomer" class="btn green btn-outline sbold uppercase" > ...
+                                <i class="fa fa-plus"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -41,22 +54,25 @@
                     <div class="row">
                         <label class="col-md-3 control-label"><?php echo '% Giảm giá(trên tổng HĐ)';?> (<span class="input-require">*</span>)</label>
                         <div class="col-md-3 input-icon right">
-                            <input type="text" class="form-control add-data-sale-invoice" id="discount-rate" required>
+                            <input type="number" class="form-control add-data-sale-invoice" id="discount-rate" required>
                         </div>
                         <label class="col-md-2 control-label"><?php echo 'Tiền giảm giá(trên tổng HĐ)';?> (<span class="input-require">*</span>)</label>
                         <div class="col-md-3 input-icon right">
-                            <input type="text" class="form-control add-data-sale-invoice" id="discount-amount" required>
+                            <input type="number" class="form-control add-data-sale-invoice" id="discount-amount" required>
                         </div>
                     </div>
                 </div>
                 <div class="form-group has-success">
                     <div class="row">
-                        <label class="col-md-3 control-label"><?php echo 'Tổng cộng';?> (<span class="input-require">*</span>)</label>
+                        <label class="col-md-3 control-label"><?php echo 'Barcode';?> (<span class="input-require">*</span>)</label>
+                        <div class="col-md-3 input-icon right">
+                            <input type="text" class="form-control add-data-sale-invoice" id="barcode" required >
+                        </div>
+                        <label class="col-md-2 control-label"><?php echo 'Tổng cộng';?> (<span class="input-require">*</span>)</label>
                         <div class="col-md-3 input-icon right">
                             <input type="text" class="form-control add-data-sale-invoice" id="total-invoice" required readonly>
                         </div>
                     </div>
-                </div>
             </div>
 
             <table class="table table-striped table-hover table-bordered" id="added-product-table">
@@ -72,21 +88,18 @@
                     <th> Giảm giá <i class="fa pull-right unsort fa-sort"></i></th>
                     <th> Tổng cộng <i class="fa pull-right unsort fa-sort"></i></th>
                     <th> Xóa </th>
-                    <th> Thêm </th>
                 </tr>
                 </thead>
                 <?php $stt = 0;?>
-                <tbody id="added-product-list">
-                    <tr id="row-product">
+                <tbody id="item-list">
+                    <tr id="row-item">
                         <td>
                             <?php echo $stt += 1;?>
                         </td>
                         <td>
-
                                 <?php
                                     echo $optionProduct;
                                 ?>
-
                         </td>
                         <td>
                             <input type="text" class="form-control" id="product_name" required>
@@ -110,10 +123,7 @@
                             <input type="number" class="form-control" id="total" required readonly>
                         </td>
                         <td>
-                            <a class='td-delete-row' > Xóa </a>
-                        </td>
-                        <td>
-                            <a class='td-add-row' > Thêm </a>
+                            <a id="td-delete-row-{{$stt}}" class='td-delete-row-{{$stt}}' > Xóa </a>
                         </td>
                     </tr>
 
@@ -124,6 +134,8 @@
             <div class="modal-footer">
                 <button type="button" class="btn blue btn-act btn-smooth" id="btnSaveSaleInvoice"><?php echo 'Lưu';?></button>
                 <button type="button" class="btn default btn-act btn-smooth" data-dismiss="modal"><?php echo 'Đóng';?></button>
+                <button type="button" class="btn blue btn-act btn-smooth" id="btnAddNewRow"><?php echo 'Thêm dòng';?></button>
+
             </div>
         </div>
         </div>

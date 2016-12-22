@@ -51,7 +51,7 @@ class SaleController extends AppController {
     public function saleInvoice(Request $request){
         $this->clearSession();
         $data = self::selectAndSortDataFromTable($request, 'sales_invoice');
-
+        // product type
         $sql = 'SELECT p.product_type_id AS id
                       , p.parent_id
                       , p.product_type_name AS text
@@ -60,6 +60,8 @@ class SaleController extends AppController {
         ';
         $productType = DB::select(DB::raw($sql));
         $productTypeObject = commonUtils::objectToArray($productType);
+
+        // product type tree combobox
 //        commonUtils::pr($productTypeObject);die;
         $productType = commonUtils::buildTreeProductType($productTypeObject, 0);
         $optionProductType = '<select id="parent_id" class="bs-select form-control bs-select-hidden">
@@ -67,14 +69,14 @@ class SaleController extends AppController {
         $optionProductType .= commonUtils::buildTreeComboProductType($productType, 0, '');
         $optionProductType .= '</select>';
 
+        // product
         $sqlProduct = 'SELECT DISTINCT p.*
                 FROM product AS p
                 WHERE p.inactive = 0
         ';
         $product = DB::select(DB::raw($sqlProduct));
 
-
-
+        // product combobox
 //        $productObject = commonUtils::objectToArray($product);
         $optionProduct = '<select id="product_id" class="bs-select form-control bs-select-hidden">
                                 <option value="">(none)</option>';
@@ -84,9 +86,18 @@ class SaleController extends AppController {
         }
         $optionProduct .= '</select>';
 
+
+        // customer
+        $sqlCustomer = 'SELECT DISTINCT s.*
+                    FROM subject AS s
+                    WHERE s.inactive = 0 AND s.is_customer = 1
+        ';
+        $customer = DB::select(DB::raw($sqlCustomer));
+
         return view('admin.sale.saleInvoice')->with('data', $data)
                                              ->with('optionProductType', $optionProductType)
                                              ->with('optionProduct', $optionProduct)
+                                             ->with('customer', $customer)
                                             ;
     }
 

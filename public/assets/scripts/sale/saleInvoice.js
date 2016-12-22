@@ -11,6 +11,7 @@ $( document ).ready(function() {
     deleteSaleInvoice();
     pressSaveSaleInvoice();
     loadData();
+    addNewRow();
 });
 
 
@@ -48,6 +49,16 @@ function showAddSaleInvoice(){
 
     });
 }
+
+function addNewRow(){
+    $(document).on('click', '#btnAddNewRow', function() {
+        var row = $('#row-item').html();
+        var newRow = $('#item-list tbody').append('<tr>'+row+'</tr>');
+
+
+    });
+}
+
 function getLastSaleInvoiceId(){
     $.ajax({
         headers: {
