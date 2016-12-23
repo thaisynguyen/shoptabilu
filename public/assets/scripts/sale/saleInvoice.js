@@ -51,13 +51,15 @@ function showAddSaleInvoice(){
 }
 
 function addNewRow(){
-    $(document).on('click', '#btnAddNewRow', function() {
-        var row = $('#row-item-1');
-        console.log(row);
-         $('#row-item-1').insertAfter(row);
-
+    $(document).on('click', 'a.td-add-row', function() {
+        var $tr    = $(this).closest('#row-item');
+        console.log($tr);
+        var $clone = $tr.clone();
+        $clone.find(':text').val('');
+        $tr.after($clone);
 
     });
+
 }
 
 function getLastSaleInvoiceId(){

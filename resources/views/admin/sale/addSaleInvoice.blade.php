@@ -88,11 +88,12 @@
                     <th> Giảm giá <i class="fa pull-right unsort fa-sort"></i></th>
                     <th> Tổng cộng <i class="fa pull-right unsort fa-sort"></i></th>
                     <th> Xóa </th>
+                    <th> Xóa </th>
                 </tr>
                 </thead>
                 <?php $stt = 0;?>
                 <tbody id="item-list">
-                    <tr id="row-item-{{$stt}}">
+                    <tr id="row-item">
                         <td>
                             <?php echo $stt += 1;?>
                         </td>
@@ -125,6 +126,9 @@
                         <td>
                             <a id="td-delete-row-{{$stt}}" class='td-delete-row-{{$stt}}' > Xóa </a>
                         </td>
+                        <td>
+                            <a id="td-add-row" class='td-add-row' > Thêm </a>
+                        </td>
                     </tr>
 
 
@@ -134,7 +138,6 @@
             <div class="modal-footer">
                 <button type="button" class="btn blue btn-act btn-smooth" id="btnSaveSaleInvoice"><?php echo 'Lưu';?></button>
                 <button type="button" class="btn default btn-act btn-smooth" data-dismiss="modal"><?php echo 'Đóng';?></button>
-                <button type="button" class="btn blue btn-act btn-smooth" id="btnAddNewRow"><?php echo 'Thêm dòng';?></button>
 
             </div>
         </div>
