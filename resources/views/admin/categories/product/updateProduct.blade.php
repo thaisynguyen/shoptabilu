@@ -70,43 +70,37 @@
                                         <div class="tab-pane active" id="tab_general">
                                             <div class="form-body">
 												<div class="row">
-													<div class="col-md-6">
+													<div class="col-md-12">
 														<div class="form-group">
-															<label class="col-md-3 control-label">Mã SP:
+															<label class="col-md-2 control-label">Mã SP:
 																<span class="required"> * </span>
 															</label>
-															<div class="col-md-9">
+															<div class="col-md-4">
 																<input type="text" class="form-control" id="product_code" name="product_code" placeholder="" value="{{ $product->product_code }}"></div>
-														</div>
-													</div>
-													<div class="col-md-6">
-														<div class="form-group">
-															<label class="col-md-3 control-label">Loai SP:
+																												
+															<label class="col-md-2 control-label">Loai SP:
 																<span class="required"> * </span>
 															</label>
-															<div class="col-md-9">
+															<div class="col-md-4">
                                                                 {{ commonUtils::renderTreeComboBox($arrayProductType, '',$product->product_type_id, 'table-group-action-input form-control input-medium', 'product_type_id', 'product_type_id', '')}}
 															</div>
-														</div>														
-													</div>
+														</div>
+													</div>													
 												</div>
 												
-												<div class="row">
-													<div class="col-md-6">
+												<div class="row">													
+													<div class="col-md-12">
 														<div class="form-group">
-															<label class="col-md-3 control-label">Tên SP:
+															<label class="col-md-2 control-label">Tên SP:
 																<span class="required"> * </span>
 															</label>
-															<div class="col-md-9">
+															<div class="col-md-4">
 																<input type="text" class="form-control" id="product_name" name="product_name" placeholder="" value="{{ $product->product_name }}"></div>
-														</div>
-													</div>
-													<div class="col-md-6">
-														<div class="form-group">
-															<label class="col-md-3 control-label">Nhà SX:
+														
+															<label class="col-md-2 control-label">Nhà SX:
 																<span class="required"> * </span>
 															</label>
-															<div class="col-md-9">
+															<div class="col-md-4">
 																{{ commonUtils::renderCombobox($arrayProducer, $product->producer_id, 'table-group-action-input form-control input-medium', 'producer_id', 'producer_id', 'Chọn NSX...')}}																
 															</div>
 														</div>
@@ -114,19 +108,16 @@
 												</div>
 												
 												<div class="row">
-													<div class="col-md-6">
+													<div class="col-md-12">
 														<div class="form-group">
-															<label class="col-md-3 control-label">Barcode:</label>
-															<div class="col-md-9">
+															<label class="col-md-2 control-label">Barcode:</label>
+															<div class="col-md-4">
 																<input type="text" class="form-control" id="barcode" name="barcode" placeholder="" value="{{ $product->barcode }}"></div>
-														</div>
-													</div>
-													<div class="col-md-6">
-														<div class="form-group">
-															<label class="col-md-3 control-label">ĐVT:
+													
+															<label class="col-md-2 control-label">ĐVT:
 																<span class="required"> * </span>
 															</label>
-															<div class="col-md-9">
+															<div class="col-md-4">
 																{{ commonUtils::renderCombobox($arrayUnit, $product->base_unit_id, 'table-group-action-input form-control input-medium', 'base_unit_id', 'base_unit_id', 'Chọn ĐVT...')}}
 															</div>
 														</div>
@@ -134,34 +125,28 @@
 												</div>
 												            
 												<div class="row">
-													<div class="col-md-6">
+													<div class="col-md-12">
 														<div class="form-group">
-															<label class="col-md-3 control-label">Thương hiệu:</label>
-															<div class="col-md-9">
+															<label class="col-md-2 control-label">Thương hiệu:</label>
+															<div class="col-md-4">
 																<input type="text" class="form-control" id="trademark" name="trademark" placeholder="" value="{{ $product->trademark }}"></div>
-														</div>
-													</div>
-													<div class="col-md-6">
-														<div class="form-group">
-															<label class="col-md-3 control-label">Kiểu mẫu:</label>
-															<div class="col-md-9">
+														
+															<label class="col-md-2 control-label">Kiểu mẫu:</label>
+															<div class="col-md-4">
 																<input type="text" class="form-control" id="model" name="model" placeholder="" value="{{ $product->model }}"></div>
 														</div>
 													</div>
 												</div>
 												
 												<div class="row">
-													<div class="col-md-6">
+													<div class="col-md-12">
 														<div class="form-group">
-															<label class="col-md-3 control-label">Màu sắc:</label>
-															<div class="col-md-9">
+															<label class="col-md-2 control-label">Màu sắc:</label>
+															<div class="col-md-4">
 																<input type="text" class="form-control" id="color" name="color" placeholder="" value="{{ $product->color }}"></div>
-														</div>
-													</div>
-													<div class="col-md-6">
-														<div class="form-group">
-															<label class="col-md-3 control-label">Cân nặng:</label>
-															<div class="col-md-9">
+
+															<label class="col-md-2 control-label">Cân nặng:</label>
+															<div class="col-md-4">
 																<div class="input-group input-daterange" >																									
 																	<input type="text" class="form-control" id="weight"  name="weight" placeholder="Cân nặng" value="{{ $product->weight }}">
 																	<span class="input-group-addon">(kg)</span>																																		
@@ -175,7 +160,7 @@
 													<div class="col-md-12">
 														<div class="form-group">
 															<label class="col-md-2 control-label">Kích thước:</label>
-															<div class="col-md-10">
+															<div class="col-md-5">
 																<div class="input-group input-daterange" >																									
 																	<input type="text" class="form-control" id="length"  name="length" placeholder="Dài" value="{{ $product->length }}">
 																	<span class="input-group-addon">(cm)</span>																	
@@ -189,26 +174,34 @@
 													</div>													
 												</div>
 												
-												<div class="form-group">
-                                                    <label class="col-md-2 control-label">Mô tả ngắn:</label>
-                                                    <div class="col-md-10">
-                                                        <textarea class="form-control" id="short_description" name="short_description">{{ $product->short_description }}</textarea>
-                                                        <!--span class="help-block"> shown in product listing </span-->
-                                                    </div>
-                                                </div>
 												
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label">Mô tả dài:</label>
-                                                    <div class="col-md-10">
-                                                        <textarea class="form-control" id="long_description" name="long_description">{{ $product->long_description }}</textarea>
-                                                    </div>
+												<div class="row">
+													<div class="col-md-12">
+														<div class="form-group">
+															<label class="col-md-2 control-label">Mô tả ngắn:</label>
+															<div class="col-md-10">
+																<textarea class="form-control" id="short_description" name="short_description">{{ $product->short_description }}</textarea>
+																<!--span class="help-block"> shown in product listing </span-->
+															</div>
+														</div>
+													</div>
+												</div>																							
+												
+												<div class="row">
+													<div class="col-md-12">
+														<div class="form-group">
+															<label class="col-md-2 control-label">Mô tả dài:</label>															
+															<div class="col-md-10">
+																<textarea class="form-control" id="long_description" name="long_description">{{ $product->long_description }}</textarea>
+															</div>
+														</div>
+													</div>
 												</div>
 
                                             </div>
                                         </div>
                                         <div class="tab-pane" id="tab_detail">
-                                            <!-- BEGIN EXAMPLE TABLE PORTLET-->
-											<div class="portlet light portlet-fit bordered">
+                                            <!-- BEGIN EXAMPLE TABLE PORTLET-->											
 												<!--div class="portlet-title">
 													<div class="caption">
 														<i class="icon-settings font-red"></i>
@@ -227,7 +220,10 @@
 													<div class="table-toolbar">
 														<div class="row">
 															<div class="col-md-6">
-																<div class="btn-group">
+
+															</div>
+															<div class="col-md-6">
+																<div class="btn-group pull-right">
 																	<div class="actions btn-set">
 																		<button id="tblProductDetail_new" class="btn green"> Thêm
 																			<i class="fa fa-plus"></i>
@@ -246,9 +242,7 @@
 																		</button>
 																	</div>
 																</div>
-															</div>
-															<div class="col-md-6">
-																<!--div class="btn-group pull-right">
+																<!--div class="btn-group ">
 																	<button class="btn green btn-outline dropdown-toggle" data-toggle="dropdown">Tools
 																		<i class="fa fa-angle-down"></i>
 																	</button>
@@ -285,8 +279,6 @@
 														</thead>
 													</table>
 												</div>
-											</div>
-											
 											<!-- END EXAMPLE TABLE PORTLET-->
                                         </div>
                                         <div class="tab-pane" id="tab_images">
