@@ -52,8 +52,9 @@ function showAddSaleInvoice(){
 
 function addNewRow(){
     $(document).on('click', '#btnAddNewRow', function() {
-        var row = $('#row-item').html();
-        var newRow = $('#item-list tbody').append('<tr>'+row+'</tr>');
+        var row = $('#row-item-1');
+        console.log(row);
+         $('#row-item-1').insertAfter(row);
 
 
     });

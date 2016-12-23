@@ -92,7 +92,7 @@
                 </thead>
                 <?php $stt = 0;?>
                 <tbody id="item-list">
-                    <tr id="row-item">
+                    <tr id="row-item-{{$stt}}">
                         <td>
                             <?php echo $stt += 1;?>
                         </td>
