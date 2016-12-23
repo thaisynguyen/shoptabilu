@@ -12,6 +12,7 @@ $( document ).ready(function() {
     pressSaveSaleInvoice();
     loadData();
     addNewRow();
+    getProductByBarcode();
 });
 
 
@@ -83,6 +84,46 @@ function getLastSaleInvoiceId(){
             console.log(thrownError);
         }
     });
+}
+
+var delay = (function(){
+    var timer = 0;
+    return function(callback, ms){
+        clearTimeout (timer);
+        timer = setTimeout(callback, ms);
+    };
+})();
+
+function getProductByBarcode(){
+    $("#barcode").bind("keyup change", function(e) {
+        delay(function(){
+            var barcode = $('#barcode').val();
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: path + '/getProductByBarcode/',
+                type: 'POST',
+                dataType: 'json',
+                data: {barcode: barcode},
+                success: function(response) {
+
+                    dataObj = response;
+                    console.log(dataObj);
+                    if (dataObj.success == true) {
+                        $('#barcode').val('');
+                        $('#barcode').focus();
+                        var $tr    = $(this).closest('#row-item');
+                    }
+                },
+                error: function(xhr, textStatus, thrownError) {
+                    console.log(thrownError);
+                }
+            });
+        }, 1000 );
+    })
+
+
 }
 
 function saveSaleInvoice(){

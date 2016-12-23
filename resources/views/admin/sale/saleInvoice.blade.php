@@ -36,7 +36,8 @@
 
 </div>
 
-    @include('admin.sale.addSaleInvoice', array('optionProductType' => $optionProductType, 'optionProduct' => $optionProduct))
+    @include('admin.sale.addSaleInvoice', array('optionProductType' => $optionProductType
+    , 'optionProductCode' => $optionProductCode, 'optionProductName' => $optionProductName))
 @stop
 
 @section('custom_js')

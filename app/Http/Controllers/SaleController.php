@@ -76,15 +76,20 @@ class SaleController extends AppController {
         ';
         $product = DB::select(DB::raw($sqlProduct));
 
-        // product combobox
-//        $productObject = commonUtils::objectToArray($product);
-        $optionProduct = '<select id="product_id" class="bs-select form-control bs-select-hidden">
-                                <option value="">(none)</option>';
+        // product code combobox
+        $optionProductCode = '';
 
         foreach($product as $p){
-            $optionProduct .= '<option value="' . $p->product_id . '" > ' . $p->product_code . ' | ' . $p->product_name  . '</option>';
+            $optionProductCode .= '<option value="' . $p->product_id . '" > ' . $p->product_code . ' | ' . $p->product_name  . '</option>';
         }
-        $optionProduct .= '</select>';
+
+        // product name combobox
+        $optionProductName = '';
+
+        foreach($product as $p){
+            $optionProductName .= '<option value="' . $p->product_id . '" > ' . $p->product_name . ' | ' . $p->product_code  . '</option>';
+        }
+
 
 
         // customer
@@ -96,7 +101,8 @@ class SaleController extends AppController {
 
         return view('admin.sale.saleInvoice')->with('data', $data)
                                              ->with('optionProductType', $optionProductType)
-                                             ->with('optionProduct', $optionProduct)
+                                             ->with('optionProductCode', $optionProductCode)
+                                             ->with('optionProductName', $optionProductName)
                                              ->with('customer', $customer)
                                             ;
     }
@@ -108,6 +114,26 @@ class SaleController extends AppController {
             "success"               => true
             , "sale_invoice_id"     => $result
         ));
+    }
+
+    public function getProductByBarcode(Request $request){
+        $barcode = $request->get('barcode');
+        if($barcode != ''){
+            $sqlProduct = 'SELECT DISTINCT p.*
+                FROM product AS p
+                WHERE p.inactive = 0 AND barcode = ' . $request->get('barcode');
+            $product = DB::select(DB::raw($sqlProduct));
+
+            return json_encode(array(
+                "success"       => true
+            , "product"     => $product
+            ));
+        } else {
+            return json_encode(array(
+                "success"       => false
+            ));
+        }
+
     }
 
 }

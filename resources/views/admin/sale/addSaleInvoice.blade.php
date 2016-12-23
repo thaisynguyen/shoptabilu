@@ -58,7 +58,7 @@
                         </div>
                         <label class="col-md-2 control-label"><?php echo 'Tiền giảm giá(trên tổng HĐ)';?> (<span class="input-require">*</span>)</label>
                         <div class="col-md-3 input-icon right">
-                            <input type="number" class="form-control add-data-sale-invoice" id="discount-amount" required>
+                            <input type="number" class="form-control add-data-sale-invoice" id="discount-amount" required onchange="getProductByBarcode()">
                         </div>
                     </div>
                 </div>
@@ -96,14 +96,24 @@
                     <tr id="row-item">
                         <td>
                             <?php echo $stt += 1;?>
+
+                            <input id="product_id_{{$stt}}" type="hidden" >
                         </td>
                         <td>
-                                <?php
-                                    echo $optionProduct;
-                                ?>
+                            <select id="product_code_{{$stt}}" class="bs-select form-control bs-select-hidden">
+                                <option value="">(none)</option>';
+                                    <?php
+                                        echo $optionProductCode;
+                                    ?>
+                                </select>
                         </td>
                         <td>
-                            <input type="text" class="form-control" id="product_name" required>
+                            <select id="product_name_{{$stt}}" class="bs-select form-control bs-select-hidden">
+                                <option value="">(none)</option>';
+                                    <?php
+                                        echo $optionProductName;
+                                    ?>
+                            </select>
                         </td>
                         <td>
                             <input type="number" class="form-control" id="unit_price" required>
