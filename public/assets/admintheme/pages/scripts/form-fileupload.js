@@ -27,6 +27,9 @@ var FormFileUpload = function () {
             // Upload server status check for browsers with CORS support:
             if ($.support.cors) {
                 $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
                     type: 'HEAD'
                 }).fail(function () {
                     $('<div class="alert alert-danger"/>')
@@ -41,6 +44,9 @@ var FormFileUpload = function () {
             $.ajax({
                 // Uncomment the following to send cross-domain cookies:
                 //xhrFields: {withCredentials: true},
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
                 url: $('#fileupload').attr("action"),
                 dataType: 'json',
                 context: $('#fileupload')[0]
