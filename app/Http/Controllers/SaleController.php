@@ -80,14 +80,14 @@ class SaleController extends AppController {
         $optionProductCode = '';
 
         foreach($product as $p){
-            $optionProductCode .= '<option value="' . $p->product_id . '" > ' . $p->product_code . ' | ' . $p->product_name  . '</option>';
+            $optionProductCode .= '<option value="' . $p->product_id . '" code="' . $p->product_code . '" name="' . $p->product_name . '"> ' . $p->product_code . ' | ' . $p->product_name  . '</option>';
         }
 
         // product name combobox
         $optionProductName = '';
 
         foreach($product as $p){
-            $optionProductName .= '<option value="' . $p->product_id . '" > ' . $p->product_name . ' | ' . $p->product_code  . '</option>';
+            $optionProductName .= '<option value="' . $p->product_id . '" code="' . $p->product_code . '" name="' . $p->product_name . '" > ' . $p->product_name . ' | ' . $p->product_code  . '</option>';
         }
 
 

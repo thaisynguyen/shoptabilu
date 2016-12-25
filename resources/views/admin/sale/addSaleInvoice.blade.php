@@ -88,19 +88,18 @@
                     <th> Giảm giá <i class="fa pull-right unsort fa-sort"></i></th>
                     <th> Tổng cộng <i class="fa pull-right unsort fa-sort"></i></th>
                     <th> Xóa </th>
-                    <th> Xóa </th>
                 </tr>
                 </thead>
                 <?php $stt = 0;?>
                 <tbody id="item-list">
-                    <tr id="row-item">
+                    <tr id="row-item" order="{{$stt}}">
                         <td>
                             <?php echo $stt += 1;?>
 
-                            <input id="product_id_{{$stt}}" type="hidden" >
+                            <input id="product_id" type="hidden" >
                         </td>
                         <td>
-                            <select id="product_code_{{$stt}}" class="bs-select form-control bs-select-hidden">
+                            <select id="product_code" class="bs-select form-control bs-select-hidden product_code">
                                 <option value="">(none)</option>';
                                     <?php
                                         echo $optionProductCode;
@@ -108,7 +107,7 @@
                                 </select>
                         </td>
                         <td>
-                            <select id="product_name_{{$stt}}" class="bs-select form-control bs-select-hidden">
+                            <select id="product_name" class="bs-select form-control bs-select-hidden product_name">
                                 <option value="">(none)</option>';
                                     <?php
                                         echo $optionProductName;
@@ -134,10 +133,7 @@
                             <input type="number" class="form-control" id="total" required readonly>
                         </td>
                         <td>
-                            <a id="td-delete-row-{{$stt}}" class='td-delete-row-{{$stt}}' > Xóa </a>
-                        </td>
-                        <td>
-                            <a id="td-add-row" class='td-add-row' > Thêm </a>
+                            <a id="td-delete-row" class='td-delete-row'> Xóa </a>
                         </td>
                     </tr>
 
@@ -146,6 +142,7 @@
 
             </table>
             <div class="modal-footer">
+                <button type="button" class="btn blue btn-act btn-smooth" id="btnAddDetail"><?php echo 'Thêm sản phẩm';?></button>
                 <button type="button" class="btn blue btn-act btn-smooth" id="btnSaveSaleInvoice"><?php echo 'Lưu';?></button>
                 <button type="button" class="btn default btn-act btn-smooth" data-dismiss="modal"><?php echo 'Đóng';?></button>
 

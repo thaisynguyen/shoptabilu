@@ -13,6 +13,7 @@ $( document ).ready(function() {
     loadData();
     addNewRow();
     getProductByBarcode();
+    selectProductCode();
 });
 
 
@@ -52,11 +53,20 @@ function showAddSaleInvoice(){
 }
 
 function addNewRow(){
-    $(document).on('click', 'a.td-add-row', function() {
-        var $tr    = $(this).closest('#row-item');
-        console.log($tr);
+    $(document).on('click', '#btnAddDetail', function() {
+        var $tr = $('#added-product-table tr:last');
+
+        var order = parseInt($tr.attr('order')) + 1;
         var $clone = $tr.clone();
+        //change row id
+        $clone.attr('id', 'row-item' + order);
+        $clone.attr('order', order);
+        //change combo product_code id
+        $clone.find('select.product_code').attr('id', 'product_code' + order);
+        $clone.find('select.product_name').attr('id', 'product_name' + order);
+
         $clone.find(':text').val('');
+
         $tr.after($clone);
 
     });
@@ -111,9 +121,24 @@ function getProductByBarcode(){
                     dataObj = response;
                     console.log(dataObj);
                     if (dataObj.success == true) {
+
+                        var $tr = $('#added-product-table tr:last');
+                        var order = parseInt($tr.attr('order')) + 1;
+                        var $clone = $tr.clone();
+                        $clone.attr('id', 'row-item' + order);
+                        $clone.attr('order', order);
+                        $clone.find(':text').val('');
+
+                        $clone.find('td:first').html(order);
+                        $clone.find('#product_id').val(dataObj.product[0].product_id);
+                        $clone.find('#product_code').val(dataObj.product[0].product_id);
+                        $clone.find('#product_name').val(dataObj.product[0].product_id);
+
+                        $tr.after($clone);
+
+
                         $('#barcode').val('');
                         $('#barcode').focus();
-                        var $tr    = $(this).closest('#row-item');
                     }
                 },
                 error: function(xhr, textStatus, thrownError) {
@@ -124,6 +149,22 @@ function getProductByBarcode(){
     })
 
 
+}
+
+function selectProductCode(){
+
+    $('#added-product-table').on('change', '.product_code', function(event) {
+        var $select = $(event.target);
+        //
+        //// how to get id of parent tr
+        //var tr = $select.closest('tr')[0];
+        //var id = tr.id;
+        //var className = tr.className;
+
+        // how to get value of that particular dropdown selected
+        var value = $select.val();
+        console.log(value);
+    });
 }
 
 function saveSaleInvoice(){
