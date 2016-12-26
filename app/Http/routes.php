@@ -60,6 +60,7 @@ Route::any('addProduct','ProductController@addProduct');
 Route::any('updateProduct','ProductController@updateProduct');
 Route::any('viewProduct/{id}','ProductController@viewProduct');
 Route::any('getAllArrayCombobox','ProductController@getAllArrayCombobox');
+Route::any('uploadProductImage','ProductController@uploadProductImage');
 
 Route::any('listProductDetail','ProductController@listProductDetail');
 Route::any('deleteProductDetail','ProductController@deleteProductDetail');

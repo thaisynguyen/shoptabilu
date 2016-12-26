@@ -18,7 +18,11 @@
 	<!--{{ HTML::style('public/assets/admintheme/global/plugins/fullcalendar/fullcalendar.min.css') }}  -->  
     {{ HTML::style('public/assets/admintheme/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css') }}
     {{ HTML::style('public/assets/admintheme/global/plugins/datatables/datatables.min.css') }}
-    
+
+    {{ HTML::style('public/assets/admintheme/global/plugins/fancybox/source/jquery.fancybox.css') }}
+    {{ HTML::style('public/assets/admintheme/global/plugins/jquery-file-upload/blueimp-gallery/blueimp-gallery.min.css') }}
+    {{ HTML::style('public/assets/admintheme/global/plugins/jquery-file-upload/css/jquery.fileupload.css') }}
+    {{ HTML::style('public/assets/admintheme/global/plugins/jquery-file-upload/css/jquery.fileupload-ui.css') }}
     <!-- END PAGE LEVEL PLUGINS -->
 
     <!-- BEGIN THEME GLOBAL STYLES -->
@@ -181,7 +185,24 @@
 	
 	{{ HTML::script('public/assets/admintheme/global/plugins/jquery-validation/js/jquery.validate.min.js') }}
 	{{ HTML::script('public/assets/admintheme/global/plugins/jquery-validation/js/additional-methods.min.js') }}
-    <!-- END PAGE LEVEL PLUGINS -->
+
+    {{ HTML::script('public/assets/admintheme/global/plugins/fancybox/source/jquery.fancybox.pack.js') }}
+    {{ HTML::script('public/assets/admintheme/global/plugins/jquery-file-upload/js/vendor/jquery.ui.widget.js') }}
+    {{ HTML::script('public/assets/admintheme/global/plugins/jquery-file-upload/js/vendor/tmpl.min.js') }}
+    {{ HTML::script('public/assets/admintheme/global/plugins/jquery-file-upload/js/vendor/load-image.min.js') }}
+    {{ HTML::script('public/assets/admintheme/global/plugins/jquery-file-upload/js/vendor/canvas-to-blob.min.js') }}
+    {{ HTML::script('public/assets/admintheme/global/plugins/jquery-file-upload/blueimp-gallery/jquery.blueimp-gallery.min.js') }}
+    {{ HTML::script('public/assets/admintheme/global/plugins/jquery-file-upload/js/jquery.iframe-transport.js') }}
+    {{ HTML::script('public/assets/admintheme/global/plugins/jquery-file-upload/js/jquery.fileupload.js') }}
+    {{ HTML::script('public/assets/admintheme/global/plugins/jquery-file-upload/js/jquery.fileupload-process.js') }}
+    {{ HTML::script('public/assets/admintheme/global/plugins/jquery-file-upload/js/jquery.fileupload-image.js') }}
+    {{ HTML::script('public/assets/admintheme/global/plugins/jquery-file-upload/js/jquery.fileupload-audio.js') }}
+    {{ HTML::script('public/assets/admintheme/global/plugins/jquery-file-upload/js/jquery.fileupload-video.js') }}
+    {{ HTML::script('public/assets/admintheme/global/plugins/jquery-file-upload/js/jquery.fileupload-validate.js') }}
+    {{ HTML::script('public/assets/admintheme/global/plugins/jquery-file-upload/js/jquery.fileupload-ui.js') }}
+
+
+<!-- END PAGE LEVEL PLUGINS -->
 
     <!-- BEGIN THEME GLOBAL SCRIPTS -->
 	<!--{{ HTML::script('public/assets/admintheme/global/plugins/jstree/dist/jstree.js') }}-->
@@ -192,6 +213,8 @@
     {{ HTML::script('public/assets/admintheme/pages/scripts/ui-bootbox.min.js') }}-->
     {{ HTML::script('public/assets/admintheme/pages/scripts/table-datatables-editable.min.js') }}
 	<!--{{ HTML::script('public/assets/admintheme/pages/scripts/table-datatables-responsive.min.js') }}	-->
+
+    <!--{{ HTML::script('public/assets/admintheme/pages/scripts/form-fileupload.min.js') }}-->
 	
     {{ HTML::script('public/assets/admintheme/layouts/layout/scripts/layout.min.js') }}
     {{ HTML::script('public/assets/admintheme/layouts/layout/scripts/demo.min.js') }}

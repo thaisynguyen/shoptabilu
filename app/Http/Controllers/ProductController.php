@@ -2,6 +2,7 @@
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 use DB;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Input;
 use Mockery\Exception;
 use Session;
 use Illuminate\Http\Request;
@@ -16,6 +17,7 @@ use App\Http\Requests\CreateGoalLevelOneRequest;
 use App\Http\Requests\CreateGoalLevelTwoRequest;
 use Utils\commonUtils;
 use App\Services\CustomPaginator;
+
 
 class ProductController extends AppController {
 
@@ -473,5 +475,106 @@ class ProductController extends AppController {
             ));
         }
     }
-	
+
+    public function uploadProductImage(Request $request)
+    {
+        //$post = $request->all();
+        //$file = $post['filename'];
+        /*$file = Input::file('file');
+
+        $upload = new Upload;
+
+
+        try {
+            $upload->process($file);
+        } catch(Exception $exception){
+            // Something went wrong. Log it.
+            Log::error($exception);
+            $error = array(
+                'name' => $file->getClientOriginalName(),
+                'size' => $file->getSize(),
+                'error' => $exception->getMessage(),
+            );
+            // Return error
+            return Response::json($error, 400);
+        }
+
+        // If it now has an id, it should have been successful.
+        if ( $upload->id ) {
+            $newurl = URL::asset($upload->publicpath().$upload->filename);
+
+            // this creates the response structure for jquery file upload
+            $success = new stdClass();
+            $success->name = $upload->filename;
+            $success->size = $upload->size;
+            $success->url = $newurl;
+            $success->thumbnailUrl = $newurl;
+            $success->deleteUrl = action('UploadController@delete', $upload->id);
+            $success->deleteType = 'DELETE';
+            $success->fileID = $upload->id;
+
+            return Response::json(array( 'files'=> array($success)), 200);
+        } else {
+            return Response::json('Error', 400);
+        }*/
+
+/*        $post = $request->all();
+        $file = $post['files'];
+
+        $json = array(
+            'files' => array()
+        );
+
+        $filename = $file[0]->getClientOriginalName().".".$file[0]->getClientOriginalExtension();
+        $json['files'][] = array(
+            'name' => $filename,
+            'size' => $file[0]->getSize(),
+            'type' => 'image/jpeg',
+            'url' => '/uploads/files/'.$filename,
+            'deleteType' => 'DELETE',
+            'deleteUrl' => self::$route.'/deleteFile/'.$filename,
+        );
+
+        $upload = $file[0]->move( public_path().'\\assets\\admintheme\\upload\\images\\', $filename );
+        //$upload = $file->move( public_path().'/uploads/files', $filename );
+
+        return Response::json($json);
+*/
+
+
+        $post = $request->all();
+        //commonUtils::pr($post);die;
+
+        $uploaddir = public_path() . '\\assets\\admintheme\\upload\\images\\';
+        if(isset($post['files'])){
+            $file = $post['files'];
+            $localFileName  = $file[0]->getClientOriginalName();
+            //commonUtils::pr($localFileName);die;
+//            Image::make($file->getRealPath())->resize(154, 30)->save($uploaddir);
+            $result = $file[0]->move($uploaddir, $localFileName);
+
+
+            try {
+
+                return json_encode(array(
+                    "files"  => $uploaddir . $localFileName
+                , "thumbnailUrl"  => $uploaddir . $localFileName
+                , "name"  => $localFileName
+                , "type" => "image/jpeg"
+                , "size" => 620888
+                , "deleteUrl" => "https://jquery-file-upload.appspot.com/image%2Fjpeg/1499352104/Tulips.jpg"
+                , "deleteType" => "DELETE"
+
+                ));
+
+            } catch (Exception $e) {
+                return json_encode(array(
+                    "success"  => false
+                , "alert"  => commonUtils::EDIT_UNSUCCESSFULLY
+                ));
+            }
+        }
+
+
+    }
 }
