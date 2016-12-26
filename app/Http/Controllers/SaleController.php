@@ -119,8 +119,9 @@ class SaleController extends AppController {
     public function getProductByBarcode(Request $request){
         $barcode = $request->get('barcode');
         if($barcode != ''){
-            $sqlProduct = 'SELECT DISTINCT p.*
+            $sqlProduct = 'SELECT DISTINCT p.*, pd.sale_price
                 FROM product AS p
+                LEFT JOIN product_detail AS pd ON p.product_id = pd.product_id
                 WHERE p.inactive = 0 AND barcode = ' . $request->get('barcode');
             $product = DB::select(DB::raw($sqlProduct));
 

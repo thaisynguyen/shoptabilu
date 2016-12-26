@@ -14,6 +14,8 @@ $( document ).ready(function() {
     addNewRow();
     getProductByBarcode();
     selectProductCode();
+    selectProductName();
+    amount();
 });
 
 
@@ -66,7 +68,7 @@ function addNewRow(){
         $clone.find('select.product_name').attr('id', 'product_name' + order);
 
         $clone.find(':text').val('');
-
+        $clone.find('#quantity').val(1);
         $tr.after($clone);
 
     });
@@ -133,6 +135,8 @@ function getProductByBarcode(){
                         $clone.find('#product_id').val(dataObj.product[0].product_id);
                         $clone.find('#product_code').val(dataObj.product[0].product_id);
                         $clone.find('#product_name').val(dataObj.product[0].product_id);
+                        $clone.find('#price').val(dataObj.product[0].sale_price);
+                        $clone.find('#quantity').val(1);
 
                         $tr.after($clone);
 
@@ -154,16 +158,57 @@ function getProductByBarcode(){
 function selectProductCode(){
 
     $('#added-product-table').on('change', '.product_code', function(event) {
-        var $select = $(event.target);
-        //
+        // how to get value of that particular dropdown selected
+        var select = $(event.target);
+        var productId = select.val();
+
+        var selectName = select.parent('td').next('td').find('select');
+        selectName.val(productId);
+
         //// how to get id of parent tr
         //var tr = $select.closest('tr')[0];
         //var id = tr.id;
         //var className = tr.className;
 
+    });
+}
+
+function selectProductName(){
+
+    $('#added-product-table').on('change', '.product_name', function(event) {
         // how to get value of that particular dropdown selected
-        var value = $select.val();
-        console.log(value);
+        var select = $(event.target);
+        var productId = select.val();
+
+        var selectCode = select.parent('td').prev('td').find('select');
+        selectCode.val(productId);
+
+        //// how to get id of parent tr
+        //var tr = $select.closest('tr')[0];
+        //var id = tr.id;
+        //var className = tr.className;
+
+    });
+}
+
+function amount(){
+
+    $('#added-product-table').on('change', '#price', function(event) {
+        // how to get value of that particular dropdown selected
+        var txtPrice = $(event.target);
+        var price = txtPrice.val();
+
+        var txtQuantity = txtPrice.parent('td').next('td').find('input');
+        var quantity = txtQuantity.val();
+        var txtAmount = txtQuantity.parent('td').next('td').find('input');
+        var amount = parseFloat(price) * parseFloat(quantity);
+        txtAmount.val(amount);
+
+        //// how to get id of parent tr
+        //var tr = $select.closest('tr')[0];
+        //var id = tr.id;
+        //var className = tr.className;
+
     });
 }
 

@@ -1,4 +1,4 @@
-<div class="modal fade" id="modalAddSaleInvoice" tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
+<div class="modal fade" id="modalAddSaleInvoice" data-backdrop="static"  tabindex="-1" role="basic" aria-hidden="true" style="display: none;">
     <div class="modal-dialog" style="width: 1200px">
         {{Form::open()}}
         <div class="modal-content">
@@ -92,7 +92,7 @@
                 </thead>
                 <?php $stt = 0;?>
                 <tbody id="item-list">
-                    <tr id="row-item" order="{{$stt}}">
+                    <tr id="row-item" order="{{$stt}}" >
                         <td>
                             <?php echo $stt += 1;?>
 
@@ -115,10 +115,10 @@
                             </select>
                         </td>
                         <td>
-                            <input type="number" class="form-control" id="unit_price" required>
+                            <input type="number" class="form-control" id="price" required>
                         </td>
                         <td>
-                            <input type="number" class="form-control" id="quantity" required>
+                            <input type="number" class="form-control" id="quantity" required value="1">
                         </td>
                         <td>
                             <input type="number" class="form-control" id="amount" required readonly>
