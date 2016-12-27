@@ -9,10 +9,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Cocur\Slugify\Bridge\Twig;
+namespace Cocur\Slugify\Tests\Bridge\Twig;
 
 use Cocur\Slugify\Bridge\Twig\SlugifyExtension;
-use \Mockery as m;
+use Mockery as m;
 
 
 /**
@@ -28,7 +28,17 @@ use \Mockery as m;
  */
 class SlugifyExtensionTest extends \PHPUnit_Framework_TestCase
 {
-    public function setUp()
+    /**
+     * @var \Cocur\Slugify\SlugifyInterface|\Mockery\MockInterface
+     */
+    protected $slugify;
+
+    /**
+     * @var SlugifyExtension
+     */
+    protected $extension;
+
+    protected function setUp()
     {
         $this->slugify = m::mock('Cocur\Slugify\SlugifyInterface');
         $this->extension = new SlugifyExtension($this->slugify);
@@ -38,7 +48,7 @@ class SlugifyExtensionTest extends \PHPUnit_Framework_TestCase
      * @test
      * @covers Cocur\Slugify\Bridge\Twig\SlugifyExtension::getName()
      */
-    public function getName($withDataSet = true)
+    public function getNameReturnsNameOfExtension()
     {
         $this->assertEquals('slugify_extension', $this->extension->getName());
     }

@@ -2,17 +2,19 @@
 
 language: php
 
-services:
-  - redis-server
-
 php:
-  - 5.4
-  - 5.5
   - 5.6
-  - hhvm
+  - 7.0
+
+matrix:
+  include:
+    - php: 5.6
+      env: 'COMPOSER_FLAGS="--prefer-stable --prefer-lowest"'
 
 before_script:
-  - curl -s http://getcomposer.org/installer | php
-  - php composer.phar install --dev
+  - travis_retry composer self-update
+  - travis_retry composer install --prefer-source --no-interaction --dev $PREFER_LOWEST
+  - travis_retry composer dump-autoload
 
-script: phpunit
+script:
+  - vendor/bin/phpunit

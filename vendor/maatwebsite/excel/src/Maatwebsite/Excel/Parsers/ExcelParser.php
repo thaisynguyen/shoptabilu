@@ -6,7 +6,6 @@ use PHPExcel_Exception;
 use PHPExcel_Shared_Date;
 use Illuminate\Support\Str;
 use PHPExcel_Style_NumberFormat;
-use Illuminate\Support\Facades\Config;
 use Maatwebsite\Excel\Collections\RowCollection;
 use Maatwebsite\Excel\Collections\CellCollection;
 use Maatwebsite\Excel\Collections\SheetCollection;
@@ -95,7 +94,7 @@ class ExcelParser {
         $this->reader = $reader;
         $this->excel = $reader->excel;
 
-        $this->defaultStartRow = $this->currentRow = Config::get('excel.import.startRow', 1);
+        $this->defaultStartRow = $this->currentRow = config('excel.import.startRow', 1);
 
         // Reset
         $this->reset();
@@ -164,7 +163,7 @@ class ExcelParser {
     protected function parseAsMultiple()
     {
         return ($this->excel->getSheetCount() > 1 && count($this->reader->getSelectedSheetIndices()) !== 1)
-        || Config::get('excel.import.force_sheets_collection', false);
+        || config('excel.import.force_sheets_collection', false);
     }
 
     /**
@@ -213,7 +212,7 @@ class ExcelParser {
     protected function getIndex($cell)
     {
         // Get heading type
-        $config = Config::get('excel.import.heading', true);
+        $config = config('excel.import.heading', true);
         $config = $config === true ? 'slugged' : $config;
 
         // Get value
@@ -222,10 +221,10 @@ class ExcelParser {
         switch ($config)
         {
             case 'slugged':
-                return $this->getSluggedIndex($value, Config::get('excel.import.to_ascii', true));
+                return $this->getSluggedIndex($value, config('excel.import.to_ascii', true));
                 break;
             case 'slugged_with_count':
-                $index = $this->getSluggedIndex($value, Config::get('excel.import.to_ascii', true));
+                $index = $this->getSluggedIndex($value, config('excel.import.to_ascii', true));
                 if(in_array($index,$this->indices)){
                     $index = $this->appendOrIncreaseStringCount($index);
                 }
@@ -429,30 +428,47 @@ class ExcelParser {
         $i = 0;
         $parsedCells = array();
 
-        // Set the cell iterator
-        $cellIterator = $this->row->getCellIterator();
+        try {
+            // Set the cell iterator
+            $cellIterator = $this->row->getCellIterator();
 
-        // Ignore empty cells if needed
-        $cellIterator->setIterateOnlyExistingCells($this->reader->needsIgnoreEmpty());
+            // Ignore empty cells if needed
+            $cellIterator->setIterateOnlyExistingCells($this->reader->needsIgnoreEmpty());
 
-        // Foreach cells
-        foreach ($cellIterator as $this->cell)
-        {
-            // Check how we need to save the parsed array
-            $index = ($this->reader->hasHeading() && isset($this->indices[$i])) ? $this->indices[$i] : $this->getIndexFromColumn();
-
-            // Check if we want to select this column
-            if ( $this->cellNeedsParsing($index) )
+            // Foreach cells
+            foreach ($cellIterator as $this->cell)
             {
-                // Set the value
-                $parsedCells[$index] = $this->parseCell($index);
+                // Check how we need to save the parsed array
+                $index = ($this->reader->hasHeading() && isset($this->indices[$i])) ? $this->indices[$i] : $this->getIndexFromColumn();
+
+                // Check if we want to select this column
+                if ( $this->cellNeedsParsing($index) )
+                {
+                    // Set the value
+                    $parsedCells[(string) $index] = $this->parseCell($index);
+                }
+
+                $i++;
             }
 
-            $i++;
+        } catch (PHPExcel_Exception $e) {
+            // silently ignore the 'No cells exist within the specified range' error, but rethrow any others
+            if ($e->getMessage() != 'No cells exist within the specified range') {
+                throw $e;
+            }
+            // make sure that we return an empty CellCollection
+            $parsedCells = array();
         }
 
         // Return array with parsed cells
-        return new CellCollection($parsedCells);
+        $cells = new CellCollection($parsedCells);
+
+        if (! $this->reader->hasHeading()) {
+            // Cell index starts at 0 when no heading
+            return $cells->values();
+        }
+
+        return $cells;
     }
 
     /**
@@ -512,7 +528,7 @@ class ExcelParser {
     protected function encode($value)
     {
         // Get input and output encoding
-        list($input, $output) = array_values(Config::get('excel.import.encoding', array('UTF-8', 'UTF-8')));
+        list($input, $output) = array_values(config('excel.import.encoding', array('UTF-8', 'UTF-8')));
 
         // If they are the same, return the value
         if ( $input == $output )

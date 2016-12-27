@@ -1,12 +1,13 @@
-<?php
+<?php namespace Cviebrock\EloquentSluggable\Tests\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
 
 /**
  * Class PostNotSluggable
  *
  * A test model that doesn't use the Sluggable package.
+ *
+ * @package Cviebrock\EloquentSluggable\Tests\Models
  */
 class PostNotSluggable extends Model
 {
@@ -31,4 +32,14 @@ class PostNotSluggable extends Model
      * @var array
      */
     protected $fillable = ['title', 'subtitle'];
+
+    /**
+     * Convert the model to its string representation.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->title;
+    }
 }
