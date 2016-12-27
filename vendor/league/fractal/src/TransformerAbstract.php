@@ -13,8 +13,7 @@ namespace League\Fractal;
 
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
-use League\Fractal\Resource\NullResource;
-use League\Fractal\Resource\ResourceInterface;
+use League\Fractal\Resource\ResourceAbstract;
 
 /**
  * Transformer Abstract
@@ -31,14 +30,14 @@ abstract class TransformerAbstract
      *
      * @var array
      */
-    protected $availableIncludes = [];
+    protected $availableIncludes = array();
 
     /**
      * Include resources without needing it to be requested.
      *
      * @var array
      */
-    protected $defaultIncludes = [];
+    protected $defaultIncludes = array();
 
     /**
      * The transformer should know about the current scope, so we can fetch relevant params.
@@ -89,16 +88,9 @@ abstract class TransformerAbstract
     private function figureOutWhichIncludes(Scope $scope)
     {
         $includes = $this->getDefaultIncludes();
-
         foreach ($this->getAvailableIncludes() as $include) {
             if ($scope->isRequested($include)) {
                 $includes[] = $include;
-            }
-        }
-
-        foreach ($includes as $include) {
-            if ($scope->isExcluded($include)) {
-              $includes = array_diff($includes, [$include]);
             }
         }
 
@@ -118,7 +110,7 @@ abstract class TransformerAbstract
      */
     public function processIncludedResources(Scope $scope, $data)
     {
-        $includedData = [];
+        $includedData = array();
 
         $includes = $this->figureOutWhichIncludes($scope);
 
@@ -131,7 +123,7 @@ abstract class TransformerAbstract
             );
         }
 
-        return $includedData === [] ? false : $includedData;
+        return $includedData === array() ? false : $includedData;
     }
 
     /**
@@ -180,21 +172,21 @@ abstract class TransformerAbstract
         $params = $scope->getManager()->getIncludeParams($scopeIdentifier);
 
         // Check if the method name actually exists
-        $methodName = 'include'.str_replace(' ', '', ucwords(str_replace('_', ' ', str_replace('-', ' ', $includeName))));
+        $methodName = 'include'.str_replace(' ', '', ucwords(str_replace('_', ' ', $includeName)));
 
-        $resource = call_user_func([$this, $methodName], $data, $params);
+        $resource = call_user_func(array($this, $methodName), $data, $params);
 
         if ($resource === null) {
             return false;
         }
 
-        if (! $resource instanceof ResourceInterface) {
+        if (! $resource instanceof ResourceAbstract) {
             throw new \Exception(sprintf(
                 'Invalid return value from %s::%s(). Expected %s, received %s.',
                 __CLASS__,
                 $methodName,
-                'League\Fractal\Resource\ResourceInterface',
-                is_object($resource) ? get_class($resource) : gettype($resource)
+                'League\Fractal\Resource\ResourceAbstract',
+                gettype($resource)
             ));
         }
 
@@ -269,15 +261,5 @@ abstract class TransformerAbstract
     protected function collection($data, $transformer, $resourceKey = null)
     {
         return new Collection($data, $transformer, $resourceKey);
-    }
-
-    /**
-     * Create a new null resource object.
-     *
-     * @return NullResource
-     */
-    protected function null()
-    {
-        return new NullResource();
     }
 }

@@ -1,7 +1,5 @@
 <?php
-namespace Cocur\Slugify\Tests\Bridge\ZF2;
-
-use Cocur\Slugify\Bridge\ZF2\Module;
+namespace Cocur\Slugify\Bridge\ZF2;
 
 /**
  * Class ModuleTest
@@ -16,7 +14,7 @@ class ModuleTest extends \PHPUnit_Framework_TestCase
      */
     private $module;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->module = new Module();
     }

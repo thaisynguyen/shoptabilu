@@ -9,10 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Cocur\Slugify\Tests\Bridge\Symfony;
+namespace Cocur\Slugify\Bridge\Symfony;
 
 use Cocur\Slugify\Bridge\Symfony\CocurSlugifyBundle;
-use Cocur\Slugify\Bridge\Symfony\CocurSlugifyExtension;
 
 /**
  * CocurSlugifyBundleTest
@@ -27,14 +26,26 @@ use Cocur\Slugify\Bridge\Symfony\CocurSlugifyExtension;
  */
 class CocurSlugifyBundleTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @covers Cocur\Slugify\Bridge\Symfony\CocurSlugifyBundle::getContainerExtension()
-     */
-    public function testGetContainerExtension()
+    public function setUp()
     {
-        $bundle = new CocurSlugifyBundle();
+        $this->bundle = new CocurSlugifyBundle();
+    }
 
-        static::assertInstanceOf(CocurSlugifyExtension::class, $bundle->getContainerExtension());
+    /**
+     * @test
+     * @covers Cocur\Slugify\Bridge\Symfony\CocurSlugifyBundle::build()
+     */
+    public function build()
+    {
+        $container = $this->getMock(
+            'Symfony\Component\DependencyInjection\ContainerBuilder',
+            array('registerExtension')
+        );
+        $container->expects($this->once())
+            ->method('registerExtension')
+            ->with($this->isInstanceOf('Cocur\Slugify\Bridge\Symfony\CocurSlugifyExtension'));
+
+        $this->bundle->build($container);
     }
 }
 

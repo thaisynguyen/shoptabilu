@@ -14,6 +14,7 @@ use PHPExcel_Style_Font;
 use PHPExcel_Style_Border;
 use PHPExcel_Worksheet_Drawing;
 use PHPExcel_Style_Alignment;
+use Illuminate\Support\Facades\Config;
 use Maatwebsite\Excel\Parsers\CssParser;
 use Maatwebsite\Excel\Classes\LaravelExcelWorksheet;
 
@@ -126,7 +127,7 @@ class Html extends PHPExcel_Reader_HTML {
      */
     protected function setStyleFormats()
     {
-        $this->_formats = config('excel.views.styles', array());
+        $this->_formats = Config::get('excel.views.styles', array());
     }
 
     /**
@@ -1228,7 +1229,7 @@ class Html extends PHPExcel_Reader_HTML {
                 break;
 
             case 'text-indent':
-                $cells->getAlignment()->setIndent((int)$value);
+                $cells->getAlignment()->setIndent(1);
                 break;
         }
     }

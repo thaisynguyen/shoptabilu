@@ -40,7 +40,7 @@ class SlugifyServiceProvider extends LaravelServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('slugify', function () {
+        $this->app->bindShared('slugify', function () {
             return new Slugify();
         });
     }
@@ -52,6 +52,6 @@ class SlugifyServiceProvider extends LaravelServiceProvider
      */
     public function provides()
     {
-        return ['slugify'];
+        return array('slugify');
     }
 }

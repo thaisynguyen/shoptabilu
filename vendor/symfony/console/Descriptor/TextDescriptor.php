@@ -38,13 +38,13 @@ class TextDescriptor extends Descriptor
         }
 
         $totalWidth = isset($options['total_width']) ? $options['total_width'] : strlen($argument->getName());
-        $spacingWidth = $totalWidth - strlen($argument->getName());
+        $spacingWidth = $totalWidth - strlen($argument->getName()) + 2;
 
-        $this->writeText(sprintf('  <info>%s</info>  %s%s%s',
+        $this->writeText(sprintf('  <info>%s</info>%s%s%s',
             $argument->getName(),
             str_repeat(' ', $spacingWidth),
-            // + 4 = 2 spaces before <info>, 2 spaces after </info>
-            preg_replace('/\s*[\r\n]\s*/', "\n".str_repeat(' ', $totalWidth + 4), $argument->getDescription()),
+            // + 17 = 2 spaces + <info> + </info> + 2 spaces
+            preg_replace('/\s*[\r\n]\s*/', "\n".str_repeat(' ', $totalWidth + 17), $argument->getDescription()),
             $default
         ), $options);
     }
@@ -75,13 +75,13 @@ class TextDescriptor extends Descriptor
             sprintf('--%s%s', $option->getName(), $value)
         );
 
-        $spacingWidth = $totalWidth - strlen($synopsis);
+        $spacingWidth = $totalWidth - strlen($synopsis) + 2;
 
-        $this->writeText(sprintf('  <info>%s</info>  %s%s%s%s',
+        $this->writeText(sprintf('  <info>%s</info>%s%s%s%s',
             $synopsis,
             str_repeat(' ', $spacingWidth),
-            // + 4 = 2 spaces before <info>, 2 spaces after </info>
-            preg_replace('/\s*[\r\n]\s*/', "\n".str_repeat(' ', $totalWidth + 4), $option->getDescription()),
+            // + 17 = 2 spaces + <info> + </info> + 2 spaces
+            preg_replace('/\s*[\r\n]\s*/', "\n".str_repeat(' ', $totalWidth + 17), $option->getDescription()),
             $default,
             $option->isArray() ? '<comment> (multiple values allowed)</comment>' : ''
         ), $options);
@@ -156,7 +156,7 @@ class TextDescriptor extends Descriptor
             $this->writeText("\n");
             $this->writeText('<comment>Help:</comment>', $options);
             $this->writeText("\n");
-            $this->writeText('  '.str_replace("\n", "\n  ", $help), $options);
+            $this->writeText(' '.str_replace("\n", "\n ", $help), $options);
             $this->writeText("\n");
         }
     }
@@ -173,7 +173,7 @@ class TextDescriptor extends Descriptor
             $width = $this->getColumnWidth($description->getCommands());
 
             foreach ($description->getCommands() as $command) {
-                $this->writeText(sprintf("%-{$width}s %s", $command->getName(), $command->getDescription()), $options);
+                $this->writeText(sprintf("%-${width}s %s", $command->getName(), $command->getDescription()), $options);
                 $this->writeText("\n");
             }
         } else {
@@ -236,10 +236,10 @@ class TextDescriptor extends Descriptor
     private function formatDefaultValue($default)
     {
         if (PHP_VERSION_ID < 50400) {
-            return str_replace(array('\/', '\\\\'), array('/', '\\'), json_encode($default));
+            return str_replace('\/', '/', json_encode($default));
         }
 
-        return str_replace('\\\\', '\\', json_encode($default, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        return json_encode($default, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
     /**

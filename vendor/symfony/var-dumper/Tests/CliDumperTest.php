@@ -69,12 +69,15 @@ array:24 [
   7 => b"é\\x00"
   "[]" => []
   "res" => stream resource {@{$res}
-%A  wrapper_type: "plainfile"
+    wrapper_type: "plainfile"
     stream_type: "STDIO"
     mode: "r"
     unread_bytes: 0
     seekable: true
-%A  options: []
+    timed_out: false
+    blocked: true
+    eof: false
+    options: []
   }
   "obj" => Symfony\Component\VarDumper\Tests\Fixture\DumbFoo {#%d
     +foo: "foo"
@@ -112,59 +115,21 @@ EOTXT
         );
     }
 
-    /**
-     * @requires extension xml
-     */
     public function testXmlResource()
     {
+        if (!extension_loaded('xml')) {
+            $this->markTestSkipped('xml extension is required');
+        }
+
         $var = xml_parser_create();
 
         $this->assertDumpMatchesFormat(
-            <<<'EOTXT'
+            <<<EOTXT
 xml resource {
   current_byte_index: %i
   current_column_number: %i
   current_line_number: 1
   error_code: XML_ERROR_NONE
-}
-EOTXT
-            ,
-            $var
-        );
-    }
-
-    public function testJsonCast()
-    {
-        $var = (array) json_decode('{"0":{},"1":null}');
-        foreach ($var as &$v) {
-        }
-        $var[] = &$v;
-        $var[''] = 2;
-
-        $this->assertDumpMatchesFormat(
-            <<<'EOTXT'
-array:4 [
-  "0" => {}
-  "1" => &1 null
-  0 => &1 null
-  "" => 2
-]
-EOTXT
-            ,
-            $var
-        );
-    }
-
-    public function testObjectCast()
-    {
-        $var = (object) array(1 => 1);
-        $var->{1} = 2;
-
-        $this->assertDumpMatchesFormat(
-            <<<'EOTXT'
-{
-  +1: 1
-  +"1": 2
 }
 EOTXT
             ,
@@ -193,7 +158,7 @@ EOTXT
 
         $this->assertStringMatchesFormat(
             <<<EOTXT
-Closed resource @{$res}
+Unknown resource @{$res}
 
 EOTXT
             ,
@@ -233,13 +198,16 @@ EOTXT
         $this->assertStringMatchesFormat(
             <<<EOTXT
 stream resource {@{$ref}
-%Awrapper_type: "PHP"
+  wrapper_type: "PHP"
   stream_type: "MEMORY"
   mode: "%s+b"
   unread_bytes: 0
   seekable: true
   uri: "php://memory"
-%Aoptions: []
+  timed_out: false
+  blocked: true
+  eof: false
+  options: []
   ⚠: Symfony\Component\VarDumper\Exception\ThrowingCasterException {{$r}
     #message: "Unexpected Exception thrown from a caster: Foobar"
     trace: array:1 [
@@ -289,14 +257,17 @@ EOTXT
     /**
      * @runInSeparateProcess
      * @preserveGlobalState disabled
-     * @requires PHP 5.6
      */
     public function testSpecialVars56()
     {
+        if (PHP_VERSION_ID < 50600) {
+            $this->markTestSkipped('PHP 5.6 is required');
+        }
+
         $var = $this->getSpecialVars();
 
         $this->assertDumpEquals(
-            <<<'EOTXT'
+            <<<EOTXT
 array:3 [
   0 => array:1 [
     0 => &1 array:1 [
@@ -342,7 +313,7 @@ EOTXT
         $dumper->dump($data);
 
         $this->assertSame(
-            <<<'EOTXT'
+            <<<EOTXT
 array:2 [
   1 => array:1 [
     "GLOBALS" => &1 array:1 [
@@ -384,7 +355,7 @@ EOTXT
         });
 
         $this->assertSame(
-            <<<'EOTXT'
+            <<<EOTXT
 array:1 [
   0 => array:1 [
     0 => array:1 [

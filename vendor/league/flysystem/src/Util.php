@@ -18,7 +18,8 @@ class Util
     {
         $pathinfo = pathinfo($path) + compact('path');
         $pathinfo['dirname'] = array_key_exists('dirname', $pathinfo)
-            ? static::normalizeDirname($pathinfo['dirname']) : '';
+            ? static::normalizeDirname($pathinfo['dirname'])
+            : '';
 
         return $pathinfo;
     }
@@ -32,7 +33,11 @@ class Util
      */
     public static function normalizeDirname($dirname)
     {
-        return $dirname === '.' ? '' : $dirname;
+        if ($dirname === '.') {
+            return '';
+        }
+
+        return $dirname;
     }
 
     /**
@@ -60,7 +65,7 @@ class Util
         $result = [];
 
         foreach ($map as $from => $to) {
-            if ( ! isset($object[$from])) {
+            if (! isset($object[$from])) {
                 continue;
             }
 
@@ -85,7 +90,7 @@ class Util
         $normalized = preg_replace('#\p{C}+|^\./#u', '', $path);
         $normalized = static::normalizeRelativePath($normalized);
 
-        if (preg_match('#(^|/)\.{2}(/|$)#', $normalized)) {
+        if (preg_match('#/\.{2}|^\.{2}/|^\.{2}$#', $normalized)) {
             throw new LogicException(
                 'Path is outside of the defined root, path: [' . $path . '], resolved: [' . $normalized . ']'
             );
@@ -107,10 +112,10 @@ class Util
     public static function normalizeRelativePath($path)
     {
         // Path remove self referring paths ("/./").
-        $path = preg_replace('#/\.(?=/)|^\./|(/|^)\./?$#', '', $path);
+        $path = preg_replace('#/\.(?=/)|^\./|/\./?$#', '', $path);
 
         // Regex for resolving relative paths
-        $regex = '#/*[^/\.]+/\.\.(?=/|$)#Uu';
+        $regex = '#/*[^/\.]+/\.\.#Uu';
 
         while (preg_match($regex, $path)) {
             $path = preg_replace($regex, '', $path);
@@ -148,7 +153,7 @@ class Util
      * Guess MIME Type based on the path of the file and it's content.
      *
      * @param string $path
-     * @param string|resource $content
+     * @param string $content
      *
      * @return string|null MIME Type or NULL if no extension detected
      */
@@ -156,11 +161,15 @@ class Util
     {
         $mimeType = MimeType::detectByContent($content);
 
-        if ( ! (empty($mimeType) || in_array($mimeType, ['application/x-empty', 'text/plain', 'text/x-asm']))) {
-            return $mimeType;
+        if (empty($mimeType) || $mimeType === 'text/plain') {
+            $extension = pathinfo($path, PATHINFO_EXTENSION);
+
+            if ($extension) {
+                $mimeType = MimeType::detectByFileExtension($extension) ?: 'text/plain';
+            }
         }
 
-        return MimeType::detectByFilename($path);
+        return $mimeType;
     }
 
     /**
@@ -262,17 +271,13 @@ class Util
      */
     protected static function emulateObjectDirectories(array $object, array $directories, array $listedDirectories)
     {
-        if ($object['type'] === 'dir') {
-            $listedDirectories[] = $object['path'];
-        }
-
         if (empty($object['dirname'])) {
             return [$directories, $listedDirectories];
         }
 
         $parent = $object['dirname'];
 
-        while ( ! empty($parent) && ! in_array($parent, $directories)) {
+        while (! empty($parent) && ! in_array($parent, $directories)) {
             $directories[] = $parent;
             $parent = static::dirname($parent);
         }

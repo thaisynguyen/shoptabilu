@@ -28,7 +28,7 @@ class Property extends Node\Stmt
             throw new Error('Properties cannot be declared final');
         }
 
-        parent::__construct($attributes);
+        parent::__construct(null, $attributes);
         $this->type = $type;
         $this->props = $props;
     }

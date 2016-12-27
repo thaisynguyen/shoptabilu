@@ -1,99 +1,6 @@
 # Change Log
 
-## 4.1.2 - 09-Nov-2016
-
-- Fix in `getExistingSlugs` when using global scopes (#327)
-- Update `Cocur\Slugify` to `^2.3`.
-
-## 4.1.1 - 12-Oct-2016
-
-- Fix for slugs updating when they don't need to, when using `onUpdate` with `unique` (#317) 
-
-
-## 4.1.0 - 14-Sep-2016
-
-- The goal of the 4.1.x releases will be to focus on support in Laravel 5.3, only providing support for 5.1/5.2
-  where it is easy and doesn't affect performance significantly.
-- Drop support for PHP <5.6 and HHVM (no longer supported by Laravel 5.3); fixes test build process
-
-
-## 4.0.4 - 13-Sep-2016
-
-- Fix `SluggableScopeHelpers` to work when using the short configuration syntax (#314).
-
-
-## 4.0.3 - 15-Jul-2016
-
-- Added `$config` argument to `SlugService::createSlug` method for optionally overriding 
-  the configuration for a statically generated slug (#286).
-
-
-## 4.0.2 - 17-Jun-2016
-
-- Added  `SluggableScopeHelpers` trait which restores some of the scoping and query
-  functionality of the 3.x version of the package (#280, thanks @unstoppablecarl and @Keoghan).
-- Added the `onUpdate` configuration option back to the package.
-- Updated the documentation to show usage of the `SluggableScopeHelpers` trait, and
-  how to use route model binding with slugs.
-
-
-## 4.0.1 - 13-Jun-2016
-
-- Fixed several bugs related to Laravel 5.1 and collections (#263, #274).
-
-
-## 4.0.0 - 10-Jun-2016
-
-- Fix for Laravel 5.1 (#263 thanks @roshangautam and @andregaldino).
-- Update `Cocur\Slugify` to `^2.1` (#269 thanks @shadoWalker89).
-
-
-## 4.0.0-beta - 01-Jun-2016
-
-- Major revision
-  - Model configuration is now handled in a `sluggable()` method.
-    on the model instead of a property, and configuration options are now camelCase
-  - Ability to generate more than one slug per model.
-  - Removed all `findBy...()` scope/methods (can't really be used when a model
-    has multiple slugs ... plus the code is easy enough to implement in the model).
-  - Removed `onUpdate` configuration option.  If you want to re-generate a slug
-    on update, then set the model's slug to `null` before saving.  Otherwise, existing
-    slugs will never be overwritten.
-  - `createSlug()` is no longer a static method on the model, but is a public method
-    on the _SlugService_ class, with a different method signature (see docs).
-  - Removed artisan command to add slug column to tables.  You will need to do this
-    (pretty simple) task yourself now. 
-  - Several bug fixes.
-- See [UPGRADING.md](UPGRADING.md) for details.
-
-
-## 3.1.4 - 03-Jan-2016
-
-- Compatible with Laravel 5.2 (by removing calls to composer from migrate command)
-
-
-## 3.1.3 - 07-Dec-2015
-
-- Fix for PostgreSQL and `findBySlugOrId()` (#205 thanks @Jaspur)
-
-
-## 3.1.2 - 07-Nov-2015
-
-- Fix some namespacing issues in docblocks (#195)
-- Streamline artisan migrate call (#191 thanks @ntzm)
-- Fix bug when using magic getters (#188 thanks @ChrisReid)
-- Add a static slug generator (#185 thanks @phroggyy)
-- Lots of PSR-2 fixes
-
-
-## 3.1.1 - 26-Oct-2015
-
-- Fix missing class reference (#192)
-- Clean up migration code (#191 thanks @natzim)
-- Fix when using magic getters (#188 thanks @ChrisReid)
-
-
-## 3.1.0 - 14-Oct-2015
+## 3.1.0 - xx-xxx-xxxx
 
 - Convert code-base to PSR-2
 - If the source is empty, then set the slug to `null` (#162 thanks @PallMallShow)
@@ -102,7 +9,6 @@
 - Updated the migration stub for Laravel 5.1's PSR-2 changes (#174 thanks @39digits)
 - Added `slugging` and `slugged` Eloquent model events
 - Fix for `findBySlugOrId()` methods when the slug is numeric (#161 thanks @canvural)
-- Add static method `Model::createSlug('some string')` (#185 thanks @phroggyy)
 
 
 ## 3.0.0 - 06-Jul-2015
@@ -166,7 +72,7 @@
 
 ## 1.0.8 - 20-Feb-2014
 
-- Fix issue where replicated models couldn't forcibly be re-slugged (#20 thanks @trideout).
+- Fix issue where replicated models couldn't forceably be reslugged (#20 thanks @trideout).
 
 
 ## 1.0.7 - 03-Dec-2013

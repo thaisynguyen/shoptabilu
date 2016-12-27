@@ -45,10 +45,6 @@ class TransportManager extends Manager
             $transport->setPassword($config['password']);
         }
 
-        if (isset($config['stream'])) {
-            $transport->setStreamOptions($config['stream']);
-        }
-
         return $transport;
     }
 
@@ -101,9 +97,8 @@ class TransportManager extends Manager
      */
     protected function createMailgunDriver()
     {
+        $client = new HttpClient;
         $config = $this->app['config']->get('services.mailgun', []);
-
-        $client = new HttpClient(Arr::get($config, 'guzzle', []));
 
         return new MailgunTransport($client, $config['secret'], $config['domain']);
     }
@@ -115,9 +110,8 @@ class TransportManager extends Manager
      */
     protected function createMandrillDriver()
     {
+        $client = new HttpClient;
         $config = $this->app['config']->get('services.mandrill', []);
-
-        $client = new HttpClient(Arr::get($config, 'guzzle', []));
 
         return new MandrillTransport($client, $config['secret']);
     }

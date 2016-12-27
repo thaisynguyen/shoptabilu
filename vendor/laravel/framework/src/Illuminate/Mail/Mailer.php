@@ -83,6 +83,13 @@ class Mailer implements MailerContract, MailQueueContract
     protected $failedRecipients = [];
 
     /**
+     * Array of parsed views containing html and text view name.
+     *
+     * @var array
+     */
+    protected $parsedViews = [];
+
+    /**
      * Create a new Mailer instance.
      *
      * @param  \Illuminate\Contracts\View\Factory  $views
@@ -152,10 +159,12 @@ class Mailer implements MailerContract, MailQueueContract
      * @param  string|array  $view
      * @param  array  $data
      * @param  \Closure|string  $callback
-     * @return void
+     * @return mixed
      */
     public function send($view, array $data, $callback)
     {
+        $this->forceReconnection();
+
         // First we need to parse the view, which could either be a string or an array
         // containing both an HTML and plain text versions of the view which should
         // be used when sending an e-mail. We will extract both of them out here.
@@ -330,15 +339,11 @@ class Mailer implements MailerContract, MailQueueContract
         }
 
         if (isset($plain)) {
-            $method = isset($view) ? 'addPart' : 'setBody';
-
-            $message->$method($this->getView($plain, $data), 'text/plain');
+            $message->addPart($this->getView($plain, $data), 'text/plain');
         }
 
         if (isset($raw)) {
-            $method = (isset($view) || isset($plain)) ? 'addPart' : 'setBody';
-
-            $message->$method($raw, 'text/plain');
+            $message->addPart($raw, 'text/plain');
         }
     }
 
@@ -390,11 +395,7 @@ class Mailer implements MailerContract, MailQueueContract
         }
 
         if (! $this->pretending) {
-            try {
-                return $this->swift->send($message, $this->failedRecipients);
-            } finally {
-                $this->swift->getTransport()->stop();
-            }
+            return $this->swift->send($message, $this->failedRecipients);
         } elseif (isset($this->logger)) {
             $this->logMessage($message);
         }

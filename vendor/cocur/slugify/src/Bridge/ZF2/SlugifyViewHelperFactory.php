@@ -22,7 +22,6 @@ class SlugifyViewHelperFactory
     {
         /** @var Slugify $slugify */
         $slugify = $vhm->getServiceLocator()->get('Cocur\Slugify\Slugify');
-
         return new SlugifyViewHelper($slugify);
     }
 }

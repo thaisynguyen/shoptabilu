@@ -133,9 +133,9 @@ class Guard implements GuardContract
             return;
         }
 
-        // If we've already retrieved the user for the current request we can just
-        // return it back immediately. We do not want to fetch the user data on
-        // every call to this method because that would be tremendously slow.
+        // If we have already retrieved the user for the current request we can just
+        // return it back immediately. We do not want to pull the user data every
+        // request into the method because that would tremendously slow an app.
         if (! is_null($this->user)) {
             return $this->user;
         }
@@ -180,7 +180,7 @@ class Guard implements GuardContract
             return;
         }
 
-        $id = $this->session->get($this->getName());
+        $id = $this->session->get($this->getName(), $this->getRecallerId());
 
         if (is_null($id) && $this->user()) {
             $id = $this->user()->getAuthIdentifier();
@@ -221,7 +221,7 @@ class Guard implements GuardContract
     /**
      * Get the user ID from the recaller cookie.
      *
-     * @return string|null
+     * @return string
      */
     protected function getRecallerId()
     {
@@ -571,11 +571,9 @@ class Guard implements GuardContract
     {
         $this->session->remove($this->getName());
 
-        if (! is_null($this->getRecaller())) {
-            $recaller = $this->getRecallerName();
+        $recaller = $this->getRecallerName();
 
-            $this->getCookieJar()->queue($this->getCookieJar()->forget($recaller));
-        }
+        $this->getCookieJar()->queue($this->getCookieJar()->forget($recaller));
     }
 
     /**

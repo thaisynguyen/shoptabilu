@@ -123,9 +123,9 @@ class Expression implements ValueInterface
     }
 
     /**
-     * @return Glob
-     *
      * @throws \LogicException
+     *
+     * @return Glob
      */
     public function getGlob()
     {

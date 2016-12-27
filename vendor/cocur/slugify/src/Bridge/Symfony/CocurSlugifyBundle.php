@@ -11,6 +11,7 @@
 
 namespace Cocur\Slugify\Bridge\Symfony;
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -24,8 +25,16 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class CocurSlugifyBundle extends Bundle
 {
-    public function getContainerExtension()
+    /**
+     * {@inheritDoc}
+     */
+    public function build(ContainerBuilder $container)
     {
-        return new CocurSlugifyExtension();
+        parent::build($container);
+
+        $extension = new CocurSlugifyExtension();
+        $extension->load(array(), $container);
+
+        $container->registerExtension($extension);
     }
 }

@@ -54,9 +54,7 @@ class MySqlGrammar extends Grammar
     {
         $columns = implode(', ', $this->getColumns($blueprint));
 
-        $sql = $blueprint->temporary ? 'create temporary' : 'create';
-
-        $sql .= ' table '.$this->wrapTable($blueprint)." ($columns)";
+        $sql = 'create table '.$this->wrapTable($blueprint)." ($columns)";
 
         // Once we have the primary SQL, we can add the encoding option to the SQL for
         // the table.  Then, we can check if a storage engine has been supplied for
@@ -163,7 +161,7 @@ class MySqlGrammar extends Grammar
 
         $table = $this->wrapTable($blueprint);
 
-        return "alter table {$table} add {$type} `{$command->index}`($columns)";
+        return "alter table {$table} add {$type} {$command->index}($columns)";
     }
 
     /**
@@ -229,7 +227,7 @@ class MySqlGrammar extends Grammar
     {
         $table = $this->wrapTable($blueprint);
 
-        return "alter table {$table} drop index `{$command->index}`";
+        return "alter table {$table} drop index {$command->index}";
     }
 
     /**
@@ -243,7 +241,7 @@ class MySqlGrammar extends Grammar
     {
         $table = $this->wrapTable($blueprint);
 
-        return "alter table {$table} drop index `{$command->index}`";
+        return "alter table {$table} drop index {$command->index}";
     }
 
     /**
@@ -257,7 +255,7 @@ class MySqlGrammar extends Grammar
     {
         $table = $this->wrapTable($blueprint);
 
-        return "alter table {$table} drop foreign key `{$command->index}`";
+        return "alter table {$table} drop foreign key {$command->index}";
     }
 
     /**
@@ -528,10 +526,6 @@ class MySqlGrammar extends Grammar
      */
     protected function typeTimestamp(Fluent $column)
     {
-        if ($column->useCurrent) {
-            return 'timestamp default CURRENT_TIMESTAMP';
-        }
-
         if (! $column->nullable && $column->default === null) {
             return 'timestamp default 0';
         }
@@ -547,10 +541,6 @@ class MySqlGrammar extends Grammar
      */
     protected function typeTimestampTz(Fluent $column)
     {
-        if ($column->useCurrent) {
-            return 'timestamp default CURRENT_TIMESTAMP';
-        }
-
         if (! $column->nullable && $column->default === null) {
             return 'timestamp default 0';
         }
@@ -567,17 +557,6 @@ class MySqlGrammar extends Grammar
     protected function typeBinary(Fluent $column)
     {
         return 'blob';
-    }
-
-    /**
-     * Create the column definition for a uuid type.
-     *
-     * @param  \Illuminate\Support\Fluent  $column
-     * @return string
-     */
-    protected function typeUuid(Fluent $column)
-    {
-        return 'char(36)';
     }
 
     /**

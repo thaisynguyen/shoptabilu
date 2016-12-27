@@ -131,7 +131,7 @@ trait AssertionsTrait
     }
 
     /**
-     * Assert that the session has a given value.
+     * Assert that the session has a given list of values.
      *
      * @param  string|array  $key
      * @param  mixed  $value

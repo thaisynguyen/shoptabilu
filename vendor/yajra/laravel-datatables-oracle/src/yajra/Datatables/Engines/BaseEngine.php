@@ -15,12 +15,14 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
+use League\Fractal\TransformerAbstract;
 use yajra\Datatables\Contracts\DataTableEngine;
 use yajra\Datatables\Helper;
 use yajra\Datatables\Processors\DataProcessor;
 
 abstract class BaseEngine implements DataTableEngine
 {
+
     /**
      * Datatables Request object.
      *
@@ -77,6 +79,7 @@ abstract class BaseEngine implements DataTableEngine
      */
     protected $query_type;
 
+
     /**
      * Extra/Added columns.
      *
@@ -106,21 +109,21 @@ abstract class BaseEngine implements DataTableEngine
     protected $autoFilter = true;
 
     /**
-     * Callback to override global search.
+     * Callback to override global search
      *
      * @var \Closure
      */
     protected $filterCallback;
 
     /**
-     * Parameters to passed on filterCallback.
+     * Parameters to passed on filterCallback
      *
      * @var mixed
      */
     protected $filterCallbackParameters;
 
     /**
-     * DT row templates container.
+     * DT row templates container
      *
      * @var array
      */
@@ -146,7 +149,7 @@ abstract class BaseEngine implements DataTableEngine
     protected $prefix;
 
     /**
-     * Database driver used.
+     * Database driver used
      *
      * @var string
      */
@@ -158,13 +161,6 @@ abstract class BaseEngine implements DataTableEngine
      * @var boolean
      */
     protected $isFilterApplied = false;
-
-    /**
-     * Fractal serializer class.
-     *
-     * @var string
-     */
-    protected $serializer;
 
     /**
      * Setup search keyword.
@@ -221,14 +217,14 @@ abstract class BaseEngine implements DataTableEngine
      * Setup column name to be use for filtering.
      *
      * @param integer $i
-     * @param bool $wantsAlias
      * @return string
      */
-    public function setupColumnName($i, $wantsAlias = false)
+    public function setupColumnName($i)
     {
         $column = $this->getColumnName($i);
+
         if (Str::contains(Str::upper($column), ' AS ')) {
-            $column = $this->extractColumnName($column, $wantsAlias);
+            $column = $this->extractColumnName($column);
         }
 
         return $column;
@@ -251,19 +247,14 @@ abstract class BaseEngine implements DataTableEngine
      * Get column name from string.
      *
      * @param string $str
-     * @param bool $wantsAlias
      * @return string
      */
-    public function extractColumnName($str, $wantsAlias)
+    public function extractColumnName($str)
     {
-        $matches = explode(' as ', Str::lower($str));
+        preg_match('#^(\S*?)\s+as\s+(\S*?)$#si', $str, $matches);
 
-        if (! empty($matches)) {
-            if ($wantsAlias) {
-                return array_pop($matches);
-            } else {
-                return array_shift($matches);
-            }
+        if ( ! empty($matches)) {
+            return $matches[2];
         } elseif (strpos($str, '.')) {
             $array = explode('.', $str);
 
@@ -325,7 +316,7 @@ abstract class BaseEngine implements DataTableEngine
      */
     public function getQueryBuilder($instance = null)
     {
-        if (! $instance) {
+        if ( ! $instance) {
             $instance = $this->query;
         }
 
@@ -555,19 +546,6 @@ abstract class BaseEngine implements DataTableEngine
     }
 
     /**
-     * Set fractal serializer class.
-     *
-     * @param string $serializer
-     * @return $this
-     */
-    public function setSerializer($serializer)
-    {
-        $this->serializer = $serializer;
-
-        return $this;
-    }
-
-    /**
      * Organizes works.
      *
      * @param bool $mDataSupport
@@ -579,7 +557,7 @@ abstract class BaseEngine implements DataTableEngine
         $this->totalRecords = $this->count();
 
         if ($this->totalRecords) {
-            $this->orderRecords(! $orderFirst);
+            $this->orderRecords( ! $orderFirst);
             $this->filterRecords();
             $this->orderRecords($orderFirst);
             $this->paginate();
@@ -603,7 +581,7 @@ abstract class BaseEngine implements DataTableEngine
      */
     public function orderRecords($skip)
     {
-        if (! $skip) {
+        if ( ! $skip) {
             $this->ordering();
         }
     }
@@ -683,12 +661,6 @@ abstract class BaseEngine implements DataTableEngine
 
         if (isset($this->transformer)) {
             $fractal = new Manager();
-            if ($this->request->get('include')) {
-                $fractal->parseIncludes($this->request->get('include'));
-            }
-
-            $serializer = $this->serializer ?: Config::get('datatables.fractal.serializer', 'League\Fractal\Serializer\DataArraySerializer');
-            $fractal->setSerializer(new $serializer);
 
             //Get transformer reflection
             //Firs method parameter should be data/object to transform

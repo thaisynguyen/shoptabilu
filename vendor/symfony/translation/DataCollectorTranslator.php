@@ -66,6 +66,8 @@ class DataCollectorTranslator implements TranslatorInterface, TranslatorBagInter
 
     /**
      * {@inheritdoc}
+     *
+     * @api
      */
     public function setLocale($locale)
     {
@@ -74,6 +76,8 @@ class DataCollectorTranslator implements TranslatorInterface, TranslatorBagInter
 
     /**
      * {@inheritdoc}
+     *
+     * @api
      */
     public function getLocale()
     {
@@ -86,20 +90,6 @@ class DataCollectorTranslator implements TranslatorInterface, TranslatorBagInter
     public function getCatalogue($locale = null)
     {
         return $this->translator->getCatalogue($locale);
-    }
-
-    /**
-     * Gets the fallback locales.
-     *
-     * @return array $locales The fallback locales
-     */
-    public function getFallbackLocales()
-    {
-        if ($this->translator instanceof Translator) {
-            return $this->translator->getFallbackLocales();
-        }
-
-        return array();
     }
 
     /**
@@ -122,7 +112,7 @@ class DataCollectorTranslator implements TranslatorInterface, TranslatorBagInter
      * @param string|null $locale
      * @param string|null $domain
      * @param string      $id
-     * @param string      $translation
+     * @param string      $trans
      */
     private function collectMessage($locale, $domain, $id, $translation)
     {
@@ -138,14 +128,14 @@ class DataCollectorTranslator implements TranslatorInterface, TranslatorBagInter
         } elseif ($catalogue->has($id, $domain)) {
             $state = self::MESSAGE_EQUALS_FALLBACK;
 
-            $fallbackCatalogue = $catalogue->getFallbackCatalogue();
+            $fallbackCatalogue = $catalogue->getFallBackCatalogue();
             while ($fallbackCatalogue) {
                 if ($fallbackCatalogue->defines($id, $domain)) {
                     $locale = $fallbackCatalogue->getLocale();
                     break;
                 }
 
-                $fallbackCatalogue = $fallbackCatalogue->getFallbackCatalogue();
+                $fallbackCatalogue = $fallbackCatalogue->getFallBackCatalogue();
             }
         } else {
             $state = self::MESSAGE_MISSING;

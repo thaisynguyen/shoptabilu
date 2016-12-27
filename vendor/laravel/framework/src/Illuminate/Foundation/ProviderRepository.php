@@ -74,7 +74,7 @@ class ProviderRepository
             $this->app->register($this->createProvider($provider));
         }
 
-        $this->app->addDeferredServices($manifest['deferred']);
+        $this->app->setDeferredServices($manifest['deferred']);
     }
 
     /**
@@ -161,7 +161,7 @@ class ProviderRepository
     /**
      * Load the service provider manifest JSON file.
      *
-     * @return array|null
+     * @return array
      */
     public function loadManifest()
     {
@@ -171,9 +171,7 @@ class ProviderRepository
         if ($this->files->exists($this->manifestPath)) {
             $manifest = json_decode($this->files->get($this->manifestPath), true);
 
-            if ($manifest) {
-                return array_merge(['when' => []], $manifest);
-            }
+            return array_merge(['when' => []], $manifest);
         }
     }
 
@@ -189,7 +187,7 @@ class ProviderRepository
             $this->manifestPath, json_encode($manifest, JSON_PRETTY_PRINT)
         );
 
-        return array_merge(['when' => []], $manifest);
+        return $manifest;
     }
 
     /**

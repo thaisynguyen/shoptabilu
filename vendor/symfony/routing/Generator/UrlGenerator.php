@@ -24,6 +24,8 @@ use Psr\Log\LoggerInterface;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Tobias Schultze <http://tobion.de>
+ *
+ * @api
  */
 class UrlGenerator implements UrlGeneratorInterface, ConfigurableRequirementsInterface
 {
@@ -81,6 +83,8 @@ class UrlGenerator implements UrlGeneratorInterface, ConfigurableRequirementsInt
      * @param RouteCollection      $routes  A RouteCollection instance
      * @param RequestContext       $context The context
      * @param LoggerInterface|null $logger  A logger instance
+     *
+     * @api
      */
     public function __construct(RouteCollection $routes, RequestContext $context, LoggerInterface $logger = null)
     {
@@ -202,7 +206,16 @@ class UrlGenerator implements UrlGeneratorInterface, ConfigurableRequirementsInt
             $scheme = $this->context->getScheme();
 
             if ($requiredSchemes) {
-                if (!in_array($scheme, $requiredSchemes, true)) {
+                $schemeMatched = false;
+                foreach ($requiredSchemes as $requiredScheme) {
+                    if ($scheme === $requiredScheme) {
+                        $schemeMatched = true;
+
+                        break;
+                    }
+                }
+
+                if (!$schemeMatched) {
                     $referenceType = self::ABSOLUTE_URL;
                     $scheme = current($requiredSchemes);
                 }
@@ -264,10 +277,7 @@ class UrlGenerator implements UrlGeneratorInterface, ConfigurableRequirementsInt
         }
 
         // add a query string if needed
-        $extra = array_udiff_assoc(array_diff_key($parameters, $variables), $defaults, function ($a, $b) {
-            return $a == $b ? 0 : 1;
-        });
-
+        $extra = array_diff_key($parameters, $variables, $defaults);
         if ($extra && $query = http_build_query($extra, '', '&')) {
             // "/" and "?" can be left decoded for better user experience, see
             // http://tools.ietf.org/html/rfc3986#section-3.4

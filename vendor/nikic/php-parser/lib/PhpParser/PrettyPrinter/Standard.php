@@ -84,71 +84,15 @@ class Standard extends PrettyPrinterAbstract
     // Scalars
 
     public function pScalar_String(Scalar\String_ $node) {
-        $kind = $node->getAttribute('kind', Scalar\String_::KIND_SINGLE_QUOTED);
-        switch ($kind) {
-            case Scalar\String_::KIND_NOWDOC:
-                $label = $node->getAttribute('docLabel');
-                if ($label && !$this->containsEndLabel($node->value, $label)) {
-                    if ($node->value === '') {
-                        return $this->pNoIndent("<<<'$label'\n$label") . $this->docStringEndToken;
-                    }
-
-                    return $this->pNoIndent("<<<'$label'\n$node->value\n$label")
-                         . $this->docStringEndToken;
-                }
-                /* break missing intentionally */
-            case Scalar\String_::KIND_SINGLE_QUOTED:
-                return '\'' . $this->pNoIndent(addcslashes($node->value, '\'\\')) . '\'';
-            case Scalar\String_::KIND_HEREDOC:
-                $label = $node->getAttribute('docLabel');
-                if ($label && !$this->containsEndLabel($node->value, $label)) {
-                    if ($node->value === '') {
-                        return $this->pNoIndent("<<<$label\n$label") . $this->docStringEndToken;
-                    }
-
-                    $escaped = $this->escapeString($node->value, null);
-                    return $this->pNoIndent("<<<$label\n" . $escaped ."\n$label")
-                         . $this->docStringEndToken;
-                }
-            /* break missing intentionally */
-            case Scalar\String_::KIND_DOUBLE_QUOTED:
-                return '"' . $this->escapeString($node->value, '"') . '"';
-        }
-        throw new \Exception('Invalid string kind');
+        return '\'' . $this->pNoIndent(addcslashes($node->value, '\'\\')) . '\'';
     }
 
     public function pScalar_Encapsed(Scalar\Encapsed $node) {
-        if ($node->getAttribute('kind') === Scalar\String_::KIND_HEREDOC) {
-            $label = $node->getAttribute('docLabel');
-            if ($label && !$this->encapsedContainsEndLabel($node->parts, $label)) {
-                if (count($node->parts) === 1
-                    && $node->parts[0] instanceof Scalar\EncapsedStringPart
-                    && $node->parts[0]->value === ''
-                ) {
-                    return $this->pNoIndent("<<<$label\n$label") . $this->docStringEndToken;
-                }
-
-                return $this->pNoIndent(
-                    "<<<$label\n" . $this->pEncapsList($node->parts, null) . "\n$label"
-                ) . $this->docStringEndToken;
-            }
-        }
         return '"' . $this->pEncapsList($node->parts, '"') . '"';
     }
 
     public function pScalar_LNumber(Scalar\LNumber $node) {
-        $str = (string) $node->value;
-        switch ($node->getAttribute('kind', Scalar\LNumber::KIND_DEC)) {
-            case Scalar\LNumber::KIND_BIN:
-                return '0b' . base_convert($str, 10, 2);
-            case Scalar\LNumber::KIND_OCT:
-                return '0' . base_convert($str, 10, 8);
-            case Scalar\LNumber::KIND_DEC:
-                return $str;
-            case Scalar\LNumber::KIND_HEX:
-                return '0x' . base_convert($str, 10, 16);
-        }
-        throw new \Exception('Invalid number kind');
+        return (string) $node->value;
     }
 
     public function pScalar_DNumber(Scalar\DNumber $node) {
@@ -412,19 +356,19 @@ class Standard extends PrettyPrinterAbstract
     // Function calls and similar constructs
 
     public function pExpr_FuncCall(Expr\FuncCall $node) {
-        return $this->pCallLhs($node->name)
-             . '(' . $this->pCommaSeparated($node->args) . ')';
+        return $this->p($node->name) . '(' . $this->pCommaSeparated($node->args) . ')';
     }
 
     public function pExpr_MethodCall(Expr\MethodCall $node) {
-        return $this->pDereferenceLhs($node->var) . '->' . $this->pObjectProperty($node->name)
+        return $this->pVarOrNewExpr($node->var) . '->' . $this->pObjectProperty($node->name)
              . '(' . $this->pCommaSeparated($node->args) . ')';
     }
 
     public function pExpr_StaticCall(Expr\StaticCall $node) {
-        return $this->pDereferenceLhs($node->class) . '::'
+        return $this->p($node->class) . '::'
              . ($node->name instanceof Expr
                 ? ($node->name instanceof Expr\Variable
+                   || $node->name instanceof Expr\ArrayDimFetch
                    ? $this->p($node->name)
                    : '{' . $this->p($node->name) . '}')
                 : $node->name)
@@ -478,13 +422,7 @@ class Standard extends PrettyPrinterAbstract
     }
 
     public function pExpr_Array(Expr\Array_ $node) {
-        $syntax = $node->getAttribute('kind',
-            $this->options['shortArraySyntax'] ? Expr\Array_::KIND_SHORT : Expr\Array_::KIND_LONG);
-        if ($syntax === Expr\Array_::KIND_SHORT) {
-            return '[' . $this->pCommaSeparated($node->items) . ']';
-        } else {
-            return 'array(' . $this->pCommaSeparated($node->items) . ')';
-        }
+        return 'array(' . $this->pCommaSeparated($node->items) . ')';
     }
 
     public function pExpr_ArrayItem(Expr\ArrayItem $node) {
@@ -493,7 +431,7 @@ class Standard extends PrettyPrinterAbstract
     }
 
     public function pExpr_ArrayDimFetch(Expr\ArrayDimFetch $node) {
-        return $this->pDereferenceLhs($node->var)
+        return $this->pVarOrNewExpr($node->var)
              . '[' . (null !== $node->dim ? $this->p($node->dim) : '') . ']';
     }
 
@@ -506,11 +444,11 @@ class Standard extends PrettyPrinterAbstract
     }
 
     public function pExpr_PropertyFetch(Expr\PropertyFetch $node) {
-        return $this->pDereferenceLhs($node->var) . '->' . $this->pObjectProperty($node->name);
+        return $this->pVarOrNewExpr($node->var) . '->' . $this->pObjectProperty($node->name);
     }
 
     public function pExpr_StaticPropertyFetch(Expr\StaticPropertyFetch $node) {
-        return $this->pDereferenceLhs($node->class) . '::$' . $this->pObjectProperty($node->name);
+        return $this->p($node->class) . '::$' . $this->pObjectProperty($node->name);
     }
 
     public function pExpr_ShellExec(Expr\ShellExec $node) {
@@ -551,9 +489,7 @@ class Standard extends PrettyPrinterAbstract
     }
 
     public function pExpr_Exit(Expr\Exit_ $node) {
-        $kind = $node->getAttribute('kind', Expr\Exit_::KIND_DIE);
-        return ($kind === Expr\Exit_::KIND_EXIT ? 'exit' : 'die')
-             . (null !== $node->expr ? '(' . $this->p($node->expr) . ')' : '');
+        return 'die' . (null !== $node->expr ? '(' . $this->p($node->expr) . ')' : '');
     }
 
     public function pExpr_Yield(Expr\Yield_ $node) {
@@ -580,23 +516,15 @@ class Standard extends PrettyPrinterAbstract
     }
 
     public function pStmt_Use(Stmt\Use_ $node) {
-        return 'use ' . $this->pUseType($node->type)
+        return 'use '
+             . ($node->type === Stmt\Use_::TYPE_FUNCTION ? 'function ' : '')
+             . ($node->type === Stmt\Use_::TYPE_CONSTANT ? 'const ' : '')
              . $this->pCommaSeparated($node->uses) . ';';
     }
 
-    public function pStmt_GroupUse(Stmt\GroupUse $node) {
-        return 'use ' . $this->pUseType($node->type) . $this->pName($node->prefix)
-             . '\{' . $this->pCommaSeparated($node->uses) . '};';
-    }
-
     public function pStmt_UseUse(Stmt\UseUse $node) {
-        return $this->pUseType($node->type) . $this->p($node->name)
+        return $this->p($node->name)
              . ($node->name->getLast() !== $node->alias ? ' as ' . $node->alias : '');
-    }
-
-    private function pUseType($type) {
-        return $type === Stmt\Use_::TYPE_FUNCTION ? 'function '
-            : ($type === Stmt\Use_::TYPE_CONSTANT ? 'const ' : '');
     }
 
     public function pStmt_Interface(Stmt\Interface_ $node) {
@@ -669,12 +597,12 @@ class Standard extends PrettyPrinterAbstract
     }
 
     public function pStmt_Declare(Stmt\Declare_ $node) {
-        return 'declare (' . $this->pCommaSeparated($node->declares) . ')'
-             . (null !== $node->stmts ? ' {' . $this->pStmts($node->stmts) . "\n" . '}' : ';');
+        return 'declare (' . $this->pCommaSeparated($node->declares) . ') {'
+             . $this->pStmts($node->stmts) . "\n" . '}';
     }
 
     public function pStmt_DeclareDeclare(Stmt\DeclareDeclare $node) {
-        return $node->key . '=' . $this->p($node->value);
+        return $node->key . ' = ' . $this->p($node->value);
     }
 
     // Control flow
@@ -798,10 +726,6 @@ class Standard extends PrettyPrinterAbstract
         return '__halt_compiler();' . $node->remaining;
     }
 
-    public function pStmt_Nop(Stmt\Nop $node) {
-        return '';
-    }
-
     // Helpers
 
     protected function pType($node) {
@@ -816,7 +740,8 @@ class Standard extends PrettyPrinterAbstract
         . "\n" . '{' . $this->pStmts($node->stmts) . "\n" . '}';
     }
 
-    protected function pObjectProperty($node) {
+    /** @internal */
+    public function pObjectProperty($node) {
         if ($node instanceof Expr) {
             return '{' . $this->p($node) . '}';
         } else {
@@ -824,7 +749,8 @@ class Standard extends PrettyPrinterAbstract
         }
     }
 
-    protected function pModifiers($modifiers) {
+    /** @internal */
+    public function pModifiers($modifiers) {
         return ($modifiers & Stmt\Class_::MODIFIER_PUBLIC    ? 'public '    : '')
              . ($modifiers & Stmt\Class_::MODIFIER_PROTECTED ? 'protected ' : '')
              . ($modifiers & Stmt\Class_::MODIFIER_PRIVATE   ? 'private '   : '')
@@ -833,11 +759,12 @@ class Standard extends PrettyPrinterAbstract
              . ($modifiers & Stmt\Class_::MODIFIER_FINAL     ? 'final '     : '');
     }
 
-    protected function pEncapsList(array $encapsList, $quote) {
+    /** @internal */
+    public function pEncapsList(array $encapsList, $quote) {
         $return = '';
         foreach ($encapsList as $element) {
-            if ($element instanceof Scalar\EncapsedStringPart) {
-                $return .= $this->escapeString($element->value, $quote);
+            if (is_string($element)) {
+                $return .= addcslashes($element, "\n\r\t\f\v$" . $quote . "\\");
             } else {
                 $return .= '{' . $this->p($element) . '}';
             }
@@ -846,77 +773,12 @@ class Standard extends PrettyPrinterAbstract
         return $return;
     }
 
-    protected function escapeString($string, $quote) {
-        if (null === $quote) {
-            // For doc strings, don't escape newlines
-            $escaped = addcslashes($string, "\t\f\v$\\");
+    /** @internal */
+    public function pVarOrNewExpr(Node $node) {
+        if ($node instanceof Expr\New_) {
+            return '(' . $this->p($node) . ')';
         } else {
-            $escaped = addcslashes($string, "\n\r\t\f\v$" . $quote . "\\");
-        }
-
-        // Escape other control characters
-        return preg_replace_callback('/([\0-\10\16-\37])(?=([0-7]?))/', function ($matches) {
-            $oct = decoct(ord($matches[1]));
-            if ($matches[2] !== '') {
-                // If there is a trailing digit, use the full three character form
-                return '\\' . str_pad($oct, 3, '0', STR_PAD_LEFT);
-            }
-            return '\\' . $oct;
-        }, $escaped);
-    }
-
-    protected function containsEndLabel($string, $label, $atStart = true, $atEnd = true) {
-        $start = $atStart ? '(?:^|[\r\n])' : '[\r\n]';
-        $end = $atEnd ? '(?:$|[;\r\n])' : '[;\r\n]';
-        return false !== strpos($string, $label)
-            && preg_match('/' . $start . $label . $end . '/', $string);
-    }
-
-    protected function encapsedContainsEndLabel(array $parts, $label) {
-        foreach ($parts as $i => $part) {
-            $atStart = $i === 0;
-            $atEnd = $i === count($parts) - 1;
-            if ($part instanceof Scalar\EncapsedStringPart
-                && $this->containsEndLabel($part->value, $label, $atStart, $atEnd)
-            ) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected function pDereferenceLhs(Node $node) {
-        if ($node instanceof Expr\Variable
-            || $node instanceof Name
-            || $node instanceof Expr\ArrayDimFetch
-            || $node instanceof Expr\PropertyFetch
-            || $node instanceof Expr\StaticPropertyFetch
-            || $node instanceof Expr\FuncCall
-            || $node instanceof Expr\MethodCall
-            || $node instanceof Expr\StaticCall
-            || $node instanceof Expr\Array_
-            || $node instanceof Scalar\String_
-            || $node instanceof Expr\ConstFetch
-            || $node instanceof Expr\ClassConstFetch
-        ) {
             return $this->p($node);
-        } else  {
-            return '(' . $this->p($node) . ')';
-        }
-    }
-
-    protected function pCallLhs(Node $node) {
-        if ($node instanceof Name
-            || $node instanceof Expr\Variable
-            || $node instanceof Expr\ArrayDimFetch
-            || $node instanceof Expr\FuncCall
-            || $node instanceof Expr\MethodCall
-            || $node instanceof Expr\StaticCall
-            || $node instanceof Expr\Array_
-        ) {
-            return $this->p($node);
-        } else  {
-            return '(' . $this->p($node) . ')';
         }
     }
 }

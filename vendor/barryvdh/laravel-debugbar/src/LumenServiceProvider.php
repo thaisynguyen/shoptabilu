@@ -52,6 +52,6 @@ class LumenServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return ['debugbar', 'command.debugbar.clear'];
+        return array('debugbar', 'command.debugbar.clear');
     }
 }

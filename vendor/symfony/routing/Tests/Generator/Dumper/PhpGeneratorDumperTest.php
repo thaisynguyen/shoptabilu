@@ -11,7 +11,6 @@
 
 namespace Symfony\Component\Routing\Tests\Generator\Dumper;
 
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\Generator\Dumper\PhpGeneratorDumper;
@@ -34,11 +33,6 @@ class PhpGeneratorDumperTest extends \PHPUnit_Framework_TestCase
      */
     private $testTmpFilepath;
 
-    /**
-     * @var string
-     */
-    private $largeTestTmpFilepath;
-
     protected function setUp()
     {
         parent::setUp();
@@ -46,9 +40,7 @@ class PhpGeneratorDumperTest extends \PHPUnit_Framework_TestCase
         $this->routeCollection = new RouteCollection();
         $this->generatorDumper = new PhpGeneratorDumper($this->routeCollection);
         $this->testTmpFilepath = sys_get_temp_dir().DIRECTORY_SEPARATOR.'php_generator.'.$this->getName().'.php';
-        $this->largeTestTmpFilepath = sys_get_temp_dir().DIRECTORY_SEPARATOR.'php_generator.'.$this->getName().'.large.php';
         @unlink($this->testTmpFilepath);
-        @unlink($this->largeTestTmpFilepath);
     }
 
     protected function tearDown()
@@ -72,46 +64,15 @@ class PhpGeneratorDumperTest extends \PHPUnit_Framework_TestCase
 
         $projectUrlGenerator = new \ProjectUrlGenerator(new RequestContext('/app.php'));
 
-        $absoluteUrlWithParameter = $projectUrlGenerator->generate('Test', array('foo' => 'bar'), UrlGeneratorInterface::ABSOLUTE_URL);
-        $absoluteUrlWithoutParameter = $projectUrlGenerator->generate('Test2', array(), UrlGeneratorInterface::ABSOLUTE_URL);
-        $relativeUrlWithParameter = $projectUrlGenerator->generate('Test', array('foo' => 'bar'), UrlGeneratorInterface::ABSOLUTE_PATH);
-        $relativeUrlWithoutParameter = $projectUrlGenerator->generate('Test2', array(), UrlGeneratorInterface::ABSOLUTE_PATH);
+        $absoluteUrlWithParameter = $projectUrlGenerator->generate('Test', array('foo' => 'bar'), true);
+        $absoluteUrlWithoutParameter = $projectUrlGenerator->generate('Test2', array(), true);
+        $relativeUrlWithParameter = $projectUrlGenerator->generate('Test', array('foo' => 'bar'), false);
+        $relativeUrlWithoutParameter = $projectUrlGenerator->generate('Test2', array(), false);
 
-        $this->assertEquals('http://localhost/app.php/testing/bar', $absoluteUrlWithParameter);
-        $this->assertEquals('http://localhost/app.php/testing2', $absoluteUrlWithoutParameter);
-        $this->assertEquals('/app.php/testing/bar', $relativeUrlWithParameter);
-        $this->assertEquals('/app.php/testing2', $relativeUrlWithoutParameter);
-    }
-
-    public function testDumpWithTooManyRoutes()
-    {
-        if (defined('HHVM_VERSION_ID')) {
-            $this->markTestSkipped('HHVM consumes too much memory on this test.');
-        }
-
-        $this->routeCollection->add('Test', new Route('/testing/{foo}'));
-        for ($i = 0; $i < 32769; ++$i) {
-            $this->routeCollection->add('route_'.$i, new Route('/route_'.$i));
-        }
-        $this->routeCollection->add('Test2', new Route('/testing2'));
-
-        file_put_contents($this->largeTestTmpFilepath, $this->generatorDumper->dump(array(
-            'class' => 'ProjectLargeUrlGenerator',
-        )));
-        $this->routeCollection = $this->generatorDumper = null;
-        include $this->largeTestTmpFilepath;
-
-        $projectUrlGenerator = new \ProjectLargeUrlGenerator(new RequestContext('/app.php'));
-
-        $absoluteUrlWithParameter = $projectUrlGenerator->generate('Test', array('foo' => 'bar'), UrlGeneratorInterface::ABSOLUTE_URL);
-        $absoluteUrlWithoutParameter = $projectUrlGenerator->generate('Test2', array(), UrlGeneratorInterface::ABSOLUTE_URL);
-        $relativeUrlWithParameter = $projectUrlGenerator->generate('Test', array('foo' => 'bar'), UrlGeneratorInterface::ABSOLUTE_PATH);
-        $relativeUrlWithoutParameter = $projectUrlGenerator->generate('Test2', array(), UrlGeneratorInterface::ABSOLUTE_PATH);
-
-        $this->assertEquals('http://localhost/app.php/testing/bar', $absoluteUrlWithParameter);
-        $this->assertEquals('http://localhost/app.php/testing2', $absoluteUrlWithoutParameter);
-        $this->assertEquals('/app.php/testing/bar', $relativeUrlWithParameter);
-        $this->assertEquals('/app.php/testing2', $relativeUrlWithoutParameter);
+        $this->assertEquals($absoluteUrlWithParameter, 'http://localhost/app.php/testing/bar');
+        $this->assertEquals($absoluteUrlWithoutParameter, 'http://localhost/app.php/testing2');
+        $this->assertEquals($relativeUrlWithParameter, '/app.php/testing/bar');
+        $this->assertEquals($relativeUrlWithoutParameter, '/app.php/testing2');
     }
 
     /**
@@ -151,7 +112,7 @@ class PhpGeneratorDumperTest extends \PHPUnit_Framework_TestCase
         $projectUrlGenerator = new \DefaultRoutesUrlGenerator(new RequestContext());
         $url = $projectUrlGenerator->generate('Test', array());
 
-        $this->assertEquals('/testing', $url);
+        $this->assertEquals($url, '/testing');
     }
 
     public function testDumpWithSchemeRequirement()
@@ -163,18 +124,18 @@ class PhpGeneratorDumperTest extends \PHPUnit_Framework_TestCase
 
         $projectUrlGenerator = new \SchemeUrlGenerator(new RequestContext('/app.php'));
 
-        $absoluteUrl = $projectUrlGenerator->generate('Test1', array(), UrlGeneratorInterface::ABSOLUTE_URL);
-        $relativeUrl = $projectUrlGenerator->generate('Test1', array(), UrlGeneratorInterface::ABSOLUTE_PATH);
+        $absoluteUrl = $projectUrlGenerator->generate('Test1', array(), true);
+        $relativeUrl = $projectUrlGenerator->generate('Test1', array(), false);
 
-        $this->assertEquals('ftp://localhost/app.php/testing', $absoluteUrl);
-        $this->assertEquals('ftp://localhost/app.php/testing', $relativeUrl);
+        $this->assertEquals($absoluteUrl, 'ftp://localhost/app.php/testing');
+        $this->assertEquals($relativeUrl, 'ftp://localhost/app.php/testing');
 
         $projectUrlGenerator = new \SchemeUrlGenerator(new RequestContext('/app.php', 'GET', 'localhost', 'https'));
 
-        $absoluteUrl = $projectUrlGenerator->generate('Test1', array(), UrlGeneratorInterface::ABSOLUTE_URL);
-        $relativeUrl = $projectUrlGenerator->generate('Test1', array(), UrlGeneratorInterface::ABSOLUTE_PATH);
+        $absoluteUrl = $projectUrlGenerator->generate('Test1', array(), true);
+        $relativeUrl = $projectUrlGenerator->generate('Test1', array(), false);
 
-        $this->assertEquals('https://localhost/app.php/testing', $absoluteUrl);
-        $this->assertEquals('/app.php/testing', $relativeUrl);
+        $this->assertEquals($absoluteUrl, 'https://localhost/app.php/testing');
+        $this->assertEquals($relativeUrl, '/app.php/testing');
     }
 }

@@ -39,8 +39,8 @@ use LogicException;
  * @method array|false getMetadata($path)
  * @method Handler get($path, Handler $handler = null)
  * @method Filesystem flushCache()
- * @method void assertPresent($path)
- * @method void assertAbsent($path)
+ * @method assertPresent($path)
+ * @method assertAbsent($path)
  * @method Filesystem addPlugin(PluginInterface $plugin)
  */
 class MountManager
@@ -88,8 +88,8 @@ class MountManager
      */
     public function mountFilesystem($prefix, FilesystemInterface $filesystem)
     {
-        if ( ! is_string($prefix)) {
-            throw new InvalidArgumentException(__METHOD__ . ' expects argument #1 to be a string.');
+        if (! is_string($prefix)) {
+            throw new InvalidArgumentException(__METHOD__.' expects argument #1 to be a string.');
         }
 
         $this->filesystems[$prefix] = $filesystem;
@@ -108,8 +108,8 @@ class MountManager
      */
     public function getFilesystem($prefix)
     {
-        if ( ! isset($this->filesystems[$prefix])) {
-            throw new LogicException('No filesystem mounted with prefix ' . $prefix);
+        if (! isset($this->filesystems[$prefix])) {
+            throw new LogicException('No filesystem mounted with prefix '.$prefix);
         }
 
         return $this->filesystems[$prefix];
@@ -130,12 +130,12 @@ class MountManager
 
         $path = array_shift($arguments);
 
-        if ( ! is_string($path)) {
+        if (! is_string($path)) {
             throw new InvalidArgumentException('First argument should be a string');
         }
 
-        if ( ! preg_match('#^.+\:\/\/.*#', $path)) {
-            throw new InvalidArgumentException('No prefix detected in path: ' . $path);
+        if (! preg_match('#^.+\:\/\/.*#', $path)) {
+            throw new InvalidArgumentException('No prefix detected in path: '.$path);
         }
 
         list($prefix, $path) = explode('://', $path, 2);
@@ -182,11 +182,10 @@ class MountManager
     /**
      * @param $from
      * @param $to
-     * @param array $config
      *
      * @return bool
      */
-    public function copy($from, $to, array $config = [])
+    public function copy($from, $to)
     {
         list($prefixFrom, $arguments) = $this->filterPrefix([$from]);
 
@@ -200,7 +199,7 @@ class MountManager
         list($prefixTo, $arguments) = $this->filterPrefix([$to]);
 
         $fsTo = $this->getFilesystem($prefixTo);
-        $result =  call_user_func_array([$fsTo, 'writeStream'], array_merge($arguments, [$buffer, $config]));
+        $result =  call_user_func_array([$fsTo, 'writeStream'], array_merge($arguments, [$buffer]));
 
         if (is_resource($buffer)) {
             fclose($buffer);
@@ -230,13 +229,12 @@ class MountManager
      *
      * @param $from
      * @param $to
-     * @param array $config
      *
      * @return bool
      */
-    public function move($from, $to, array $config = [])
+    public function move($from, $to)
     {
-        $copied = $this->copy($from, $to, $config);
+        $copied = $this->copy($from, $to);
 
         if ($copied) {
             return $this->delete($from);

@@ -255,12 +255,12 @@ if (typeof(PhpDebugBar) == 'undefined') {
         className: csscls('panel'),
 
         render: function() {
-            this.$tab = $('<a />').addClass(csscls('tab'));
+            this.$tab = $('<a href="javascript:" />').addClass(csscls('tab'));
 
             this.$icon = $('<i />').appendTo(this.$tab);
             this.bindAttr('icon', function(icon) {
                 if (icon) {
-                    this.$icon.attr('class', 'phpdebugbar-fa phpdebugbar-fa-' + icon);
+                    this.$icon.attr('class', 'fa fa-' + icon);
                 } else {
                     this.$icon.attr('class', '');
                 }
@@ -315,7 +315,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
             this.$icon = $('<i />').appendTo(this.$el);
             this.bindAttr('icon', function(icon) {
                 if (icon) {
-                    this.$icon.attr('class', 'phpdebugbar-fa phpdebugbar-fa-' + icon);
+                    this.$icon.attr('class', 'fa fa-' + icon);
                 } else {
                     this.$icon.attr('class', '');
                 }
@@ -395,8 +395,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
         className: "phpdebugbar " + csscls('minimized'),
 
         options: {
-            bodyMarginBottom: true,
-            bodyMarginBottomHeight: parseInt($('body').css('margin-bottom'))
+            bodyPaddingBottom: true
         },
 
         initialize: function() {
@@ -484,31 +483,31 @@ if (typeof(PhpDebugBar) == 'undefined') {
             };
 
             // close button
-            this.$closebtn = $('<a />').addClass(csscls('close-btn')).appendTo(this.$headerRight);
+            this.$closebtn = $('<a href="javascript:" />').addClass(csscls('close-btn')).appendTo(this.$headerRight);
             this.$closebtn.click(function() {
                 self.close();
             });
 
             // minimize button
-            this.$minimizebtn = $('<a />').addClass(csscls('minimize-btn') ).appendTo(this.$headerRight);
+            this.$minimizebtn = $('<a href="javascript:" />').addClass(csscls('minimize-btn') ).appendTo(this.$headerRight);
             this.$minimizebtn.click(function() {
                 self.minimize();
             });
 
             // maximize button
-            this.$maximizebtn = $('<a />').addClass(csscls('maximize-btn') ).appendTo(this.$headerRight);
+            this.$maximizebtn = $('<a href="javascript:" />').addClass(csscls('maximize-btn') ).appendTo(this.$headerRight);
             this.$maximizebtn.click(function() {
                 self.restore();
             });
 
             // restore button
-            this.$restorebtn = $('<a />').addClass(csscls('restore-btn')).hide().appendTo(this.$el);
+            this.$restorebtn = $('<a href="javascript:" />').addClass(csscls('restore-btn')).hide().appendTo(this.$el);
             this.$restorebtn.click(function() {
                 self.restore();
             });
 
             // open button
-            this.$openbtn = $('<a />').addClass(csscls('open-btn')).appendTo(this.$headerRight).hide();
+            this.$openbtn = $('<a href="javascript:" />').addClass(csscls('open-btn')).appendTo(this.$headerRight).hide();
             this.$openbtn.click(function() {
                 self.openHandler.show(function(id, dataset) {
                     self.addDataSet(dataset, id, "(opened)");
@@ -793,16 +792,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
             this.$el.addClass(csscls('closed'));
             this.recomputeBottomOffset();
         },
-        
-        /**
-         * Checks if the panel is closed
-         *
-         * @return {Boolean}
-         */
-        isClosed: function() {
-            return this.$el.hasClass(csscls('closed'));
-        },
-        
+
         /**
          * Restore the debug bar
          *
@@ -822,17 +812,12 @@ if (typeof(PhpDebugBar) == 'undefined') {
         },
 
         /**
-         * Recomputes the margin-bottom css property of the body so
+         * Recomputes the padding-bottom css property of the body so
          * that the debug bar never hides any content
          */
         recomputeBottomOffset: function() {
-            if (this.options.bodyMarginBottom) {
-                if (this.isClosed()) {
-                    return $('body').css('margin-bottom', this.options.bodyMarginBottomHeight || '');
-                }
-                
-                var offset = parseInt(this.$el.height()) + this.options.bodyMarginBottomHeight;
-                $('body').css('margin-bottom', offset);
+            if (this.options.bodyPaddingBottom) {
+                $('body').css('padding-bottom', this.$el.height());
             }
         },
 

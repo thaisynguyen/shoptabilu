@@ -3,7 +3,6 @@
 namespace Illuminate\Auth\Passwords;
 
 use Closure;
-use Illuminate\Support\Arr;
 use UnexpectedValueException;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Mail\Mailer as MailerContract;
@@ -230,7 +229,7 @@ class PasswordBroker implements PasswordBrokerContract
      */
     public function getUser(array $credentials)
     {
-        $credentials = Arr::except($credentials, ['token']);
+        $credentials = array_except($credentials, ['token']);
 
         $user = $this->users->retrieveByCredentials($credentials);
 

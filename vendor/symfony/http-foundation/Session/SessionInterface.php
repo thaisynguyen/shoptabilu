@@ -23,16 +23,20 @@ interface SessionInterface
     /**
      * Starts the session storage.
      *
-     * @return bool True if session started
+     * @return bool True if session started.
      *
      * @throws \RuntimeException If session fails to start.
+     *
+     * @api
      */
     public function start();
 
     /**
      * Returns the session ID.
      *
-     * @return string The session ID
+     * @return string The session ID.
+     *
+     * @api
      */
     public function getId();
 
@@ -40,13 +44,17 @@ interface SessionInterface
      * Sets the session ID.
      *
      * @param string $id
+     *
+     * @api
      */
     public function setId($id);
 
     /**
      * Returns the session name.
      *
-     * @return mixed The session name
+     * @return mixed The session name.
+     *
+     * @api
      */
     public function getName();
 
@@ -54,6 +62,8 @@ interface SessionInterface
      * Sets the session name.
      *
      * @param string $name
+     *
+     * @api
      */
     public function setName($name);
 
@@ -68,7 +78,9 @@ interface SessionInterface
      *                      to expire with browser session. Time is in seconds, and is
      *                      not a Unix timestamp.
      *
-     * @return bool True if session invalidated, false if error
+     * @return bool True if session invalidated, false if error.
+     *
+     * @api
      */
     public function invalidate($lifetime = null);
 
@@ -76,13 +88,15 @@ interface SessionInterface
      * Migrates the current session to a new session id while maintaining all
      * session attributes.
      *
-     * @param bool $destroy  Whether to delete the old session or leave it to garbage collection
+     * @param bool $destroy  Whether to delete the old session or leave it to garbage collection.
      * @param int  $lifetime Sets the cookie lifetime for the session cookie. A null value
      *                       will leave the system settings unchanged, 0 sets the cookie
      *                       to expire with browser session. Time is in seconds, and is
      *                       not a Unix timestamp.
      *
-     * @return bool True if session migrated, false if error
+     * @return bool True if session migrated, false if error.
+     *
+     * @api
      */
     public function migrate($destroy = false, $lifetime = null);
 
@@ -101,6 +115,8 @@ interface SessionInterface
      * @param string $name The attribute name
      *
      * @return bool true if the attribute is defined, false otherwise
+     *
+     * @api
      */
     public function has($name);
 
@@ -108,9 +124,11 @@ interface SessionInterface
      * Returns an attribute.
      *
      * @param string $name    The attribute name
-     * @param mixed  $default The default value if not found
+     * @param mixed  $default The default value if not found.
      *
      * @return mixed
+     *
+     * @api
      */
     public function get($name, $default = null);
 
@@ -119,6 +137,8 @@ interface SessionInterface
      *
      * @param string $name
      * @param mixed  $value
+     *
+     * @api
      */
     public function set($name, $value);
 
@@ -126,6 +146,8 @@ interface SessionInterface
      * Returns attributes.
      *
      * @return array Attributes
+     *
+     * @api
      */
     public function all();
 
@@ -142,11 +164,15 @@ interface SessionInterface
      * @param string $name
      *
      * @return mixed The removed value or null when it does not exist
+     *
+     * @api
      */
     public function remove($name);
 
     /**
      * Clears all attributes.
+     *
+     * @api
      */
     public function clear();
 

@@ -14,12 +14,12 @@ namespace League\Fractal;
 /**
  * A handy interface for getting at include parameters.
  */
-class ParamBag implements \ArrayAccess, \IteratorAggregate
+class ParamBag implements \ArrayAccess
 {
     /**
      * @var array
      */
-    protected $params = [];
+    protected $params = array();
 
     /**
      * Create a new parameter bag instance.
@@ -73,7 +73,6 @@ class ParamBag implements \ArrayAccess, \IteratorAggregate
      * Disallow changing the value of params in the data bag via property access.
      *
      * @param string $key
-     * @param mixed  $value
      *
      * @throws \LogicException
      *
@@ -126,7 +125,6 @@ class ParamBag implements \ArrayAccess, \IteratorAggregate
      * Disallow changing the value of params in the data bag via array access.
      *
      * @param string $key
-     * @param mixed  $value
      *
      * @throws \LogicException
      *
@@ -149,15 +147,5 @@ class ParamBag implements \ArrayAccess, \IteratorAggregate
     public function offsetUnset($key)
     {
         throw new \LogicException('Modifying parameters is not permitted');
-    }
-
-    /**
-     * IteratorAggregate for iterating over the object like an array.
-     *
-     * @return \ArrayIterator
-     */
-    public function getIterator()
-    {
-        return new \ArrayIterator($this->params);
     }
 }

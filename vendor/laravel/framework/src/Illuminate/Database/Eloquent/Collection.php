@@ -22,6 +22,7 @@ class Collection extends BaseCollection
 
         return Arr::first($this->items, function ($itemKey, $model) use ($key) {
             return $model->getKey() == $key;
+
         }, $default);
     }
 
@@ -103,9 +104,7 @@ class Collection extends BaseCollection
      */
     public function modelKeys()
     {
-        return array_map(function ($m) {
-            return $m->getKey();
-        }, $this->items);
+        return array_map(function ($m) { return $m->getKey(); }, $this->items);
     }
 
     /**
@@ -203,24 +202,9 @@ class Collection extends BaseCollection
      */
     public function except($keys)
     {
-        $dictionary = Arr::except($this->getDictionary(), $keys);
+        $dictionary = array_except($this->getDictionary(), $keys);
 
         return new static(array_values($dictionary));
-    }
-
-    /**
-     * Make the given, typically hidden, attributes visible across the entire collection.
-     *
-     * @param  array|string  $attributes
-     * @return $this
-     */
-    public function withHidden($attributes)
-    {
-        $this->each(function ($model) use ($attributes) {
-            $model->withHidden($attributes);
-        });
-
-        return $this;
     }
 
     /**

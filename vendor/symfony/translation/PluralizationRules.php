@@ -131,7 +131,6 @@ class PluralizationRules
             case 'fr':
             case 'gun':
             case 'hi':
-            case 'hy':
             case 'ln':
             case 'mg':
             case 'nso':
@@ -190,8 +189,8 @@ class PluralizationRules
     /**
      * Overrides the default plural rule for a given locale.
      *
-     * @param callable $rule   A PHP callable
-     * @param string   $locale The locale
+     * @param string $rule   A PHP callable
+     * @param string $locale The locale
      *
      * @throws \LogicException
      */

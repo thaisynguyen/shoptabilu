@@ -26,7 +26,7 @@ class SessionCollector extends DataCollector implements DataCollectorInterface, 
      */
     public function collect()
     {
-        $data = [];
+        $data = array();
         foreach ($this->session->all() as $key => $value) {
             $data[$key] = is_string($value) ? $value : $this->formatVar($value);
         }
@@ -46,13 +46,13 @@ class SessionCollector extends DataCollector implements DataCollectorInterface, 
      */
     public function getWidgets()
     {
-        return [
-            "session" => [
+        return array(
+            "session" => array(
                 "icon" => "archive",
                 "widget" => "PhpDebugBar.Widgets.VariableListWidget",
                 "map" => "session",
                 "default" => "{}"
-            ]
-        ];
+            )
+        );
     }
 }

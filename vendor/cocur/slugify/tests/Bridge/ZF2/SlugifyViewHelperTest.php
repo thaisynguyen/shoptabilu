@@ -1,7 +1,6 @@
 <?php
-namespace Cocur\Slugify\Tests\Bridge\ZF2;
+namespace Cocur\Slugify\Bridge\ZF2;
 
-use Cocur\Slugify\Bridge\ZF2\SlugifyViewHelper;
 use Cocur\Slugify\Slugify;
 
 /**
@@ -24,7 +23,7 @@ class SlugifyViewHelperTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers Cocur\Slugify\Bridge\ZF2\SlugifyViewHelper::__construct()
      */
-    protected function setUp()
+    public function setUp()
     {
         $this->slugify = new Slugify();
         $this->viewHelper = new SlugifyViewHelper($this->slugify);

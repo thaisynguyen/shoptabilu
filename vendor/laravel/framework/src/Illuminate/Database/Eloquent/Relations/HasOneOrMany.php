@@ -83,8 +83,6 @@ abstract class HasOneOrMany extends Relation
 
         $query->from($query->getModel()->getTable().' as '.$hash = $this->getRelationCountHash());
 
-        $query->getModel()->setTable($hash);
-
         $key = $this->wrap($this->getQualifiedParentKeyName());
 
         return $query->where($hash.'.'.$this->getPlainForeignKey(), '=', new Expression($key));

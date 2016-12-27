@@ -39,17 +39,15 @@ abstract class PromptingGenerator implements GeneratorInterface
      * @var Filesystem
      */
     private $filesystem;
-
     /**
      * @var ExecutionContextInterface
      */
     private $executionContext;
 
     /**
-     * @param IO $io
+     * @param IO               $io
      * @param TemplateRenderer $templates
-     * @param Filesystem $filesystem
-     * @param ExecutionContextInterface $executionContext
+     * @param Filesystem       $filesystem
      */
     public function __construct(IO $io, TemplateRenderer $templates, Filesystem $filesystem = null, ExecutionContextInterface $executionContext = null)
     {
@@ -67,7 +65,7 @@ abstract class PromptingGenerator implements GeneratorInterface
     {
         $filepath = $this->getFilePath($resource);
 
-        if ($this->fileAlreadyExists($filepath)) {
+        if ($this->ifFileAlreadyExists($filepath)) {
             if ($this->userAborts($filepath)) {
                 return;
             }
@@ -116,7 +114,7 @@ abstract class PromptingGenerator implements GeneratorInterface
      *
      * @return bool
      */
-    private function fileAlreadyExists($filepath)
+    private function ifFileAlreadyExists($filepath)
     {
         return $this->filesystem->pathExists($filepath);
     }

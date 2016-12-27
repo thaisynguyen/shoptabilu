@@ -20,9 +20,9 @@ class OpenHandlerController extends BaseController
         $data = $openHandler->handle(null, false, false);
 
         return new Response(
-            $data, 200, [
+            $data, 200, array(
                 'Content-Type' => 'application/json'
-            ]
+            )
         );
     }
 

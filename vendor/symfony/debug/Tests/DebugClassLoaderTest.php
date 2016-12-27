@@ -13,11 +13,12 @@ namespace Symfony\Component\Debug\Tests;
 
 use Symfony\Component\Debug\DebugClassLoader;
 use Symfony\Component\Debug\ErrorHandler;
+use Symfony\Component\Debug\Exception\ContextErrorException;
 
 class DebugClassLoaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var int Error reporting level before running tests
+     * @var int Error reporting level before running tests.
      */
     private $errorReporting;
 
@@ -135,7 +136,7 @@ class DebugClassLoaderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Case mismatch between class and real file names
+     * @expectedExceptionMessage Case mismatch between class and source file names
      */
     public function testFileCaseMismatch()
     {
@@ -174,7 +175,7 @@ class DebugClassLoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testDeprecatedSuper($class, $super, $type)
     {
-        set_error_handler(function () { return false; });
+        set_error_handler('var_dump', 0);
         $e = error_reporting(0);
         trigger_error('', E_USER_DEPRECATED);
 
@@ -204,7 +205,7 @@ class DebugClassLoaderTest extends \PHPUnit_Framework_TestCase
 
     public function testDeprecatedSuperInSameNamespace()
     {
-        set_error_handler(function () { return false; });
+        set_error_handler('var_dump', 0);
         $e = error_reporting(0);
         trigger_error('', E_USER_NOTICE);
 
@@ -230,7 +231,7 @@ class DebugClassLoaderTest extends \PHPUnit_Framework_TestCase
             $this->markTestSkipped('PHP7 already prevents using reserved names.');
         }
 
-        set_error_handler(function () { return false; });
+        set_error_handler('var_dump', 0);
         $e = error_reporting(0);
         trigger_error('', E_USER_NOTICE);
 

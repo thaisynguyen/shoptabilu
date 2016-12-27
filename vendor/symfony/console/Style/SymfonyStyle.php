@@ -66,34 +66,21 @@ class SymfonyStyle extends OutputStyle
     {
         $this->autoPrependBlock();
         $messages = is_array($messages) ? array_values($messages) : array($messages);
-        $indentLength = 0;
         $lines = array();
 
+        // add type
         if (null !== $type) {
-            $typePrefix = sprintf('[%s] ', $type);
-            $indentLength = strlen($typePrefix);
-            $lineIndentation = str_repeat(' ', $indentLength);
+            $messages[0] = sprintf('[%s] %s', $type, $messages[0]);
         }
 
         // wrap and add newlines for each element
         foreach ($messages as $key => $message) {
             $message = OutputFormatter::escape($message);
-            $lines = array_merge($lines, explode(PHP_EOL, wordwrap($message, $this->lineLength - Helper::strlen($prefix) - $indentLength, PHP_EOL, true)));
-
-            // prefix each line with a number of spaces equivalent to the type length
-            if (null !== $type) {
-                foreach ($lines as &$line) {
-                    $line = $lineIndentation === substr($line, 0, $indentLength) ? $line : $lineIndentation.$line;
-                }
-            }
+            $lines = array_merge($lines, explode(PHP_EOL, wordwrap($message, $this->lineLength - Helper::strlen($prefix), PHP_EOL, true)));
 
             if (count($messages) > 1 && $key < count($messages) - 1) {
                 $lines[] = '';
             }
-        }
-
-        if (null !== $type) {
-            $lines[0] = substr_replace($lines[0], $typePrefix, 0, $indentLength);
         }
 
         if ($padding && $this->isDecorated()) {
@@ -177,7 +164,7 @@ class SymfonyStyle extends OutputStyle
      */
     public function success($message)
     {
-        $this->block($message, 'OK', 'fg=black;bg=green', ' ', true);
+        $this->block($message, 'OK', 'fg=white;bg=green', ' ', true);
     }
 
     /**
@@ -217,13 +204,12 @@ class SymfonyStyle extends OutputStyle
      */
     public function table(array $headers, array $rows)
     {
-        $style = clone Table::getStyleDefinition('symfony-style-guide');
-        $style->setCellHeaderFormat('<info>%s</info>');
+        $headers = array_map(function ($value) { return sprintf('<info>%s</>', $value); }, $headers);
 
         $table = new Table($this);
         $table->setHeaders($headers);
         $table->setRows($rows);
-        $table->setStyle($style);
+        $table->setStyle('symfony-style-guide');
 
         $table->render();
         $this->newLine();
@@ -308,7 +294,7 @@ class SymfonyStyle extends OutputStyle
     {
         $progressBar = parent::createProgressBar($max);
 
-        if ('\\' !== DIRECTORY_SEPARATOR) {
+        if ('\\' === DIRECTORY_SEPARATOR) {
             $progressBar->setEmptyBarCharacter('░'); // light shade character \u2591
             $progressBar->setProgressCharacter('');
             $progressBar->setBarCharacter('▓'); // dark shade character \u2593

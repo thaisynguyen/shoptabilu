@@ -16,24 +16,18 @@
         }
     ],
     "require": {
-        "php": ">=5.5.9"
+        "php": ">=5.3.9"
     },
     "require-dev": {
-        "symfony/console": "~2.8|~3.0"
-    },
-    "suggest": {
-        "symfony/console": "For validating YAML files using the lint command"
+        "symfony/phpunit-bridge": "~2.7"
     },
     "autoload": {
-        "psr-4": { "Symfony\\Component\\Yaml\\": "" },
-        "exclude-from-classmap": [
-            "/Tests/"
-        ]
+        "psr-4": { "Symfony\\Component\\Yaml\\": "" }
     },
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "3.2-dev"
+            "dev-master": "2.7-dev"
         }
     }
 }

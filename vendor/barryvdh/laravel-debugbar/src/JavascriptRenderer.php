@@ -12,6 +12,9 @@ class JavascriptRenderer extends BaseJavascriptRenderer
     // Use XHR handler by default, instead of jQuery
     protected $ajaxHandlerBindToJquery = false;
     protected $ajaxHandlerBindToXHR = true;
+    
+    /** @var \Illuminate\Routing\UrlGenerator */
+    protected $url;
 
     public function __construct(DebugBar $debugBar, $baseUrl = null, $basePath = null)
     {
@@ -25,11 +28,10 @@ class JavascriptRenderer extends BaseJavascriptRenderer
      * Set the URL Generator
      *
      * @param \Illuminate\Routing\UrlGenerator $url
-     * @deprecated
      */
     public function setUrlGenerator($url)
     {
-
+        $this->url = $url;
     }
 
     /**
@@ -37,19 +39,24 @@ class JavascriptRenderer extends BaseJavascriptRenderer
      */
     public function renderHead()
     {
-        $cssRoute = route('debugbar.assets.css', [
-            'v' => $this->getModifiedTime('css')
-        ]);
+        if (!$this->url) {
+            return parent::renderHead();
+        }
 
-        $jsRoute = route('debugbar.assets.js', [
-            'v' => $this->getModifiedTime('js')
-        ]);
+        $jsModified = $this->getModifiedTime('js');
+        $cssModified = $this->getModifiedTime('css');
 
-        $cssRoute = preg_replace('/\Ahttps?:/', '', $cssRoute);
-        $jsRoute  = preg_replace('/\Ahttps?:/', '', $jsRoute);
-
-        $html  = "<link rel='stylesheet' type='text/css' property='stylesheet' href='{$cssRoute}'>";
-        $html .= "<script type='text/javascript' src='{$jsRoute}'></script>";
+        $html = '';
+        $html .= sprintf(
+            '<link rel="stylesheet" type="text/css" href="%s?%s">' . "\n",
+            $this->url->route('debugbar.assets.css'),
+            $cssModified
+        );
+        $html .= sprintf(
+            '<script type="text/javascript" src="%s?%s"></script>' . "\n",
+            $this->url->route('debugbar.assets.js'),
+            $jsModified
+        );
 
         if ($this->isJqueryNoConflictEnabled()) {
             $html .= '<script type="text/javascript">jQuery.noConflict(true);</script>' . "\n";
@@ -110,7 +117,7 @@ class JavascriptRenderer extends BaseJavascriptRenderer
         }
 
         if (is_array($uri)) {
-            $uris = [];
+            $uris = array();
             foreach ($uri as $u) {
                 $uris[] = $this->makeUriRelativeTo($u, $root);
             }

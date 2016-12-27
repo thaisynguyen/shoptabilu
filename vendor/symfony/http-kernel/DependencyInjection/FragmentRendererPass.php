@@ -52,14 +52,9 @@ class FragmentRendererPass implements CompilerPassInterface
                 throw new \InvalidArgumentException(sprintf('The service "%s" must not be abstract as fragment renderer are lazy-loaded.', $id));
             }
 
-            $class = $container->getParameterBag()->resolveValue($def->getClass());
+            $refClass = new \ReflectionClass($container->getParameterBag()->resolveValue($def->getClass()));
             $interface = 'Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface';
-
-            if (!is_subclass_of($class, $interface)) {
-                if (!class_exists($class, false)) {
-                    throw new \InvalidArgumentException(sprintf('Class "%s" used for service "%s" cannot be found.', $class, $id));
-                }
-
+            if (!$refClass->implementsInterface($interface)) {
                 throw new \InvalidArgumentException(sprintf('Service "%s" must implement interface "%s".', $id, $interface));
             }
 

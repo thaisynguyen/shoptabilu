@@ -48,7 +48,7 @@ class Arr
     /**
      * Collapse an array of arrays into a single array.
      *
-     * @param  \ArrayAccess|array  $array
+     * @param  array|\ArrayAccess  $array
      * @return array
      */
     public static function collapse($array)
@@ -181,9 +181,7 @@ class Arr
     {
         $return = [];
 
-        array_walk_recursive($array, function ($x) use (&$return) {
-            $return[] = $x;
-        });
+        array_walk_recursive($array, function ($x) use (&$return) { $return[] = $x; });
 
         return $return;
     }
@@ -199,13 +197,7 @@ class Arr
     {
         $original = &$array;
 
-        $keys = (array) $keys;
-
-        if (count($keys) === 0) {
-            return;
-        }
-
-        foreach ($keys as $key) {
+        foreach ((array) $keys as $key) {
             $parts = explode('.', $key);
 
             while (count($parts) > 1) {
@@ -358,25 +350,6 @@ class Arr
     }
 
     /**
-     * Push an item onto the beginning of an array.
-     *
-     * @param  array  $array
-     * @param  mixed  $value
-     * @param  mixed  $key
-     * @return array
-     */
-    public static function prepend($array, $value, $key = null)
-    {
-        if (is_null($key)) {
-            array_unshift($array, $value);
-        } else {
-            $array = [$key => $value] + $array;
-        }
-
-        return $array;
-    }
-
-    /**
      * Get a value from the array, and remove it.
      *
      * @param  array   $array
@@ -451,11 +424,11 @@ class Arr
     {
         foreach ($array as &$value) {
             if (is_array($value)) {
-                $value = static::sortRecursive($value);
+                $value = self::sortRecursive($value);
             }
         }
 
-        if (static::isAssoc($array)) {
+        if (self::isAssoc($array)) {
             ksort($array);
         } else {
             sort($array);

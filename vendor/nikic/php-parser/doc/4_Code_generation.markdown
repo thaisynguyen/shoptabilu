@@ -14,11 +14,8 @@ the following syntactic elements:
 Here is an example:
 
 ```php
-use PhpParser\BuilderFactory;
-use PhpParser\PrettyPrinter;
-use PhpParser\Node;
-
-$factory = new BuilderFactory;
+<?php
+$factory = new PhpParser\BuilderFactory;
 $node = $factory->namespace('Name\Space')
     ->addStmt($factory->use('Some\Other\Thingy')->as('SomeOtherClass'))
     ->addStmt($factory->class('SomeClass')
@@ -29,7 +26,6 @@ $node = $factory->namespace('Name\Space')
         ->addStmt($factory->method('someMethod')
             ->makePublic()
             ->makeAbstract() // ->makeFinal()
-            ->setReturnType('bool')
             ->addParam($factory->param('someParam')->setTypeHint('SomeClass'))
             ->setDocComment('/**
                               * This method does something.
@@ -42,7 +38,7 @@ $node = $factory->namespace('Name\Space')
             ->makeProtected() // ->makePublic() [default], ->makePrivate()
             ->addParam($factory->param('someParam')->setDefault('test'))
             // it is possible to add manually created nodes
-            ->addStmt(new Node\Expr\Print_(new Node\Expr\Variable('someParam')))
+            ->addStmt(new PhpParser\Node\Expr\Print_(new PhpParser\Node\Expr\Variable('someParam')))
         )
 
         // properties will be correctly reordered above the methods
@@ -54,7 +50,7 @@ $node = $factory->namespace('Name\Space')
 ;
 
 $stmts = array($node);
-$prettyPrinter = new PrettyPrinter\Standard();
+$prettyPrinter = new PhpParser\PrettyPrinter\Standard();
 echo $prettyPrinter->prettyPrintFile($stmts);
 ```
 
@@ -75,7 +71,7 @@ abstract class SomeClass extends SomeOtherClass implements A\Few, \Interfaces
      *
      * @param SomeClass And takes a parameter
      */
-    public abstract function someMethod(SomeClass $someParam) : bool;
+    public abstract function someMethod(SomeClass $someParam);
     protected function anotherMethod($someParam = 'test')
     {
         print $someParam;

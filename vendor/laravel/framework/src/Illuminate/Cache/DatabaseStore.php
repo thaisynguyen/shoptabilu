@@ -116,12 +116,14 @@ class DatabaseStore implements Store
      *
      * @param  string  $key
      * @param  mixed   $value
-     * @return int|bool
+     * @return void
      */
     public function increment($key, $value = 1)
     {
-        return $this->incrementOrDecrement($key, $value, function ($current, $value) {
-            return $current + $value;
+        $this->connection->transaction(function () use ($key, $value) {
+            return $this->incrementOrDecrement($key, $value, function ($current) use ($value) {
+                return $current + $value;
+            });
         });
     }
 
@@ -130,12 +132,14 @@ class DatabaseStore implements Store
      *
      * @param  string  $key
      * @param  mixed   $value
-     * @return int|bool
+     * @return void
      */
     public function decrement($key, $value = 1)
     {
-        return $this->incrementOrDecrement($key, $value, function ($current, $value) {
-            return $current - $value;
+        $this->connection->transaction(function () use ($key, $value) {
+            return $this->incrementOrDecrement($key, $value, function ($current) use ($value) {
+                return $current - $value;
+            });
         });
     }
 
@@ -145,32 +149,23 @@ class DatabaseStore implements Store
      * @param  string  $key
      * @param  mixed  $value
      * @param  \Closure  $callback
-     * @return int|bool
+     * @return void
      */
     protected function incrementOrDecrement($key, $value, Closure $callback)
     {
-        return $this->connection->transaction(function () use ($key, $value, $callback) {
-            $prefixed = $this->prefix.$key;
+        $prefixed = $this->prefix.$key;
 
-            $cache = $this->table()->where('key', $prefixed)->lockForUpdate()->first();
+        $cache = $this->table()->where('key', $prefixed)->lockForUpdate()->first();
 
-            if (is_null($cache)) {
-                return false;
-            }
-
+        if (! is_null($cache)) {
             $current = $this->encrypter->decrypt($cache->value);
-            $new = $callback((int) $current, $value);
 
-            if (! is_numeric($current)) {
-                return false;
+            if (is_numeric($current)) {
+                $this->table()->where('key', $prefixed)->update([
+                    'value' => $this->encrypter->encrypt($callback($current)),
+                ]);
             }
-
-            $this->table()->where('key', $prefixed)->update([
-                'value' => $this->encrypter->encrypt($new),
-            ]);
-
-            return $new;
-        });
+        }
     }
 
     /**

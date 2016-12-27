@@ -23,14 +23,14 @@ class Module implements ServiceProviderInterface, ViewHelperProviderInterface
      */
     public function getServiceConfig()
     {
-        return [
-            'factories' => [
+        return array(
+            'factories' => array(
                 'Cocur\Slugify\Slugify' => 'Cocur\Slugify\Bridge\ZF2\SlugifyService'
-            ],
-            'aliases' => [
+            ),
+            'aliases' => array(
                 'slugify' => 'Cocur\Slugify\Slugify'
-            ]
-        ];
+            )
+        );
     }
 
     /**
@@ -41,10 +41,10 @@ class Module implements ServiceProviderInterface, ViewHelperProviderInterface
      */
     public function getViewHelperConfig()
     {
-        return [
-            'factories' => [
+        return array(
+            'factories' => array(
                 'slugify' => 'Cocur\Slugify\Bridge\ZF2\SlugifyViewHelperFactory'
-            ]
-        ];
+            )
+        );
     }
 }

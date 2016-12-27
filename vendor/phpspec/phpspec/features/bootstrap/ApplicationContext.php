@@ -1,20 +1,24 @@
 <?php
 
+use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
+use Behat\Gherkin\Node\TableNode;
 use Fake\Prompter;
 use Fake\ReRunner;
+use Matcher\ApplicationOutputMatcher;
+use Matcher\ExitStatusMatcher;
+use Matcher\ValidJUnitXmlMatcher;
 use PhpSpec\Console\Application;
-use PhpSpec\Loader\StreamWrapper;
+use PhpSpec\Matcher\MatchersProviderInterface;
+use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Tester\ApplicationTester;
 
 /**
  * Defines application features from the specific context.
  */
-class ApplicationContext implements Context
+class ApplicationContext implements Context, MatchersProviderInterface
 {
-    const JUNIT_XSD_PATH = '/src/PhpSpec/Resources/schema/junit.xsd';
-
     /**
      * @var Application
      */
@@ -45,8 +49,6 @@ class ApplicationContext implements Context
      */
     public function setupApplication()
     {
-        StreamWrapper::register();
-
         $this->application = new Application('2.1-dev');
         $this->application->setAutoExit(false);
 
@@ -80,25 +82,21 @@ class ApplicationContext implements Context
             'class' => $class
         );
 
-        if ($this->tester->run($arguments, array('interactive' => false)) !== 0) {
-            throw new \Exception('Test runner exited with an error');
-        }
+        expect($this->tester->run($arguments, array('interactive' => false)))->toBe(0);
     }
 
     /**
      * @When I run phpspec (non interactively)
      * @When I run phpspec using the :formatter format
      * @When I run phpspec with the :option option
-     * @When I run phpspec with :spec specs to run
      * @When /I run phpspec with option (?P<option>.*)/
      * @When /I run phpspec (?P<interactive>interactively)$/
      * @When /I run phpspec (?P<interactive>interactively) with the (?P<option>.*) option/
      */
-    public function iRunPhpspec($formatter = null, $option = null, $interactive = null, $spec = null)
+    public function iRunPhpspec($formatter = null, $option = null, $interactive=null)
     {
         $arguments = array (
-            'command' => 'run',
-            'spec' => $spec
+            'command' => 'run'
         );
 
         if ($formatter) {
@@ -107,10 +105,7 @@ class ApplicationContext implements Context
 
         $this->addOptionToArguments($option, $arguments);
 
-        $this->lastExitCode = $this->tester->run($arguments, array(
-            'interactive' => (bool)$interactive,
-            'decorated' => false,
-        ));
+        $this->lastExitCode = $this->tester->run($arguments, array('interactive' => (bool)$interactive));
     }
 
     /**
@@ -166,7 +161,7 @@ class ApplicationContext implements Context
      */
     public function iShouldSee($output)
     {
-        $this->checkApplicationOutput((string)$output);
+        expect($this->tester)->toHaveOutput((string)$output);
     }
 
     /**
@@ -174,9 +169,7 @@ class ApplicationContext implements Context
      */
     public function iShouldBePromptedForCodeGeneration()
     {
-        if(!$this->prompter->hasBeenAsked()) {
-            throw new \Exception('There was a missing prompt for code generation');
-        }
+        expect($this->prompter)->toHaveBeenAsked();
     }
 
     /**
@@ -184,9 +177,7 @@ class ApplicationContext implements Context
      */
     public function iShouldNotBePromptedForCodeGeneration()
     {
-        if($this->prompter->hasBeenAsked()) {
-            throw new \Exception('There was an unexpected prompt for code generation');
-        }
+        expect($this->prompter)->toNotHaveBeenAsked();
     }
 
     /**
@@ -194,7 +185,7 @@ class ApplicationContext implements Context
      */
     public function theSuiteShouldPass()
     {
-        $this->theExitCodeShouldBe(0);
+        expect($this->lastExitCode)->toBeLike(0);
     }
 
     /**
@@ -202,9 +193,7 @@ class ApplicationContext implements Context
      */
     public function theSuiteShouldNotPass()
     {
-        if ($this->lastExitCode === 0) {
-            throw new \Exception('The application did not exit with an error code');
-        }
+        expect($this->lastExitCode)->notToBeLike(0);
     }
 
     /**
@@ -212,7 +201,7 @@ class ApplicationContext implements Context
      */
     public function exampleShouldHaveBeenSkipped($number)
     {
-        $this->checkApplicationOutput("($number skipped)");
+        expect($this->tester)->toHaveOutput("($number skipped)");
     }
 
     /**
@@ -220,7 +209,7 @@ class ApplicationContext implements Context
      */
     public function examplesShouldHaveBeenRun($number)
     {
-        $this->checkApplicationOutput("$number examples");
+        expect($this->tester)->toHaveOutput("$number examples");
     }
 
     /**
@@ -228,13 +217,7 @@ class ApplicationContext implements Context
      */
     public function theExitCodeShouldBe($code)
     {
-        if ($this->lastExitCode !== (int)$code) {
-            throw new \Exception(sprintf(
-                'The application existed with an unexpected code: expected: %s, actual: %s',
-                $code,
-                $this->lastExitCode
-            ));
-        }
+        expect($this->lastExitCode)->toBeLike($code);
     }
 
     /**
@@ -242,13 +225,7 @@ class ApplicationContext implements Context
      */
     public function iShouldSeeValidJunitOutput()
     {
-        $dom = new \DOMDocument();
-        $dom->loadXML($this->tester->getDisplay());
-        if (!$dom->schemaValidate(__DIR__ . '/../..' . self::JUNIT_XSD_PATH)) {
-            throw new \Exception(sprintf(
-                "Output was not valid JUnit XML"
-            ));
-        }
+        expect($this->tester)->toHaveOutputValidJunitXml();
     }
 
     /**
@@ -256,9 +233,7 @@ class ApplicationContext implements Context
      */
     public function theTestsShouldBeRerun()
     {
-        if (!$this->reRunner->hasBeenReRun()) {
-            throw new \Exception('The tests should have been rerun');
-        }
+        expect($this->reRunner)->toHaveBeenRerun();
     }
 
     /**
@@ -266,9 +241,7 @@ class ApplicationContext implements Context
      */
     public function theTestsShouldNotBeRerun()
     {
-        if ($this->reRunner->hasBeenReRun()) {
-            throw new \Exception('The tests should not have been rerun');
-        }
+        expect($this->reRunner)->toNotHaveBeenRerun();
     }
 
     /**
@@ -276,10 +249,7 @@ class ApplicationContext implements Context
      */
     public function iShouldBePromptedWith(PyStringNode $question)
     {
-        $stringQuestion = (string)$question;
-        if (!$this->prompter->hasBeenAsked($stringQuestion)) {
-            throw new \Exception("The prompt was not shown: $stringQuestion");
-        }
+        expect($this->prompter)->toHaveBeenAsked((string)$question);
     }
 
     /**
@@ -294,9 +264,7 @@ class ApplicationContext implements Context
             '--config' => $config
         );
 
-        if ($this->tester->run($arguments, array('interactive' => false)) !== 0) {
-            throw new \Exception('Test runner exited with an error');
-        }
+        expect($this->tester->run($arguments, array('interactive' => false)))->toBe(0);
     }
 
     /**
@@ -315,49 +283,15 @@ class ApplicationContext implements Context
     }
 
     /**
-     * @When I run phpspec with the spec :spec
+     * Custom matchers
+     *
+     * @return array
      */
-    public function iRunPhpspecWithTheSpec($spec)
+    public function getMatchers()
     {
-        $arguments = array (
-            'command' => 'run',
-            1 => $spec
+        return array(
+            new ApplicationOutputMatcher(),
+            new ValidJUnitXmlMatcher()
         );
-
-        $this->lastExitCode = $this->tester->run($arguments, array('interactive' => false));
-    }
-
-    /**
-     * @When I run phpspec with the spec :spec and the config :config
-     */
-    public function iRunPhpspecWithTheSpecAndTheConfig($spec, $config)
-    {
-        $arguments = array (
-            'command' => 'run',
-            1 => $spec,
-            '--config' => $config
-        );
-
-        $this->lastExitCode = $this->tester->run($arguments, array('interactive' => false));
-    }
-
-    private function checkApplicationOutput($output)
-    {
-        $expected = $this->normalize($output);
-        $actual = $this->normalize($this->tester->getDisplay(true));
-        if (strpos($actual, $expected) === false) {
-            throw new \Exception(sprintf(
-                "Application output did not contain expected '%s'. Actual output:\n'%s'" ,
-                $expected,
-                $this->tester->getDisplay()
-            ));
-        }
-    }
-
-    private function normalize($string)
-    {
-        $string = preg_replace('/\([0-9]+ms\)/', '', $string);
-
-        return $string;
     }
 }

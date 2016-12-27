@@ -20,8 +20,6 @@ class SlugifyViewHelper extends AbstractHelper
 
     /**
      * @param SlugifyInterface $slugify
-     *
-     * @codeCoverageIgnore
      */
     public function __construct(SlugifyInterface $slugify)
     {
@@ -29,12 +27,12 @@ class SlugifyViewHelper extends AbstractHelper
     }
 
     /**
-     * @param string      $string
-     * @param string|null $separator
+     * @param string $string
+     * @param string $separator
      *
      * @return string
      */
-    public function __invoke($string, $separator = null)
+    public function __invoke($string, $separator = '-')
     {
         return $this->slugify->slugify($string, $separator);
     }

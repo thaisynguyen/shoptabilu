@@ -7,8 +7,8 @@ use BadMethodCallException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
+use Illuminate\Support\Collection;
 use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Traits\Macroable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Grammars\Grammar;
@@ -17,10 +17,6 @@ use Illuminate\Database\Query\Processors\Processor;
 
 class Builder
 {
-    use Macroable {
-        __call as macroCall;
-    }
-
     /**
      * The database connection instance.
      *
@@ -223,7 +219,7 @@ class Builder
     /**
      * Set the columns to be selected.
      *
-     * @param  array|mixed  $columns
+     * @param  array  $columns
      * @return $this
      */
     public function select($columns = ['*'])
@@ -282,7 +278,7 @@ class Builder
     /**
      * Add a new select column to the query.
      *
-     * @param  array|mixed  $column
+     * @param  mixed  $column
      * @return $this
      */
     public function addSelect($column)
@@ -336,13 +332,9 @@ class Builder
         // is trying to build a join with a complex "on" clause containing more than
         // one condition, so we'll add the join and call a Closure with the query.
         if ($one instanceof Closure) {
-            $join = new JoinClause($type, $table);
+            $this->joins[] = new JoinClause($type, $table);
 
-            call_user_func($one, $join);
-
-            $this->joins[] = $join;
-
-            $this->addBinding($join->bindings, 'join');
+            call_user_func($one, end($this->joins));
         }
 
         // If the column is simply a string, we can assume the join simply has a basic
@@ -354,8 +346,6 @@ class Builder
             $this->joins[] = $join->on(
                 $one, $operator, $two, 'and', $where
             );
-
-            $this->addBinding($join->bindings, 'join');
         }
 
         return $this;
@@ -764,12 +754,6 @@ class Builder
     {
         $type = $not ? 'NotIn' : 'In';
 
-        if ($values instanceof static) {
-            return $this->whereInExistingQuery(
-                $column, $values, $boolean, $not
-            );
-        }
-
         // If the value of the where in clause is actually a Closure, we will assume that
         // the developer is using a full sub-select for this "in" statement, and will
         // execute those Closures, then we can re-construct the entire sub-selects.
@@ -842,26 +826,6 @@ class Builder
         // provided callback with the query so the developer may set any of the query
         // conditions they want for the in clause, then we'll put it in this array.
         call_user_func($callback, $query = $this->newQuery());
-
-        $this->wheres[] = compact('type', 'column', 'query', 'boolean');
-
-        $this->addBinding($query->getBindings(), 'where');
-
-        return $this;
-    }
-
-    /**
-     * Add a external sub-select to the query.
-     *
-     * @param  string   $column
-     * @param  \Illuminate\Database\Query\Builder|static  $query
-     * @param  string   $boolean
-     * @param  bool     $not
-     * @return $this
-     */
-    protected function whereInExistingQuery($column, $query, $boolean, $not)
-    {
-        $type = $not ? 'NotInSub' : 'InSub';
 
         $this->wheres[] = compact('type', 'column', 'query', 'boolean');
 
@@ -1232,7 +1196,7 @@ class Builder
     {
         $property = $this->unions ? 'unionLimit' : 'limit';
 
-        if ($value >= 0) {
+        if ($value > 0) {
             $this->$property = $value;
         }
 
@@ -1277,7 +1241,7 @@ class Builder
 
         $this->unions[] = compact('query', 'all');
 
-        $this->addBinding($query->getBindings(), 'union');
+        $this->addBinding($query->bindings, 'union');
 
         return $this;
     }
@@ -1302,10 +1266,6 @@ class Builder
     public function lock($value = true)
     {
         $this->lock = $value;
-
-        if ($this->lock) {
-            $this->useWritePdo();
-        }
 
         return $this;
     }
@@ -1401,11 +1361,7 @@ class Builder
      */
     public function get($columns = ['*'])
     {
-        if (is_null($this->columns)) {
-            $this->columns = $columns;
-        }
-
-        return $this->processor->processSelect($this, $this->runSelect());
+        return $this->getFresh($columns);
     }
 
     /**
@@ -1413,12 +1369,14 @@ class Builder
      *
      * @param  array  $columns
      * @return array|static[]
-     *
-     * @deprecated since version 5.1. Use get instead.
      */
     public function getFresh($columns = ['*'])
     {
-        return $this->get($columns);
+        if (is_null($this->columns)) {
+            $this->columns = $columns;
+        }
+
+        return $this->processor->processSelect($this, $this->runSelect());
     }
 
     /**
@@ -1486,7 +1444,7 @@ class Builder
     {
         $this->backupFieldsForCount();
 
-        $this->aggregate = ['function' => 'count', 'columns' => $this->clearSelectAliases($columns)];
+        $this->aggregate = ['function' => 'count', 'columns' => $columns];
 
         $results = $this->get();
 
@@ -1522,20 +1480,6 @@ class Builder
     }
 
     /**
-     * Remove the column aliases since they will break count queries.
-     *
-     * @param  array  $columns
-     * @return array
-     */
-    protected function clearSelectAliases(array $columns)
-    {
-        return array_map(function ($column) {
-            return is_string($column) && ($aliasPosition = strpos(strtolower($column), ' as ')) !== false
-                    ? substr($column, 0, $aliasPosition) : $column;
-        }, $columns);
-    }
-
-    /**
      * Restore some fields after the pagination count.
      *
      * @return void
@@ -1559,7 +1503,7 @@ class Builder
      *
      * @param  int  $count
      * @param  callable  $callback
-     * @return bool
+     * @return void
      */
     public function chunk($count, callable $callback)
     {
@@ -1570,47 +1514,50 @@ class Builder
             // developer take care of everything within the callback, which allows us to
             // keep the memory low for spinning through large result sets for working.
             if (call_user_func($callback, $results) === false) {
-                return false;
+                break;
             }
 
             $page++;
 
             $results = $this->forPage($page, $count)->get();
         }
-
-        return true;
     }
 
     /**
      * Get an array with the values of a given column.
      *
      * @param  string  $column
-     * @param  string|null  $key
+     * @param  string  $key
      * @return array
      */
     public function lists($column, $key = null)
     {
-        $results = $this->get(is_null($key) ? [$column] : [$column, $key]);
+        $columns = $this->getListSelect($column, $key);
 
-        // If the columns are qualified with a table or have an alias, we cannot use
-        // those directly in the "pluck" operations since the results from the DB
-        // are only keyed by the column itself. We'll strip the table out here.
-        return Arr::pluck(
-            $results,
-            $this->stripTableForPluck($column),
-            $this->stripTableForPluck($key)
-        );
+        $results = new Collection($this->get($columns));
+
+        return $results->pluck($columns[0], Arr::get($columns, 1))->all();
     }
 
     /**
-     * Strip off the table name or alias from a column identifier.
+     * Get the columns that should be used in a list array.
      *
      * @param  string  $column
-     * @return string|null
+     * @param  string  $key
+     * @return array
      */
-    protected function stripTableForPluck($column)
+    protected function getListSelect($column, $key)
     {
-        return is_null($column) ? $column : last(preg_split('~\.| ~', $column));
+        $select = is_null($key) ? [$column] : [$column, $key];
+
+        // If the selected column contains a "dot", we will remove it so that the list
+        // operation can run normally. Specifying the table is not needed, since we
+        // really want the names of the columns as it is in this resulting array.
+        return array_map(function ($column) {
+            $dot = strpos($column, '.');
+
+            return $dot === false ? $column : substr($column, $dot + 1);
+        }, $select);
     }
 
     /**
@@ -1620,8 +1567,12 @@ class Builder
      * @param  string  $glue
      * @return string
      */
-    public function implode($column, $glue = '')
+    public function implode($column, $glue = null)
     {
+        if (is_null($glue)) {
+            return implode($this->lists($column));
+        }
+
         return implode($glue, $this->lists($column));
     }
 
@@ -1632,17 +1583,13 @@ class Builder
      */
     public function exists()
     {
-        $sql = $this->grammar->compileExists($this);
+        $limit = $this->limit;
 
-        $results = $this->connection->select($sql, $this->getBindings(), ! $this->useWritePdo);
+        $result = $this->limit(1)->count() > 0;
 
-        if (isset($results[0])) {
-            $results = (array) $results[0];
+        $this->limit($limit);
 
-            return (bool) $results['exists'];
-        }
-
-        return false;
+        return $result;
     }
 
     /**
@@ -1664,7 +1611,7 @@ class Builder
      * Retrieve the minimum value of a given column.
      *
      * @param  string  $column
-     * @return mixed
+     * @return float|int
      */
     public function min($column)
     {
@@ -1675,7 +1622,7 @@ class Builder
      * Retrieve the maximum value of a given column.
      *
      * @param  string  $column
-     * @return mixed
+     * @return float|int
      */
     public function max($column)
     {
@@ -1686,18 +1633,20 @@ class Builder
      * Retrieve the sum of the values of a given column.
      *
      * @param  string  $column
-     * @return mixed
+     * @return float|int
      */
     public function sum($column)
     {
-        return $this->aggregate(__FUNCTION__, [$column]);
+        $result = $this->aggregate(__FUNCTION__, [$column]);
+
+        return $result ?: 0;
     }
 
     /**
      * Retrieve the average of the values of a given column.
      *
      * @param  string  $column
-     * @return mixed
+     * @return float|int
      */
     public function avg($column)
     {
@@ -1705,22 +1654,11 @@ class Builder
     }
 
     /**
-     * Alias for the "avg" method.
-     *
-     * @param  string  $column
-     * @return mixed
-     */
-    public function average($column)
-    {
-        return $this->avg($column);
-    }
-
-    /**
      * Execute an aggregate function on the database.
      *
      * @param  string  $function
      * @param  array   $columns
-     * @return mixed
+     * @return float|int
      */
     public function aggregate($function, $columns = ['*'])
     {
@@ -1747,34 +1685,10 @@ class Builder
         $this->bindings['select'] = $previousSelectBindings;
 
         if (isset($results[0])) {
-            return array_change_key_case((array) $results[0])['aggregate'];
+            $result = array_change_key_case((array) $results[0]);
+
+            return $result['aggregate'];
         }
-    }
-
-    /**
-     * Execute a numeric aggregate function on the database.
-     *
-     * @param  string  $function
-     * @param  array   $columns
-     * @return float|int
-     */
-    public function numericAggregate($function, $columns = ['*'])
-    {
-        $result = $this->aggregate($function, $columns);
-
-        if (! $result) {
-            return 0;
-        }
-
-        if (is_int($result) || is_float($result)) {
-            return $result;
-        }
-
-        if (strpos((string) $result, '.') === false) {
-            return (int) $result;
-        }
-
-        return (float) $result;
     }
 
     /**
@@ -1868,10 +1782,6 @@ class Builder
      */
     public function increment($column, $amount = 1, array $extra = [])
     {
-        if (! is_numeric($amount)) {
-            throw new InvalidArgumentException('Non-numeric value passed to increment method.');
-        }
-
         $wrapped = $this->grammar->wrap($column);
 
         $columns = array_merge([$column => $this->raw("$wrapped + $amount")], $extra);
@@ -1889,10 +1799,6 @@ class Builder
      */
     public function decrement($column, $amount = 1, array $extra = [])
     {
-        if (! is_numeric($amount)) {
-            throw new InvalidArgumentException('Non-numeric value passed to decrement method.');
-        }
-
         $wrapped = $this->grammar->wrap($column);
 
         $columns = array_merge([$column => $this->raw("$wrapped - $amount")], $extra);
@@ -2110,10 +2016,6 @@ class Builder
      */
     public function __call($method, $parameters)
     {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
-        }
-
         if (Str::startsWith($method, 'where')) {
             return $this->dynamicWhere($method, $parameters);
         }

@@ -35,7 +35,7 @@ class SesTransport extends Transport
         return $this->ses->sendRawEmail([
             'Source' => key($message->getSender() ?: $message->getFrom()),
             'RawMessage' => [
-                'Data' => $message->toString(),
+                'Data' => (string) $message,
             ],
         ]);
     }

@@ -13,6 +13,7 @@ namespace Symfony\Component\DomCrawler\Tests;
 
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\DomCrawler\FormFieldRegistry;
+use Symfony\Component\DomCrawler\Field;
 
 class FormTest extends \PHPUnit_Framework_TestCase
 {
@@ -188,8 +189,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $form = $this->createForm('<form>'.$form.'</form>');
         $this->assertEquals(
             $values,
-            array_map(
-                function ($field) {
+            array_map(function ($field) {
                     $class = get_class($field);
 
                     return array(substr($class, strrpos($class, '\\') + 1), $field->getValue());
@@ -342,6 +342,18 @@ class FormTest extends \PHPUnit_Framework_TestCase
             $this->fail('->offsetSet() throws an \InvalidArgumentException exception if the field does not exist');
         } catch (\InvalidArgumentException $e) {
             $this->assertTrue(true, '->offsetSet() throws an \InvalidArgumentException exception if the field does not exist');
+        }
+    }
+
+    public function testSetValueOnMultiValuedFieldsWithMalformedName()
+    {
+        $form = $this->createForm('<form><input type="text" name="foo[bar]" value="bar" /><input type="text" name="foo[baz]" value="baz" /><input type="submit" /></form>');
+
+        try {
+            $form['foo[bar'] = 'bar';
+            $this->fail('->offsetSet() throws an \InvalidArgumentException exception if the name is malformed.');
+        } catch (\InvalidArgumentException $e) {
+            $this->assertTrue(true, '->offsetSet() throws an \InvalidArgumentException exception if the name is malformed.');
         }
     }
 
@@ -669,19 +681,31 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($form->has('example.y'), '->has() returns true if the image input was correctly turned into an x and a y fields');
     }
 
-    public function testFormFieldRegistryAcceptAnyNames()
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testFormFieldRegistryAddThrowAnExceptionWhenTheNameIsMalformed()
     {
-        $field = $this->getFormFieldMock('[t:dbt%3adate;]data_daterange_enddate_value');
-
         $registry = new FormFieldRegistry();
-        $registry->add($field);
-        $this->assertEquals($field, $registry->get('[t:dbt%3adate;]data_daterange_enddate_value'));
-        $registry->set('[t:dbt%3adate;]data_daterange_enddate_value', null);
+        $registry->add($this->getFormFieldMock('[foo]'));
+    }
 
-        $form = $this->createForm('<form><input type="text" name="[t:dbt%3adate;]data_daterange_enddate_value" value="bar" /><input type="submit" /></form>');
-        $form['[t:dbt%3adate;]data_daterange_enddate_value'] = 'bar';
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testFormFieldRegistryRemoveThrowAnExceptionWhenTheNameIsMalformed()
+    {
+        $registry = new FormFieldRegistry();
+        $registry->remove('[foo]');
+    }
 
-        $registry->remove('[t:dbt%3adate;]data_daterange_enddate_value');
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testFormFieldRegistryGetThrowAnExceptionWhenTheNameIsMalformed()
+    {
+        $registry = new FormFieldRegistry();
+        $registry->get('[foo]');
     }
 
     /**
@@ -691,6 +715,15 @@ class FormTest extends \PHPUnit_Framework_TestCase
     {
         $registry = new FormFieldRegistry();
         $registry->get('foo');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testFormFieldRegistrySetThrowAnExceptionWhenTheNameIsMalformed()
+    {
+        $registry = new FormFieldRegistry();
+        $registry->set('[foo]', null);
     }
 
     /**
@@ -787,7 +820,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessage Unreachable field "0"
      */
     public function testFormRegistrySetArrayOnNotCompoundField()

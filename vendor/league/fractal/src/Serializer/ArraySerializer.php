@@ -27,7 +27,7 @@ class ArraySerializer extends SerializerAbstract
      */
     public function collection($resourceKey, array $data)
     {
-        return [$resourceKey ?: 'data' => $data];
+        return array($resourceKey ?: 'data' => $data);
     }
 
     /**
@@ -41,16 +41,6 @@ class ArraySerializer extends SerializerAbstract
     public function item($resourceKey, array $data)
     {
         return $data;
-    }
-
-    /**
-     * Serialize null resource.
-     *
-     * @return array
-     */
-    public function null()
-    {
-        return [];
     }
 
     /**
@@ -76,10 +66,10 @@ class ArraySerializer extends SerializerAbstract
     public function meta(array $meta)
     {
         if (empty($meta)) {
-            return [];
+            return array();
         }
 
-        return ['meta' => $meta];
+        return array('meta' => $meta);
     }
 
     /**
@@ -94,15 +84,15 @@ class ArraySerializer extends SerializerAbstract
         $currentPage = (int) $paginator->getCurrentPage();
         $lastPage = (int) $paginator->getLastPage();
 
-        $pagination = [
+        $pagination = array(
             'total' => (int) $paginator->getTotal(),
             'count' => (int) $paginator->getCount(),
             'per_page' => (int) $paginator->getPerPage(),
             'current_page' => $currentPage,
             'total_pages' => $lastPage,
-        ];
+        );
 
-        $pagination['links'] = [];
+        $pagination['links'] = array();
 
         if ($currentPage > 1) {
             $pagination['links']['previous'] = $paginator->getUrl($currentPage - 1);
@@ -112,7 +102,7 @@ class ArraySerializer extends SerializerAbstract
             $pagination['links']['next'] = $paginator->getUrl($currentPage + 1);
         }
 
-        return ['pagination' => $pagination];
+        return array('pagination' => $pagination);
     }
 
     /**
@@ -124,13 +114,13 @@ class ArraySerializer extends SerializerAbstract
      */
     public function cursor(CursorInterface $cursor)
     {
-        $cursor = [
+        $cursor = array(
             'current' => $cursor->getCurrent(),
             'prev' => $cursor->getPrev(),
             'next' => $cursor->getNext(),
             'count' => (int) $cursor->getCount(),
-        ];
+        );
 
-        return ['cursor' => $cursor];
+        return array('cursor' => $cursor);
     }
 }

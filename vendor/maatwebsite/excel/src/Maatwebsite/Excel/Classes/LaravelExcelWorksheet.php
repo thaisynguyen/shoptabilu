@@ -5,6 +5,7 @@ use PHPExcel_Cell;
 use PHPExcel_Exception;
 use PHPExcel_Worksheet;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 use Maatwebsite\Excel\Writers\CellWriter;
 use Maatwebsite\Excel\Exceptions\LaravelExcelException;
 use PHPExcel_Worksheet_PageSetup;
@@ -109,9 +110,6 @@ class LaravelExcelWorksheet extends PHPExcel_Worksheet {
     {
         parent::__construct($pParent, $pTitle);
         $this->setParent($pParent);
-        // check if we should generate headings
-        // defaults to true if not overridden by settings
-        $this->autoGenerateHeading = config('excel.export.generate_heading_by_indices', true);
     }
 
     /**
@@ -129,7 +127,7 @@ class LaravelExcelWorksheet extends PHPExcel_Worksheet {
             list($setter, $set) = $this->_setSetter($setup);
 
             // get the value
-            $value = config('excel.sheets.pageSetup.' . $setup, null);
+            $value = Config::get('excel.sheets.pageSetup.' . $setup, null);
 
             // Set the page setup value
             if (!is_null($value))
@@ -137,7 +135,7 @@ class LaravelExcelWorksheet extends PHPExcel_Worksheet {
         }
 
         // Set default page margins
-        $this->setPageMargin(config('excel.export.sheets.page_margin', false));
+        $this->setPageMargin(Config::get('excel.export.sheets.page_margin', false));
     }
 
     /**
@@ -175,10 +173,9 @@ class LaravelExcelWorksheet extends PHPExcel_Worksheet {
      * Manipulate a single row
      * @param  integer|callback|array $rowNumber
      * @param  array|callback         $callback
-     * @param  boolean                $explicit
      * @return LaravelExcelWorksheet
      */
-    public function row($rowNumber, $callback = null, $explicit = false)
+    public function row($rowNumber, $callback = null)
     {
         // If a callback is given, handle it with the cell writer
         if ($callback instanceof Closure)
@@ -203,11 +200,7 @@ class LaravelExcelWorksheet extends PHPExcel_Worksheet {
                 $cell = $column . $rowNumber;
 
                 // Set the cell value
-                if ($explicit) {
-                    $this->setCellValueExplicit($cell, $rowValue);
-                } else {
-                    $this->setCellValue($cell, $rowValue);
-                }
+                $this->setCellValue($cell, $rowValue);
                 $column++;
             }
         }
@@ -221,10 +214,9 @@ class LaravelExcelWorksheet extends PHPExcel_Worksheet {
     /**
      * Add multiple rows
      * @param  array $rows
-     * @param  boolean $explicit
      * @return LaravelExcelWorksheet
      */
-    public function rows($rows = array(), $explicit = false)
+    public function rows($rows = array())
     {
         // Get the start row
         $startRow = $this->getStartRow();
@@ -232,7 +224,7 @@ class LaravelExcelWorksheet extends PHPExcel_Worksheet {
         // Add rows
         foreach ($rows as $row)
         {
-            $this->row($startRow, $row, $explicit);
+            $this->row($startRow, $row);
             $startRow++;
         }
 
@@ -243,10 +235,9 @@ class LaravelExcelWorksheet extends PHPExcel_Worksheet {
      * Prepend a row
      * @param  integer        $rowNumber
      * @param  array|callback $callback
-     * @param  boolean        $explicit
      * @return LaravelExcelWorksheet
      */
-    public function prependRow($rowNumber = 1, $callback = null, $explicit = false)
+    public function prependRow($rowNumber = 1, $callback = null)
     {
         // If only one param was given, prepend it before the first row
         if (is_null($callback))
@@ -259,28 +250,16 @@ class LaravelExcelWorksheet extends PHPExcel_Worksheet {
         $this->insertNewRowBefore($rowNumber);
 
         // Add data to row
-        return $this->row($rowNumber, $callback, $explicit);
-    }
-
-    /**
-     * Prepend a row explicitly
-     * @param  integer        $rowNumber
-     * @param  array|callback $callback
-     * @return LaravelExcelWorksheet
-     */
-    public function prependRowExplicit($rowNumber = 1, $callback = null)
-    {
-        return $this->prependRow($rowNumber, $callback, true);
+        return $this->row($rowNumber, $callback);
     }
 
     /**
      * Append a row
      * @param  integer|callback $rowNumber
      * @param  array|callback   $callback
-     * @param  boolean          $explicit
      * @return LaravelExcelWorksheet
      */
-    public function appendRow($rowNumber = 1, $callback = null, $explicit = false)
+    public function appendRow($rowNumber = 1, $callback = null)
     {
         // If only one param was given, add it as very last
         if (is_null($callback))
@@ -290,41 +269,24 @@ class LaravelExcelWorksheet extends PHPExcel_Worksheet {
         }
 
         // Add the row
-        return $this->row($rowNumber, $callback, $explicit);
-    }
-
-    /**
-     * Append a row explicitly
-     * @param  integer|callback $rowNumber
-     * @param  array|callback   $callback
-     * @return LaravelExcelWorksheet
-     */
-    public function appendRowExplicit($rowNumber = 1, $callback = null)
-    {
-        return $this->appendRow($rowNumber, $callback, true);
+        return $this->row($rowNumber, $callback);
     }
 
     /**
      * Manipulate a single cell
      * @param  array|string $cell
      * @param bool|callable $callback $callback
-     * @param       boolean $explicit
      * @return LaravelExcelWorksheet
      */
-    public function cell($cell, $callback = false, $explicit = false)
+    public function cell($cell, $callback = false)
     {
         // If a callback is given, handle it with the cell writer
         if ($callback instanceof Closure)
             return $this->cells($cell, $callback);
 
         // Else if the 2nd param was set, we will use it as a cell value
-        if ($callback) {
-            if ($explicit) {
-                $this->setCellValueExplicit($cell, $callback);
-            } else {
-                $this->setCellValue($cell, $callback);
-            }
-        }
+        if ($callback)
+            $this->setCellValue($cell, $callback);
 
         return $this;
     }
@@ -673,7 +635,10 @@ class LaravelExcelWorksheet extends PHPExcel_Worksheet {
      */
     protected function generateHeadingByIndices()
     {
-        return $this->autoGenerateHeading;
+        if (!$this->autoGenerateHeading)
+            return false;
+
+        return Config::get('excel.export.generate_heading_by_indices', false);
     }
 
     /**
@@ -956,7 +921,7 @@ class LaravelExcelWorksheet extends PHPExcel_Worksheet {
         if (isset($this->autoSize))
             return $this->autoSize;
 
-        return config('excel.export.autosize', true);
+        return Config::get('excel.export.autosize', true);
     }
 
     /**
@@ -1099,7 +1064,7 @@ class LaravelExcelWorksheet extends PHPExcel_Worksheet {
         // Set center alignment on merge cells
         $this->cells($pRange, function ($cell) use ($alignment)
         {
-            $aligment = is_string($alignment) ? $alignment : config('excel.export.merged_cell_alignment', 'left');
+            $aligment = is_string($alignment) ? $alignment : Config::get('excel.export.merged_cell_alignment', 'left');
             $cell->setAlignment($aligment);
         });
 
@@ -1172,7 +1137,7 @@ class LaravelExcelWorksheet extends PHPExcel_Worksheet {
      */
     protected function getDefaultNullValue()
     {
-        return config('excel.export.sheets.nullValue', null);
+        return Config::get('excel.export.sheets.nullValue', null);
     }
 
     /**
@@ -1181,7 +1146,7 @@ class LaravelExcelWorksheet extends PHPExcel_Worksheet {
      */
     protected function getDefaultStartCell()
     {
-        return config('excel.export.sheets.startCell', 'A1');
+        return Config::get('excel.export.sheets.startCell', 'A1');
     }
 
 
@@ -1191,7 +1156,7 @@ class LaravelExcelWorksheet extends PHPExcel_Worksheet {
      */
     protected function getDefaultStrictNullComparison()
     {
-        return config('excel.export.sheets.strictNullComparison', false);
+        return Config::get('excel.export.sheets.strictNullComparison', false);
     }
 
     /**

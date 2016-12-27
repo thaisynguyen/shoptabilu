@@ -14,7 +14,6 @@
 namespace PhpSpec\Util;
 
 use PhpSpec\Exception\Generator\NamedMethodNotFoundException;
-use PhpSpec\Exception\Generator\NoMethodFoundInClass;
 
 final class ClassFileAnalyser
 {
@@ -38,7 +37,7 @@ final class ClassFileAnalyser
     public function getEndLineOfLastMethod($class)
     {
         $tokens = $this->getTokensForClass($class);
-        $index = $this->findEndOfLastMethod($tokens, $this->findIndexOfClassEnd($tokens));
+        $index = $this->findIndexOfMethodEnd($tokens, $this->findIndexOfLastMethod($tokens));
         return $tokens[$index][2];
     }
 
@@ -81,6 +80,19 @@ final class ClassFileAnalyser
     private function findIndexOfFirstMethod(array $tokens)
     {
         for ($i = 0, $max = count($tokens); $i < $max; $i++) {
+            if ($this->tokenIsFunction($tokens[$i])) {
+                return $i;
+            }
+        }
+    }
+
+    /**
+     * @param array $tokens
+     * @return int
+     */
+    private function findIndexOfLastMethod(array $tokens)
+    {
+        for ($i = count($tokens) - 1; $i >= 0; $i--) {
             if ($this->tokenIsFunction($tokens[$i])) {
                 return $i;
             }
@@ -146,7 +158,7 @@ final class ClassFileAnalyser
     private function findIndexOfNamedMethodEnd(array $tokens, $methodName)
     {
         $index = $this->findIndexOfNamedMethod($tokens, $methodName);
-        return $this->findIndexOfMethodOrClassEnd($tokens, $index);
+        return $this->findIndexOfMethodEnd($tokens, $index);
     }
 
     /**
@@ -191,14 +203,14 @@ final class ClassFileAnalyser
      * @param int $index
      * @return int
      */
-    private function findIndexOfMethodOrClassEnd(array $tokens, $index)
+    private function findIndexOfMethodEnd(array $tokens, $index)
     {
         $braceCount = 0;
 
         for ($i = $index, $max = count($tokens); $i < $max; $i++) {
             $token = $tokens[$i];
 
-            if ('{' === $token || $this->isSpecialBraceToken($token)) {
+            if ('{' === $token) {
                 $braceCount++;
                 continue;
             }
@@ -212,15 +224,6 @@ final class ClassFileAnalyser
         }
     }
 
-    private function isSpecialBraceToken($token)
-    {
-        if (!is_array($token)) {
-            return false;
-        }
-
-        return $token[1] === "{";
-    }
-
     /**
      * @param mixed $token
      * @return bool
@@ -228,33 +231,5 @@ final class ClassFileAnalyser
     private function tokenIsFunction($token)
     {
         return is_array($token) && $token[0] === T_FUNCTION;
-    }
-
-    /**
-     * @param array $tokens
-     * @return int
-     */
-    private function findIndexOfClassEnd(array $tokens)
-    {
-        $classTokens = array_filter($tokens, function ($token) {
-            return is_array($token) && $token[0] === T_CLASS;
-        });
-        $classTokenIndex = key($classTokens);
-        return $this->findIndexOfMethodOrClassEnd($tokens, $classTokenIndex) - 1;
-    }
-
-    /**
-     * @param array $tokens
-     * @param int $index
-     * @return int
-     */
-    public function findEndOfLastMethod(array $tokens, $index)
-    {
-        for ($i = $index - 1; $i > 0; $i--) {
-            if ($tokens[$i] == "}") {
-                return $i + 1;
-            }
-        }
-        throw new NoMethodFoundInClass();
     }
 }

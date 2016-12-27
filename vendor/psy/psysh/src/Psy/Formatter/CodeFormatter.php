@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2015 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,9 +11,8 @@
 
 namespace Psy\Formatter;
 
+use JakubOnderka\PhpConsoleColor\ConsoleColor;
 use JakubOnderka\PhpConsoleHighlighter\Highlighter;
-use Psy\Configuration;
-use Psy\ConsoleColorFactory;
 use Psy\Exception\RuntimeException;
 
 /**
@@ -24,15 +23,12 @@ class CodeFormatter implements Formatter
     /**
      * Format the code represented by $reflector.
      *
-     * @param \Reflector  $reflector
-     * @param null|string $colorMode (default: null)
+     * @param \Reflector $reflector
      *
      * @return string formatted code
      */
-    public static function format(\Reflector $reflector, $colorMode = null)
+    public static function format(\Reflector $reflector)
     {
-        $colorMode = $colorMode ?: Configuration::COLOR_MODE_AUTO;
-
         if ($fileName = $reflector->getFileName()) {
             if (!is_file($fileName)) {
                 throw new RuntimeException('Source code unavailable.');
@@ -42,8 +38,8 @@ class CodeFormatter implements Formatter
             $start = $reflector->getStartLine();
             $end   = $reflector->getEndLine() - $start;
 
-            $factory = new ConsoleColorFactory($colorMode);
-            $colors = $factory->getConsoleColor();
+            $colors = new ConsoleColor();
+            $colors->addTheme('line_number', array('blue'));
             $highlighter = new Highlighter($colors);
 
             return $highlighter->getCodeSnippet($file, $start, 0, $end);

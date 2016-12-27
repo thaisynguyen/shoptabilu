@@ -13,7 +13,7 @@
 
 namespace PhpSpec\Wrapper;
 
-use PhpSpec\CodeAnalysis\AccessInspectorInterface;
+use Phpspec\CodeAnalysis\AccessInspectorInterface;
 use PhpSpec\Exception\ExceptionFactory;
 use PhpSpec\Runner\MatcherManager;
 use PhpSpec\Formatter\Presenter\PresenterInterface;

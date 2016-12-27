@@ -12,7 +12,6 @@
 namespace Symfony\Component\HttpKernel\Tests;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Config\EnvParametersResource;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -99,7 +98,7 @@ class KernelTest extends \PHPUnit_Framework_TestCase
 
     public function testClassCacheIsNotLoadedByDefault()
     {
-        $kernel = $this->getKernel(array('initializeBundles', 'initializeContainer', 'doLoadClassCache'));
+        $kernel = $this->getKernel(array('initializeBundles', 'initializeContainer'));
         $kernel->expects($this->never())
             ->method('doLoadClassCache');
 
@@ -246,7 +245,7 @@ modified';
 $heredoc = <<<HD
 
 
-Heredoc should not be   modified {$a[1+$b]}
+Heredoc should not be   modified
 
 
 HD;
@@ -282,7 +281,7 @@ modified';
 $heredoc = <<<HD
 
 
-Heredoc should not be   modified {$a[1+$b]}
+Heredoc should not be   modified
 
 
 HD;
@@ -730,17 +729,21 @@ EOF;
     public function testTerminateDelegatesTerminationOnlyForTerminableInterface()
     {
         // does not implement TerminableInterface
-        $httpKernel = new TestKernel();
+        $httpKernelMock = $this->getMockBuilder('Symfony\Component\HttpKernel\HttpKernelInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $httpKernelMock
+            ->expects($this->never())
+            ->method('terminate');
 
         $kernel = $this->getKernel(array('getHttpKernel'));
         $kernel->expects($this->once())
             ->method('getHttpKernel')
-            ->willReturn($httpKernel);
+            ->will($this->returnValue($httpKernelMock));
 
         $kernel->boot();
         $kernel->terminate(Request::create('/'), new Response());
-
-        $this->assertFalse($httpKernel->terminateCalled, 'terminate() is never called if the kernel class does not implement TerminableInterface');
 
         // implements TerminableInterface
         $httpKernelMock = $this->getMockBuilder('Symfony\Component\HttpKernel\HttpKernel')
@@ -841,19 +844,5 @@ EOF;
         $p->setValue($kernel, __DIR__.'/Fixtures');
 
         return $kernel;
-    }
-}
-
-class TestKernel implements HttpKernelInterface
-{
-    public $terminateCalled = false;
-
-    public function terminate()
-    {
-        $this->terminateCalled = true;
-    }
-
-    public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = true)
-    {
     }
 }

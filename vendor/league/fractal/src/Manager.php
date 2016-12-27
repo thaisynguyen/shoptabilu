@@ -29,21 +29,14 @@ class Manager
      *
      * @var array
      */
-    protected $requestedIncludes = [];
-
-    /**
-     * Array of scope identifiers for resources to exclude.
-     *
-     * @var array
-     */
-    protected $requestedExcludes = [];
+    protected $requestedIncludes = array();
 
     /**
      * Array containing modifiers as keys and an array value of params.
      *
      * @var array
      */
-    protected $includeParams = [];
+    protected $includeParams = array();
 
     /**
      * The character used to separate modifier parameters.
@@ -98,11 +91,15 @@ class Manager
      *
      * @param string $include
      *
-     * @return \League\Fractal\ParamBag
+     * @return \League\Fractal\ParamBag|null
      */
     public function getIncludeParams($include)
     {
-        $params = isset($this->includeParams[$include]) ? $this->includeParams[$include] : [];
+        if (! isset($this->includeParams[$include])) {
+            return;
+        }
+
+        $params = $this->includeParams[$include];
 
         return new ParamBag($params);
     }
@@ -115,16 +112,6 @@ class Manager
     public function getRequestedIncludes()
     {
         return $this->requestedIncludes;
-    }
-
-    /**
-     * Get Requested Excludes.
-     *
-     * @return array
-     */
-    public function getRequestedExcludes()
-    {
-        return $this->requestedExcludes;
     }
 
     /**
@@ -151,7 +138,7 @@ class Manager
     public function parseIncludes($includes)
     {
         // Wipe these before we go again
-        $this->requestedIncludes = $this->includeParams = [];
+        $this->requestedIncludes = $this->includeParams = array();
 
         if (is_string($includes)) {
             $includes = explode(',', $includes);
@@ -179,21 +166,21 @@ class Manager
                 continue;
             }
 
-            // Matches multiple instances of 'something(foo|bar|baz)' in the string
-            // I guess it ignores : so you could use anything, but probably don't do that
-            preg_match_all('/([\w]+)(\(([^\)]+)\))?/', $allModifiersStr, $allModifiersArr);
+            // Matches multiple instances of 'something(foo,bar,baz)' in the string
+            // I guess it ignores : so you could use anything, but probably dont do that
+            preg_match_all('/([\w]+)\(([^\)]+)\)/', $allModifiersStr, $allModifiersArr);
 
             // [0] is full matched strings...
             $modifierCount = count($allModifiersArr[0]);
 
-            $modifierArr = [];
+            $modifierArr = array();
 
             for ($modifierIt = 0; $modifierIt < $modifierCount; $modifierIt++) {
                 // [1] is the modifier
                 $modifierName = $allModifiersArr[1][$modifierIt];
 
-                // and [3] is delimited params
-                $modifierParamStr = $allModifiersArr[3][$modifierIt];
+                // and [2] is delimited params
+                $modifierParamStr = $allModifiersArr[2][$modifierIt];
 
                 // Make modifier array key with an array of params as the value
                 $modifierArr[$modifierName] = explode($this->paramDelimiter, $modifierParamStr);
@@ -204,40 +191,6 @@ class Manager
 
         // This should be optional and public someday, but without it includes would never show up
         $this->autoIncludeParents();
-
-        return $this;
-    }
-
-    /**
-     * Parse Exclude String.
-     *
-     * @param array|string $excludes Array or csv string of resources to exclude
-     *
-     * @return $this
-     */
-    public function parseExcludes($excludes)
-    {
-        $this->requestedExcludes = [];
-
-        if (is_string($excludes)) {
-            $excludes = explode(',', $excludes);
-        }
-
-        if (! is_array($excludes)) {
-            throw new \InvalidArgumentException(
-                'The parseExcludes() method expects a string or an array. '.gettype($excludes).' given'
-            );
-        }
-
-        foreach ($excludes as $excludeName) {
-            $excludeName = $this->trimToAcceptableRecursionLevel($excludeName);
-
-            if (in_array($excludeName, $this->requestedExcludes)) {
-                continue;
-            }
-
-            $this->requestedExcludes[] = $excludeName;
-        }
 
         return $this;
     }
@@ -282,7 +235,7 @@ class Manager
      */
     protected function autoIncludeParents()
     {
-        $parsed = [];
+        $parsed = array();
 
         foreach ($this->requestedIncludes as $include) {
             $nested = explode('.', $include);

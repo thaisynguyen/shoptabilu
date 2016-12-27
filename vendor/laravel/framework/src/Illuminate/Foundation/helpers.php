@@ -1,16 +1,8 @@
 <?php
 
 use Illuminate\Support\Str;
-use Illuminate\View\Expression;
 use Illuminate\Container\Container;
-use Illuminate\Contracts\Auth\Guard;
-use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Contracts\Auth\Access\Gate;
-use Illuminate\Contracts\Routing\UrlGenerator;
-use Illuminate\Contracts\Routing\ResponseFactory;
-use Illuminate\Contracts\View\Factory as ViewFactory;
-use Illuminate\Contracts\Cookie\Factory as CookieFactory;
-use Illuminate\Database\Eloquent\Factory as EloquentFactory;
 
 if (! function_exists('abort')) {
     /**
@@ -98,7 +90,20 @@ if (! function_exists('auth')) {
      */
     function auth()
     {
-        return app(Guard::class);
+        return app('Illuminate\Contracts\Auth\Guard');
+    }
+}
+
+if (! function_exists('base_path')) {
+    /**
+     * Get the path to the base of the install.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    function base_path($path = '')
+    {
+        return app()->basePath().($path ? DIRECTORY_SEPARATOR.$path : $path);
     }
 }
 
@@ -113,19 +118,6 @@ if (! function_exists('back')) {
     function back($status = 302, $headers = [])
     {
         return app('redirect')->back($status, $headers);
-    }
-}
-
-if (! function_exists('base_path')) {
-    /**
-     * Get the path to the base of the install.
-     *
-     * @param  string  $path
-     * @return string
-     */
-    function base_path($path = '')
-    {
-        return app()->basePath().($path ? DIRECTORY_SEPARATOR.$path : $path);
     }
 }
 
@@ -195,7 +187,7 @@ if (! function_exists('cookie')) {
      */
     function cookie($name = null, $value = null, $minutes = 0, $path = null, $domain = null, $secure = false, $httpOnly = true)
     {
-        $cookie = app(CookieFactory::class);
+        $cookie = app('Illuminate\Contracts\Cookie\Factory');
 
         if (is_null($name)) {
             return $cookie;
@@ -213,7 +205,7 @@ if (! function_exists('csrf_field')) {
      */
     function csrf_field()
     {
-        return new Expression('<input type="hidden" name="_token" value="'.csrf_token().'">');
+        return new Illuminate\View\Expression('<input type="hidden" name="_token" value="'.csrf_token().'">');
     }
 }
 
@@ -264,98 +256,6 @@ if (! function_exists('delete')) {
     }
 }
 
-if (! function_exists('dispatch')) {
-    /**
-     * Dispatch a job to its appropriate handler.
-     *
-     * @param  mixed  $job
-     * @return mixed
-     */
-    function dispatch($job)
-    {
-        return app(Dispatcher::class)->dispatch($job);
-    }
-}
-
-if (! function_exists('elixir')) {
-    /**
-     * Get the path to a versioned Elixir file.
-     *
-     * @param  string  $file
-     * @return string
-     *
-     * @throws \InvalidArgumentException
-     */
-    function elixir($file)
-    {
-        static $manifest = null;
-
-        if (is_null($manifest)) {
-            $manifest = json_decode(file_get_contents(public_path('build/rev-manifest.json')), true);
-        }
-
-        if (isset($manifest[$file])) {
-            return '/build/'.$manifest[$file];
-        }
-
-        throw new InvalidArgumentException("File {$file} not defined in asset manifest.");
-    }
-}
-
-if (! function_exists('env')) {
-    /**
-     * Gets the value of an environment variable. Supports boolean, empty and null.
-     *
-     * @param  string  $key
-     * @param  mixed   $default
-     * @return mixed
-     */
-    function env($key, $default = null)
-    {
-        $value = getenv($key);
-
-        if ($value === false) {
-            return value($default);
-        }
-
-        switch (strtolower($value)) {
-            case 'true':
-            case '(true)':
-                return true;
-            case 'false':
-            case '(false)':
-                return false;
-            case 'empty':
-            case '(empty)':
-                return '';
-            case 'null':
-            case '(null)':
-                return;
-        }
-
-        if (strlen($value) > 1 && Str::startsWith($value, '"') && Str::endsWith($value, '"')) {
-            return substr($value, 1, -1);
-        }
-
-        return $value;
-    }
-}
-
-if (! function_exists('event')) {
-    /**
-     * Fire an event and call the listeners.
-     *
-     * @param  string|object  $event
-     * @param  mixed  $payload
-     * @param  bool  $halt
-     * @return array|null
-     */
-    function event($event, $payload = [], $halt = false)
-    {
-        return app('events')->fire($event, $payload, $halt);
-    }
-}
-
 if (! function_exists('factory')) {
     /**
      * Create a model factory builder for a given class, name, and amount.
@@ -365,7 +265,7 @@ if (! function_exists('factory')) {
      */
     function factory()
     {
-        $factory = app(EloquentFactory::class);
+        $factory = app('Illuminate\Database\Eloquent\Factory');
 
         $arguments = func_get_args();
 
@@ -434,7 +334,7 @@ if (! function_exists('method_field')) {
      */
     function method_field($method)
     {
-        return new Expression('<input type="hidden" name="_method" value="'.$method.'">');
+        return new Illuminate\View\Expression('<input type="hidden" name="_method" value="'.$method.'">');
     }
 }
 
@@ -495,19 +395,6 @@ if (! function_exists('post')) {
     }
 }
 
-if (! function_exists('public_path')) {
-    /**
-     * Get the path to the public folder.
-     *
-     * @param  string  $path
-     * @return string
-     */
-    function public_path($path = '')
-    {
-        return app()->make('path.public').($path ? DIRECTORY_SEPARATOR.$path : $path);
-    }
-}
-
 if (! function_exists('put')) {
     /**
      * Register a new PUT route with the router.
@@ -519,6 +406,19 @@ if (! function_exists('put')) {
     function put($uri, $action)
     {
         return app('router')->put($uri, $action);
+    }
+}
+
+if (! function_exists('public_path')) {
+    /**
+     * Get the path to the public folder.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    function public_path($path = '')
+    {
+        return app()->make('path.public').($path ? DIRECTORY_SEPARATOR.$path : $path);
     }
 }
 
@@ -567,7 +467,7 @@ if (! function_exists('resource')) {
      * @param  string  $name
      * @param  string  $controller
      * @param  array   $options
-     * @return \Illuminate\Routing\Route
+     * @return void
      */
     function resource($name, $controller, array $options = [])
     {
@@ -586,7 +486,7 @@ if (! function_exists('response')) {
      */
     function response($content = '', $status = 200, array $headers = [])
     {
-        $factory = app(ResponseFactory::class);
+        $factory = app('Illuminate\Contracts\Routing\ResponseFactory');
 
         if (func_num_args() === 0) {
             return $factory;
@@ -724,7 +624,7 @@ if (! function_exists('url')) {
      */
     function url($path = null, $parameters = [], $secure = null)
     {
-        return app(UrlGenerator::class)->to($path, $parameters, $secure);
+        return app('Illuminate\Contracts\Routing\UrlGenerator')->to($path, $parameters, $secure);
     }
 }
 
@@ -735,16 +635,98 @@ if (! function_exists('view')) {
      * @param  string  $view
      * @param  array   $data
      * @param  array   $mergeData
-     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
+     * @return \Illuminate\View\View
      */
     function view($view = null, $data = [], $mergeData = [])
     {
-        $factory = app(ViewFactory::class);
+        $factory = app('Illuminate\Contracts\View\Factory');
 
         if (func_num_args() === 0) {
             return $factory;
         }
 
         return $factory->make($view, $data, $mergeData);
+    }
+}
+
+if (! function_exists('env')) {
+    /**
+     * Gets the value of an environment variable. Supports boolean, empty and null.
+     *
+     * @param  string  $key
+     * @param  mixed   $default
+     * @return mixed
+     */
+    function env($key, $default = null)
+    {
+        $value = getenv($key);
+
+        if ($value === false) {
+            return value($default);
+        }
+
+        switch (strtolower($value)) {
+            case 'true':
+            case '(true)':
+                return true;
+
+            case 'false':
+            case '(false)':
+                return false;
+
+            case 'empty':
+            case '(empty)':
+                return '';
+
+            case 'null':
+            case '(null)':
+                return;
+        }
+
+        if (Str::startsWith($value, '"') && Str::endsWith($value, '"')) {
+            return substr($value, 1, -1);
+        }
+
+        return $value;
+    }
+}
+
+if (! function_exists('event')) {
+    /**
+     * Fire an event and call the listeners.
+     *
+     * @param  string|object  $event
+     * @param  mixed  $payload
+     * @param  bool  $halt
+     * @return array|null
+     */
+    function event($event, $payload = [], $halt = false)
+    {
+        return app('events')->fire($event, $payload, $halt);
+    }
+}
+
+if (! function_exists('elixir')) {
+    /**
+     * Get the path to a versioned Elixir file.
+     *
+     * @param  string  $file
+     * @return string
+     *
+     * @throws \InvalidArgumentException
+     */
+    function elixir($file)
+    {
+        static $manifest = null;
+
+        if (is_null($manifest)) {
+            $manifest = json_decode(file_get_contents(public_path('build/rev-manifest.json')), true);
+        }
+
+        if (isset($manifest[$file])) {
+            return '/build/'.$manifest[$file];
+        }
+
+        throw new InvalidArgumentException("File {$file} not defined in asset manifest.");
     }
 }

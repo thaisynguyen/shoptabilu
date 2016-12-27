@@ -17,21 +17,21 @@ class SlugifyHelper
     /** @var SlugifyInterface */
     private $slugify;
 
-    /**
-     * @codeCoverageIgnore
-     */
+	/**
+	 * @codeCoverageIgnore
+	 */
     public function __construct(SlugifyInterface $slugify)
     {
         $this->slugify = $slugify;
     }
 
     /**
-     * @param string      $string
-     * @param string|null $separator
+     * @param string
+     * @param string
      *
      * @return string
      */
-    public function slugify($string, $separator = null)
+    public function slugify($string, $separator = '-')
     {
         return $this->slugify->slugify($string, $separator);
     }

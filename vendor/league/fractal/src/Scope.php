@@ -14,7 +14,6 @@ namespace League\Fractal;
 use InvalidArgumentException;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
-use League\Fractal\Resource\NullResource;
 use League\Fractal\Resource\ResourceInterface;
 use League\Fractal\Serializer\SerializerAbstract;
 
@@ -30,12 +29,12 @@ class Scope
     /**
      * @var array
      */
-    protected $availableIncludes = [];
+    protected $availableIncludes = array();
 
     /**
      * @var string
      */
-    protected $scopeIdentifier;
+    protected $scopeIdentifer;
 
     /**
      * @var \League\Fractal\Manager
@@ -50,26 +49,26 @@ class Scope
     /**
      * @var array
      */
-    protected $parentScopes = [];
+    protected $parentScopes = array();
 
     /**
      * Create a new scope instance.
      *
      * @param Manager           $manager
      * @param ResourceInterface $resource
-     * @param string            $scopeIdentifier
+     * @param string            $scopeIdentifer
      *
      * @return void
      */
-    public function __construct(Manager $manager, ResourceInterface $resource, $scopeIdentifier = null)
+    public function __construct(Manager $manager, ResourceInterface $resource, $scopeIdentifer = null)
     {
         $this->manager = $manager;
         $this->resource = $resource;
-        $this->scopeIdentifier = $scopeIdentifier;
+        $this->scopeIdentifer = $scopeIdentifer;
     }
 
     /**
-     * Embed a scope as a child of the current scope.
+     * Embed a scope as a child of the currenct scope.
      *
      * @internal
      *
@@ -90,7 +89,7 @@ class Scope
      */
     public function getScopeIdentifier()
     {
-        return $this->scopeIdentifier;
+        return $this->scopeIdentifer;
     }
 
     /**
@@ -102,7 +101,7 @@ class Scope
      */
     public function getIdentifier($appendIdentifier = null)
     {
-        $identifierParts = array_merge($this->parentScopes, [$this->scopeIdentifier, $appendIdentifier]);
+        $identifierParts = array_merge($this->parentScopes, array($this->scopeIdentifer, $appendIdentifier));
 
         return implode('.', array_filter($identifierParts));
     }
@@ -115,16 +114,6 @@ class Scope
     public function getParentScopes()
     {
         return $this->parentScopes;
-    }
-
-    /**
-     * Getter for resource.
-     *
-     * @return ResourceInterface
-     */
-    public function getResource()
-    {
-        return $this->resource;
     }
 
     /**
@@ -154,42 +143,16 @@ class Scope
     {
         if ($this->parentScopes) {
             $scopeArray = array_slice($this->parentScopes, 1);
-            array_push($scopeArray, $this->scopeIdentifier, $checkScopeSegment);
+            array_push($scopeArray, $this->scopeIdentifer, $checkScopeSegment);
         } else {
-            $scopeArray = [$checkScopeSegment];
+            $scopeArray = array($checkScopeSegment);
         }
 
         $scopeString = implode('.', (array) $scopeArray);
 
-        return in_array($scopeString, $this->manager->getRequestedIncludes());
-    }
+        $checkAgainstArray = $this->manager->getRequestedIncludes();
 
-    /**
-     * Is Excluded.
-     *
-     * Check if - in relation to the current scope - this specific segment should
-     * be excluded. That means, if a.b.c is excluded and the current scope is a.b,
-     * then c will not be allowed in the transformation whether it appears in
-     * the list of default or available, requested includes.
-     *
-     * @internal
-     *
-     * @param string $checkScopeSegment
-     *
-     * @return bool
-     */
-    public function isExcluded($checkScopeSegment)
-    {
-        if ($this->parentScopes) {
-            $scopeArray = array_slice($this->parentScopes, 1);
-            array_push($scopeArray, $this->scopeIdentifier, $checkScopeSegment);
-        } else {
-            $scopeArray = [$checkScopeSegment];
-        }
-
-        $scopeString = implode('.', (array) $scopeArray);
-
-        return in_array($scopeString, $this->manager->getRequestedExcludes());
+        return in_array($scopeString, $checkAgainstArray);
     }
 
     /**
@@ -242,19 +205,6 @@ class Scope
         if ($serializer->sideloadIncludes()) {
             $includedData = $serializer->includedData($this->resource, $rawIncludedData);
 
-            // If the serializer wants to inject additional information
-            // about the included resources, it can do so now.
-            $data = $serializer->injectData($data, $rawIncludedData);
-
-            if ($this->isRootScope()) {
-                // If the serializer wants to have a final word about all
-                // the objects that are sideloaded, it can do so now.
-                $includedData = $serializer->filterIncludes(
-                    $includedData,
-                    $data
-                );
-            }
-
             $data = array_merge($data, $includedData);
         }
 
@@ -298,7 +248,7 @@ class Scope
         $transformer = $this->resource->getTransformer();
         $data = $this->resource->getData();
 
-        $transformedData = $includedData = [];
+        $transformedData = $includedData = array();
 
         if ($this->resource instanceof Item) {
             list($transformedData, $includedData[]) = $this->fireTransformer($transformer, $data);
@@ -306,9 +256,6 @@ class Scope
             foreach ($data as $value) {
                 list($transformedData[], $includedData[]) = $this->fireTransformer($transformer, $value);
             }
-        } elseif ($this->resource instanceof NullResource) {
-            $transformedData = null;
-            $includedData = [];
         } else {
             throw new InvalidArgumentException(
                 'Argument $resource should be an instance of League\Fractal\Resource\Item'
@@ -316,7 +263,7 @@ class Scope
             );
         }
 
-        return [$transformedData, $includedData];
+        return array($transformedData, $includedData);
     }
 
     /**
@@ -335,13 +282,9 @@ class Scope
 
         if ($this->resource instanceof Collection) {
             return $serializer->collection($resourceKey, $data);
-        }
-
-        if ($this->resource instanceof Item) {
+        } else {
             return $serializer->item($resourceKey, $data);
         }
-
-        return $serializer->null();
     }
 
     /**
@@ -356,21 +299,25 @@ class Scope
      */
     protected function fireTransformer($transformer, $data)
     {
-        $includedData = [];
+        $includedData = array();
 
         if (is_callable($transformer)) {
             $transformedData = call_user_func($transformer, $data);
         } else {
-            $transformer->setCurrentScope($this);
             $transformedData = $transformer->transform($data);
         }
 
         if ($this->transformerHasIncludes($transformer)) {
             $includedData = $this->fireIncludedTransformers($transformer, $data);
-            $transformedData = $this->manager->getSerializer()->mergeIncludes($transformedData, $includedData);
+
+            // If the serializer does not want the includes to be side-loaded then
+            // the included data must be merged with the transformed data.
+            if (! $this->manager->getSerializer()->sideloadIncludes()) {
+                $transformedData = array_merge($transformedData, $includedData);
+            }
         }
 
-        return [$transformedData, $includedData];
+        return array($transformedData, $includedData);
     }
 
     /**
@@ -387,7 +334,7 @@ class Scope
     {
         $this->availableIncludes = $transformer->getAvailableIncludes();
 
-        return $transformer->processIncludedResources($this, $data) ?: [];
+        return $transformer->processIncludedResources($this, $data) ?: array();
     }
 
     /**
@@ -409,15 +356,5 @@ class Scope
         $availableIncludes = $transformer->getAvailableIncludes();
 
         return ! empty($defaultIncludes) || ! empty($availableIncludes);
-    }
-
-    /**
-     * Check, if this is the root scope.
-     *
-     * @return bool
-     */
-    protected function isRootScope()
-    {
-        return empty($this->parentScopes);
     }
 }

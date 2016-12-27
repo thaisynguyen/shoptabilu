@@ -1,30 +1,22 @@
-<?php namespace Cviebrock\EloquentSluggable\Tests\Models;
+<?php
 
 /**
  * Class PostWithRelation
  *
  * A test model used for the relationship tests.
- *
- * @package Cviebrock\EloquentSluggable\Tests\Models
- *
- * @property \Cviebrock\EloquentSluggable\Tests\Models\Author author
  */
 class PostWithRelation extends Post
 {
 
     /**
-     * Return the sluggable configuration array for this model.
+     * Sluggable configuration.
      *
-     * @return array
+     * @var array
      */
-    public function sluggable()
-    {
-        return [
-            'slug' => [
-                'source' => ['author.name', 'title'],
-            ]
-        ];
-    }
+    protected $sluggable = [
+      'build_from' => ['author.name', 'title'],
+      'save_to' => 'slug',
+    ];
 
     /**
      * Relation to Author model.
@@ -33,6 +25,7 @@ class PostWithRelation extends Post
      */
     public function author()
     {
-        return $this->belongsTo(Author::class);
+        return $this->belongsTo('Author');
     }
+
 }

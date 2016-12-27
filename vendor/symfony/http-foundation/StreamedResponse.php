@@ -23,12 +23,13 @@ namespace Symfony\Component\HttpFoundation;
  * @see flush()
  *
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @api
  */
 class StreamedResponse extends Response
 {
     protected $callback;
     protected $streamed;
-    private $headersSent;
 
     /**
      * Constructor.
@@ -36,6 +37,8 @@ class StreamedResponse extends Response
      * @param callable|null $callback A valid PHP callback or null to set it later
      * @param int           $status   The response status code
      * @param array         $headers  An array of response headers
+     *
+     * @api
      */
     public function __construct($callback = null, $status = 200, $headers = array())
     {
@@ -45,7 +48,6 @@ class StreamedResponse extends Response
             $this->setCallback($callback);
         }
         $this->streamed = false;
-        $this->headersSent = false;
     }
 
     /**
@@ -75,22 +77,6 @@ class StreamedResponse extends Response
             throw new \LogicException('The Response callback must be a valid PHP callable.');
         }
         $this->callback = $callback;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * This method only sends the headers once.
-     */
-    public function sendHeaders()
-    {
-        if ($this->headersSent) {
-            return;
-        }
-
-        $this->headersSent = true;
-
-        parent::sendHeaders();
     }
 
     /**

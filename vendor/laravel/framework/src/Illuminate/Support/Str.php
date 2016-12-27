@@ -2,6 +2,7 @@
 
 namespace Illuminate\Support;
 
+use RuntimeException;
 use Stringy\StaticStringy;
 use Illuminate\Support\Traits\Macroable;
 
@@ -66,7 +67,7 @@ class Str
     public static function contains($haystack, $needles)
     {
         foreach ((array) $needles as $needle) {
-            if ($needle != '' && mb_strpos($haystack, $needle) !== false) {
+            if ($needle != '' && strpos($haystack, $needle) !== false) {
                 return true;
             }
         }
@@ -84,7 +85,7 @@ class Str
     public static function endsWith($haystack, $needles)
     {
         foreach ((array) $needles as $needle) {
-            if ((string) $needle === static::substr($haystack, -static::length($needle))) {
+            if ((string) $needle === substr($haystack, -strlen($needle))) {
                 return true;
             }
         }
@@ -103,7 +104,7 @@ class Str
     {
         $quoted = preg_quote($cap, '/');
 
-        return preg_replace('/(?:'.$quoted.')+$/u', '', $value).$cap;
+        return preg_replace('/(?:'.$quoted.')+$/', '', $value).$cap;
     }
 
     /**
@@ -126,7 +127,7 @@ class Str
         // pattern such as "library/*", making any string check convenient.
         $pattern = str_replace('\*', '.*', $pattern).'\z';
 
-        return (bool) preg_match('#^'.$pattern.'#u', $value);
+        return (bool) preg_match('#^'.$pattern.'#', $value);
     }
 
     /**
@@ -180,7 +181,7 @@ class Str
     {
         preg_match('/^\s*+(?:\S++\s*+){1,'.$words.'}/u', $value, $matches);
 
-        if (! isset($matches[0]) || static::length($value) === static::length($matches[0])) {
+        if (! isset($matches[0]) || strlen($value) === strlen($matches[0])) {
             return $value;
         }
 
@@ -216,6 +217,8 @@ class Str
      *
      * @param  int  $length
      * @return string
+     *
+     * @throws \RuntimeException
      */
     public static function random($length = 16)
     {
@@ -237,10 +240,24 @@ class Str
      *
      * @param  int  $length
      * @return string
+     *
+     * @throws \RuntimeException
      */
     public static function randomBytes($length = 16)
     {
-        return random_bytes($length);
+        if (PHP_MAJOR_VERSION >= 7) {
+            $bytes = random_bytes($length);
+        } elseif (function_exists('openssl_random_pseudo_bytes')) {
+            $bytes = openssl_random_pseudo_bytes($length, $strong);
+
+            if ($bytes === false || $strong === false) {
+                throw new RuntimeException('Unable to generate random string.');
+            }
+        } else {
+            throw new RuntimeException('OpenSSL extension is required for PHP 5 users.');
+        }
+
+        return $bytes;
     }
 
     /**
@@ -283,9 +300,9 @@ class Str
             return hash_equals($knownString, $userInput);
         }
 
-        $knownLength = mb_strlen($knownString, '8bit');
+        $knownLength = mb_strlen($knownString);
 
-        if (mb_strlen($userInput, '8bit') !== $knownLength) {
+        if (mb_strlen($userInput) !== $knownLength) {
             return false;
         }
 
@@ -365,19 +382,19 @@ class Str
      */
     public static function snake($value, $delimiter = '_')
     {
-        $key = $value;
+        $key = $value.$delimiter;
 
-        if (isset(static::$snakeCache[$key][$delimiter])) {
-            return static::$snakeCache[$key][$delimiter];
+        if (isset(static::$snakeCache[$key])) {
+            return static::$snakeCache[$key];
         }
 
         if (! ctype_lower($value)) {
-            $value = preg_replace('/\s+/u', '', $value);
+            $value = strtolower(preg_replace('/(.)(?=[A-Z])/', '$1'.$delimiter, $value));
 
-            $value = static::lower(preg_replace('/(.)(?=[A-Z])/u', '$1'.$delimiter, $value));
+            $value = preg_replace('/\s+/', '', $value);
         }
 
-        return static::$snakeCache[$key][$delimiter] = $value;
+        return static::$snakeCache[$key] = $value;
     }
 
     /**
@@ -390,7 +407,7 @@ class Str
     public static function startsWith($haystack, $needles)
     {
         foreach ((array) $needles as $needle) {
-            if ($needle != '' && mb_strpos($haystack, $needle) === 0) {
+            if ($needle != '' && strpos($haystack, $needle) === 0) {
                 return true;
             }
         }

@@ -23,6 +23,8 @@ use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
  * for DependencyInjection extensions and Console commands.
  *
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @api
  */
 abstract class Bundle extends ContainerAware implements BundleInterface
 {
@@ -64,6 +66,8 @@ abstract class Bundle extends ContainerAware implements BundleInterface
      * @return ExtensionInterface|null The container extension
      *
      * @throws \LogicException
+     *
+     * @api
      */
     public function getContainerExtension()
     {
@@ -101,6 +105,8 @@ abstract class Bundle extends ContainerAware implements BundleInterface
      * Gets the Bundle namespace.
      *
      * @return string The Bundle namespace
+     *
+     * @api
      */
     public function getNamespace()
     {
@@ -113,6 +119,8 @@ abstract class Bundle extends ContainerAware implements BundleInterface
      * Gets the Bundle directory path.
      *
      * @return string The Bundle absolute path
+     *
+     * @api
      */
     public function getPath()
     {
@@ -128,6 +136,8 @@ abstract class Bundle extends ContainerAware implements BundleInterface
      * Returns the bundle parent name.
      *
      * @return string The Bundle parent name it overrides or null if no parent
+     *
+     * @api
      */
     public function getParent()
     {
@@ -137,6 +147,8 @@ abstract class Bundle extends ContainerAware implements BundleInterface
      * Returns the bundle name (the class short name).
      *
      * @return string The Bundle name
+     *
+     * @api
      */
     final public function getName()
     {
@@ -166,10 +178,6 @@ abstract class Bundle extends ContainerAware implements BundleInterface
             return;
         }
 
-        if (!class_exists('Symfony\Component\Finder\Finder')) {
-            throw new \RuntimeException('You need the symfony/finder component to register bundle commands.');
-        }
-
         $finder = new Finder();
         $finder->files()->name('*Command.php')->in($dir);
 
@@ -177,7 +185,7 @@ abstract class Bundle extends ContainerAware implements BundleInterface
         foreach ($finder as $file) {
             $ns = $prefix;
             if ($relativePath = $file->getRelativePath()) {
-                $ns .= '\\'.str_replace('/', '\\', $relativePath);
+                $ns .= '\\'.strtr($relativePath, '/', '\\');
             }
             $class = $ns.'\\'.$file->getBasename('.php');
             if ($this->container) {

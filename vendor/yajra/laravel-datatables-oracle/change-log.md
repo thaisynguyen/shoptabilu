@@ -8,49 +8,6 @@
 
 ##Change Log
 
-###v5.12.5
-    - Get order column name from the request. Fix #307.
-
-###v5.12.4
-    - Fix searching when aliasing a column. Fix #274.
-
-###v5.12.3
-    - Remove checking of columns - name index and let setupColumnName method to identify the proper column name.
-
-###v5.12.2
-    - Fix double prefix when using join queries. Fix #272, #273
-
-###v5.12.1
-    - Fix support for PHP5.4.
-
-###v5.12.0
-    - Added support for Fractal Serializer.
-    - Added config for default serializer.
-    - Note: Should be used along with setTransformer method.
-    - Usage:
-        return Datatables::of($model)
-            ->setTransformer(ModelTransformer::class)
-            ->setSerializer(ModelSerializer::class)
-            ->make(true);
-
-###v5.11.14
-    - Sort by a multi-line 'select as' query. PR #245
-
-###v5.11.13
-    - Allow fractal v0.12 and up. Fix #237.
-
-###v5.11.12
-    - Use connection grammar to wrap columns and table name.
-
-###v5.11.11
-    - Parse includes in fractal. Fix #225.
-
-###v5.11.10
-    - CollectionEngine: fix sorting of relation columns by using seralize (like filtering). PR #197.
-
-###v5.11.9
-    - Add fix for QueryBuilder: ORDER BY *. PR #194.
-
 ###v5.11.8
     - Skip search, order and pagination on empty records.
     - Fix #149 and #176 empty collection error when using make(false).

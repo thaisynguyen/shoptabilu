@@ -25,7 +25,8 @@ class Interface_ extends Declaration
     /**
      * Extends one or more interfaces.
      *
-     * @param Name|string ...$interfaces Names of interfaces to extend
+     * @param Name|string $interface Name of interface to extend
+     * @param Name|string $...       More interfaces to extend
      *
      * @return $this The builder instance (for fluid interface)
      */

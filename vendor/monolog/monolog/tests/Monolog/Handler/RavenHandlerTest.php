@@ -99,18 +99,6 @@ class RavenHandlerTest extends TestCase
         $this->assertEquals($release, $ravenClient->lastData['release']);
     }
 
-    public function testFingerprint()
-    {
-        $ravenClient = $this->getRavenClient();
-        $handler = $this->getHandler($ravenClient);
-
-        $fingerprint = array('{{ default }}', 'other value');
-        $record = $this->getRecord(Logger::INFO, 'test', array('fingerprint' => $fingerprint));
-        $handler->handle($record);
-
-        $this->assertEquals($fingerprint, $ravenClient->lastData['fingerprint']);
-    }
-
     public function testUserContext()
     {
         $ravenClient = $this->getRavenClient();
@@ -121,7 +109,7 @@ class RavenHandlerTest extends TestCase
 
         $user = array(
             'id' => '123',
-            'email' => 'test@test.com',
+            'email' => 'test@test.com'
         );
 
         $recordWithContext = $this->getRecord(Logger::INFO, 'test', array('user' => $user));
@@ -129,7 +117,7 @@ class RavenHandlerTest extends TestCase
         $ravenClient->user_context(array('id' => 'test_user_id'));
         // handle context
         $handler->handle($recordWithContext);
-        $this->assertEquals($user, $ravenClient->lastData['user']);
+        $this->assertEquals($user, $ravenClient->lastData['sentry.interfaces.User']);
 
         // check to see if its reset
         $handler->handle($recordWithNoContext);
@@ -139,7 +127,7 @@ class RavenHandlerTest extends TestCase
         // handle with null context
         $ravenClient->user_context(null);
         $handler->handle($recordWithContext);
-        $this->assertEquals($user, $ravenClient->lastData['user']);
+        $this->assertEquals($user, $ravenClient->lastData['sentry.interfaces.User']);
 
         // check to see if its reset
         $handler->handle($recordWithNoContext);
@@ -195,32 +183,6 @@ class RavenHandlerTest extends TestCase
         $handler->handleBatch($records);
     }
 
-    public function testHandleBatchPicksProperMessage()
-    {
-        $records = array(
-            $this->getRecord(Logger::DEBUG, 'debug message 1'),
-            $this->getRecord(Logger::DEBUG, 'debug message 2'),
-            $this->getRecord(Logger::INFO, 'information 1'),
-            $this->getRecord(Logger::ERROR, 'error 1'),
-            $this->getRecord(Logger::WARNING, 'warning'),
-            $this->getRecord(Logger::ERROR, 'error 2'),
-            $this->getRecord(Logger::INFO, 'information 2'),
-        );
-
-        $logFormatter = $this->getMock('Monolog\\Formatter\\FormatterInterface');
-        $logFormatter->expects($this->once())->method('formatBatch');
-
-        $formatter = $this->getMock('Monolog\\Formatter\\FormatterInterface');
-        $formatter->expects($this->once())->method('format')->with($this->callback(function ($record) use ($records) {
-            return $record['message'] == 'error 1';
-        }));
-
-        $handler = $this->getHandler($this->getRavenClient());
-        $handler->setBatchFormatter($logFormatter);
-        $handler->setFormatter($formatter);
-        $handler->handleBatch($records);
-    }
-
     public function testGetSetBatchFormatter()
     {
         $ravenClient = $this->getRavenClient();
@@ -228,22 +190,6 @@ class RavenHandlerTest extends TestCase
 
         $handler->setBatchFormatter($formatter = new LineFormatter());
         $this->assertSame($formatter, $handler->getBatchFormatter());
-    }
-
-    public function testRelease()
-    {
-        $ravenClient = $this->getRavenClient();
-        $handler = $this->getHandler($ravenClient);
-        $release = 'v42.42.42';
-        $handler->setRelease($release);
-        $record = $this->getRecord(Logger::INFO, 'test');
-        $handler->handle($record);
-        $this->assertEquals($release, $ravenClient->lastData['release']);
-
-        $localRelease = 'v41.41.41';
-        $record = $this->getRecord(Logger::INFO, 'test', array('release' => $localRelease));
-        $handler->handle($record);
-        $this->assertEquals($localRelease, $ravenClient->lastData['release']);
     }
 
     private function methodThatThrowsAnException()

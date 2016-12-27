@@ -31,12 +31,6 @@ class ClassFileAnalyserSpec extends ObjectBehavior
         $this->getEndLineOfNamedMethod($class, 'methodOne')->shouldReturn(13);
     }
 
-    function it_should_return_the_line_number_of_the_end_of_the_last_method()
-    {
-    	$class = $this->getSingleMethodClassContainingAnonymousFunction();
-    	$this->getEndLineOfLastMethod($class)->shouldReturn(12);
-    }
-
     private function getSingleMethodClass()
     {
         return <<<SINGLE_METHOD_CLASS
@@ -68,29 +62,5 @@ final class MyClass
 {
 }
 NO_METHOD_CLASS;
-    }
-
-    private function getSingleMethodClassContainingAnonymousFunction()
-    {
-    	return <<<SINGLE_METHOD_CLASS_CONTAINING_ANONYMOUS_FUNCTION
-<?php
-
-namespace MyNamespace;
-
-class MyClass
-{
-    public function testAnAnonymousFunction()
-    {
-        return function () {
-            return 'something';
-        };
-    }
- // com
-}
-/*
- comment }
- */
-
-SINGLE_METHOD_CLASS_CONTAINING_ANONYMOUS_FUNCTION;
     }
 }

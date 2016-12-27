@@ -6,10 +6,6 @@ use PhpParser\Node\Expr;
 
 class Exit_ extends Expr
 {
-    /* For use in "kind" attribute */
-    const KIND_EXIT = 1;
-    const KIND_DIE = 2;
-
     /** @var null|Expr Expression */
     public $expr;
 
@@ -20,7 +16,7 @@ class Exit_ extends Expr
      * @param array                    $attributes Additional attributes
      */
     public function __construct(Expr $expr = null, array $attributes = array()) {
-        parent::__construct($attributes);
+        parent::__construct(null, $attributes);
         $this->expr = $expr;
     }
 

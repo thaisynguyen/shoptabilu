@@ -180,9 +180,9 @@ class MorphTo extends BelongsTo
     {
         $instance = $this->createModelByType($type);
 
-        $key = $instance->getTable().'.'.$instance->getKeyName();
+        $key = $instance->getKeyName();
 
-        $query = $instance->newQuery()->with($this->getQuery()->getEagerLoads());
+        $query = $instance->newQuery();
 
         $query = $this->useWithTrashed($query);
 
@@ -201,6 +201,7 @@ class MorphTo extends BelongsTo
 
         return collect($this->dictionary[$type])->map(function ($models) use ($foreign) {
             return head($models)->{$foreign};
+
         })->values()->unique();
     }
 

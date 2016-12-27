@@ -1,7 +1,6 @@
 <?php
-namespace Cocur\Slugify\Tests\Bridge\ZF2;
+namespace Cocur\Slugify\Bridge\ZF2;
 
-use Cocur\Slugify\Bridge\ZF2\SlugifyViewHelperFactory;
 use Cocur\Slugify\Slugify;
 use Zend\ServiceManager\ServiceManager;
 use Zend\View\HelperPluginManager;
@@ -19,7 +18,7 @@ class SlugifyViewHelperFactoryTest extends \PHPUnit_Framework_TestCase
      */
     private $factory;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->factory = new SlugifyViewHelperFactory();
     }

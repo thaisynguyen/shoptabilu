@@ -77,9 +77,8 @@ class QueryBuilderEngine extends BaseEngine implements DataTableEngine
         $myQuery = clone $this->query;
         // if its a normal query ( no union, having and distinct word )
         // replace the select with static text to improve performance
-        if (! Str::contains(Str::lower($myQuery->toSql()), ['union', 'having', 'distinct'])) {
-            $row_count = $this->connection->getQueryGrammar()->wrap('row_count');
-            $myQuery->select($this->connection->raw("'1' as {$row_count}"));
+        if ( ! Str::contains(Str::lower($myQuery->toSql()), ['union', 'having', 'distinct'])) {
+            $myQuery->select($this->connection->raw("'1' as row_count"));
         }
 
         return $this->connection->table($this->connection->raw('(' . $myQuery->toSql() . ') count_row_table'))
@@ -95,16 +94,17 @@ class QueryBuilderEngine extends BaseEngine implements DataTableEngine
             function ($query) {
                 $keyword = $this->setupKeyword($this->request->keyword());
                 foreach ($this->request->searchableColumnIndex() as $index) {
-                    $columnName = $this->setupColumnName($index);
+                    $column = $this->setupColumnName($index);
 
-                    if (isset($this->columnDef['filter'][$columnName])) {
-                        $method     = Helper::getOrMethod($this->columnDef['filter'][$columnName]['method']);
-                        $parameters = $this->columnDef['filter'][$columnName]['parameters'];
+                    if (isset($this->columnDef['filter'][$column])) {
+                        $method     = Helper::getOrMethod($this->columnDef['filter'][$column]['method']);
+                        $parameters = $this->columnDef['filter'][$column]['parameters'];
                         $this->compileColumnQuery(
-                            $this->getQueryBuilder($query), $method, $parameters, $columnName, $keyword
+                            $this->getQueryBuilder($query), $method, $parameters, $column, $keyword
                         );
                     } else {
-                        $this->compileGlobalSearch($this->getQueryBuilder($query), $columnName, $keyword);
+                        $column = $this->prefixColumn($column);
+                        $this->compileGlobalSearch($this->getQueryBuilder($query), $column, $keyword);
                     }
 
                     $this->isFilterApplied = true;
@@ -185,7 +185,7 @@ class QueryBuilderEngine extends BaseEngine implements DataTableEngine
      */
     public function castColumn($column)
     {
-        $column = $this->connection->getQueryGrammar()->wrap($column);
+        $column = Helper::wrapDatabaseValue($this->database, $column);
         if ($this->database === 'pgsql') {
             $column = 'CAST(' . $column . ' as TEXT)';
         }
@@ -241,10 +241,7 @@ class QueryBuilderEngine extends BaseEngine implements DataTableEngine
     public function ordering()
     {
         foreach ($this->request->orderableColumns() as $orderable) {
-            $r_column = $this->request->input('columns')[$orderable['column']];
-            $column   = $r_column['name'];
-            $column   = $column ? $column : $r_column['data'];
-            //$column = $this->setupColumnName($orderable['column'], true);
+            $column = $this->setupColumnName($orderable['column']);
             if (isset($this->columnDef['order'][$column])) {
                 $method     = $this->columnDef['order'][$column]['method'];
                 $parameters = $this->columnDef['order'][$column]['parameters'];
@@ -252,15 +249,6 @@ class QueryBuilderEngine extends BaseEngine implements DataTableEngine
                     $this->getQueryBuilder(), $method, $parameters, $column, $orderable['direction']
                 );
             } else {
-                /**
-                 * If we perform a select("*"), the ORDER BY clause will look like this:
-                 * ORDER BY * ASC
-                 * which causes a query exception
-                 * The temporary fix is modify `*` column to `id` column
-                 */
-                if ($column === '*') {
-                    $column = 'id';
-                }
                 $this->getQueryBuilder()->orderBy($column, $orderable['direction']);
             }
         }

@@ -119,7 +119,7 @@ class CellWriter {
     public function setFontWeight($bold = true)
     {
         return $this->setStyle('font', array(
-            'bold' => ($bold === 'bold' || $bold === true)
+            'bold' => ($bold == 'bold' || $bold) ? true : false
         ));
     }
 
@@ -153,17 +153,6 @@ class CellWriter {
     }
 
     /**
-     * Set the text rotation
-     * @param integer $alignment
-     * @return  CellWriter
-     */
-    public function setTextRotation($degrees)
-    {
-      $style = $this->getCellStyle()->getAlignment()->setTextRotation($degrees);
-      return $this;
-    }
-
-    /**
      * Set the alignment
      * @param string $alignment
      * @return  CellWriter
@@ -185,17 +174,6 @@ class CellWriter {
         return $this->setStyle('alignment', array(
             'vertical' => $alignment
         ));
-    }
-
-    /**
-     * Set the text indent
-     * @param integer $indent
-     * @return  CellWriter
-     */
-    public function setTextIndent($indent)
-    {
-      $style = $this->getCellStyle()->getAlignment()->setIndent((int)$indent);
-      return $this;
     }
 
     /**

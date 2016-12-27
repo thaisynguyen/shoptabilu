@@ -42,11 +42,11 @@ class Debug extends Twig_Extension
      */
     public function getFunctions()
     {
-        return [
+        return array(
             new Twig_SimpleFunction(
-                'debug', [$this, 'debug'], ['needs_context' => true, 'needs_environment' => true]
+                'debug', [$this, 'debug'], array('needs_context' => true, 'needs_environment' => true)
             ),
-        ];
+        );
     }
 
     /**
@@ -64,7 +64,7 @@ class Debug extends Twig_Extension
 
         $count = func_num_args();
         if (2 === $count) {
-            $data = [];
+            $data = array();
             foreach ($context as $key => $value) {
                 if (is_object($value)) {
                     if (method_exists($value, 'toArray')) {

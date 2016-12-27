@@ -4,7 +4,7 @@ namespace Barryvdh\Debugbar\DataCollector;
 
 use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\Renderable;
-use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Contracts\ArrayableInterface;
 
 /**
  * Collector for Laravel's Auth provider
@@ -55,10 +55,10 @@ class AuthCollector extends DataCollector implements Renderable
     {
         // Defaults
         if (is_null($user)) {
-            return [
+            return array(
                 'name' => 'Guest',
-                'user' => ['guest' => true],
-            ];
+                'user' => array('guest' => true),
+            );
         }
 
         // The default auth identifer is the ID number, which isn't all that
@@ -75,10 +75,10 @@ class AuthCollector extends DataCollector implements Renderable
             }
         }
 
-        return [
+        return array(
             'name' => $identifier,
-            'user' => $user instanceof Arrayable ? $user->toArray() : $user,
-        ];
+            'user' => $user instanceof ArrayableInterface ? $user->toArray() : $user,
+        );
     }
 
     /**
@@ -94,21 +94,21 @@ class AuthCollector extends DataCollector implements Renderable
      */
     public function getWidgets()
     {
-        $widgets = [
-            'auth' => [
+        $widgets = array(
+            'auth' => array(
                 'icon' => 'lock',
                 'widget' => 'PhpDebugBar.Widgets.VariableListWidget',
                 'map' => 'auth.user',
                 'default' => '{}'
-            ]
-        ];
+            )
+        );
         if ($this->showName) {
-            $widgets['auth.name'] = [
+            $widgets['auth.name'] = array(
                 'icon' => 'user',
                 'tooltip' => 'Auth status',
                 'map' => 'auth.name',
                 'default' => '',
-            ];
+            );
         }
         return $widgets;
     }

@@ -23,13 +23,6 @@ class CookieJar implements JarContract
     protected $domain = null;
 
     /**
-     * The default secure setting (defaults to false).
-     *
-     * @var bool
-     */
-    protected $secure = false;
-
-    /**
      * All of the cookies queued for sending.
      *
      * @var array
@@ -50,7 +43,7 @@ class CookieJar implements JarContract
      */
     public function make($name, $value, $minutes = 0, $path = null, $domain = null, $secure = false, $httpOnly = true)
     {
-        list($path, $domain, $secure) = $this->getPathAndDomain($path, $domain, $secure);
+        list($path, $domain) = $this->getPathAndDomain($path, $domain);
 
         $time = ($minutes == 0) ? 0 : time() + ($minutes * 60);
 
@@ -130,7 +123,6 @@ class CookieJar implements JarContract
      * Remove a cookie from the queue.
      *
      * @param  string  $name
-     * @return void
      */
     public function unqueue($name)
     {
@@ -142,12 +134,11 @@ class CookieJar implements JarContract
      *
      * @param  string  $path
      * @param  string  $domain
-     * @param  bool    $secure
      * @return array
      */
-    protected function getPathAndDomain($path, $domain, $secure = false)
+    protected function getPathAndDomain($path, $domain)
     {
-        return [$path ?: $this->path, $domain ?: $this->domain, $secure ?: $this->secure];
+        return [$path ?: $this->path, $domain ?: $this->domain];
     }
 
     /**
@@ -155,12 +146,11 @@ class CookieJar implements JarContract
      *
      * @param  string  $path
      * @param  string  $domain
-     * @param  bool    $secure
      * @return $this
      */
-    public function setDefaultPathAndDomain($path, $domain, $secure = false)
+    public function setDefaultPathAndDomain($path, $domain)
     {
-        list($this->path, $this->domain, $this->secure) = [$path, $domain, $secure];
+        list($this->path, $this->domain) = [$path, $domain];
 
         return $this;
     }

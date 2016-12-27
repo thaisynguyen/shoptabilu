@@ -35,13 +35,6 @@ class Kernel implements KernelContract
     protected $artisan;
 
     /**
-     * The Artisan commands provided by the application.
-     *
-     * @var array
-     */
-    protected $commands = [];
-
-    /**
      * The bootstrap classes for the application.
      *
      * @var array
@@ -156,6 +149,11 @@ class Kernel implements KernelContract
     {
         $this->bootstrap();
 
+        // If we are calling a arbitary command from within the application, we will load
+        // all of the available deferred providers which will make all of the commands
+        // available to an application. Otherwise the command will not be available.
+        $this->app->loadDeferredProviders();
+
         return $this->getArtisan()->call($command, $parameters);
     }
 
@@ -198,7 +196,7 @@ class Kernel implements KernelContract
     }
 
     /**
-     * Bootstrap the application for artisan commands.
+     * Bootstrap the application for HTTP requests.
      *
      * @return void
      */
@@ -208,9 +206,6 @@ class Kernel implements KernelContract
             $this->app->bootstrapWith($this->bootstrappers());
         }
 
-        // If we are calling an arbitrary command from within the application, we'll load
-        // all of the available deferred providers which will make all of the commands
-        // available to an application. Otherwise the command will not be available.
         $this->app->loadDeferredProviders();
     }
 

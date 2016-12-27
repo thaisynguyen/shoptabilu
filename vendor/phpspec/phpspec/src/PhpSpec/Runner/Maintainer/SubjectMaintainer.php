@@ -13,7 +13,7 @@
 
 namespace PhpSpec\Runner\Maintainer;
 
-use PhpSpec\CodeAnalysis\AccessInspectorInterface;
+use Phpspec\CodeAnalysis\AccessInspectorInterface;
 use PhpSpec\Loader\Node\ExampleNode;
 use PhpSpec\SpecificationInterface;
 use PhpSpec\Runner\MatcherManager;

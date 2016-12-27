@@ -3,21 +3,57 @@
 namespace PhpParser;
 
 use PhpParser\Comment;
-use PhpParser\Node\Expr;
-use PhpParser\Node\Scalar;
-use PhpParser\Node\Scalar\String_;
 
-abstract class ParserTest extends \PHPUnit_Framework_TestCase
+require_once __DIR__ . '/CodeTestAbstract.php';
+
+class ParserTest extends CodeTestAbstract
 {
-    /** @returns Parser */
-    abstract protected function getParser(Lexer $lexer);
+    /**
+     * @dataProvider provideTestParse
+     */
+    public function testParse($name, $code, $expected) {
+        $lexer = new Lexer\Emulative(array('usedAttributes' => array(
+            'startLine', 'endLine', 'startFilePos', 'endFilePos'
+        )));
+        $parser = new Parser($lexer, array(
+            'throwOnError' => false,
+        ));
+
+        $stmts = $parser->parse($code);
+        $errors = $parser->getErrors();
+
+        $output = '';
+        foreach ($errors as $error) {
+            $output .= $this->formatErrorMessage($error, $code) . "\n";
+        }
+
+        if (null !== $stmts) {
+            $dumper = new NodeDumper;
+            $output .= $dumper->dump($stmts);
+        }
+
+        $this->assertSame($this->canonicalize($expected), $this->canonicalize($output), $name);
+    }
+
+    public function provideTestParse() {
+        return $this->getTests(__DIR__ . '/../code/parser', 'test');
+    }
+
+    private function formatErrorMessage(Error $e, $code) {
+        if ($e->hasColumnInfo()) {
+            return $e->getRawMessage() . ' from ' . $e->getStartLine() . ':' . $e->getStartColumn($code)
+                . ' to ' . $e->getEndLine() . ':' . $e->getEndColumn($code);
+        } else {
+            return $e->getMessage();
+        }
+    }
 
     /**
      * @expectedException \PhpParser\Error
      * @expectedExceptionMessage Syntax error, unexpected EOF on line 1
      */
     public function testParserThrowsSyntaxError() {
-        $parser = $this->getParser(new Lexer());
+        $parser = new Parser(new Lexer());
         $parser->parse('<?php foo');
     }
 
@@ -26,7 +62,7 @@ abstract class ParserTest extends \PHPUnit_Framework_TestCase
      * @expectedExceptionMessage Cannot use foo as self because 'self' is a special class name on line 1
      */
     public function testParserThrowsSpecialError() {
-        $parser = $this->getParser(new Lexer());
+        $parser = new Parser(new Lexer());
         $parser->parse('<?php use foo as self;');
     }
 
@@ -47,9 +83,9 @@ function test($a) {
     echo $a;
 }
 EOC;
-        $code = canonicalize($code);
+        $code = $this->canonicalize($code);
 
-        $parser = $this->getParser($lexer);
+        $parser = new Parser($lexer);
         $stmts = $parser->parse($code);
 
         /** @var \PhpParser\Node\Stmt\Function_ $fn */
@@ -57,7 +93,7 @@ EOC;
         $this->assertInstanceOf('PhpParser\Node\Stmt\Function_', $fn);
         $this->assertEquals(array(
             'comments' => array(
-                new Comment\Doc('/** Doc comment */', 2, 6),
+                new Comment\Doc('/** Doc comment */', 2),
             ),
             'startLine' => 3,
             'endLine' => 7,
@@ -79,8 +115,8 @@ EOC;
         $this->assertInstanceOf('PhpParser\Node\Stmt\Echo_', $echo);
         $this->assertEquals(array(
             'comments' => array(
-                new Comment("// Line\n", 4, 49),
-                new Comment("// Comments\n", 5, 61),
+                new Comment("// Line\n", 4),
+                new Comment("// Comments\n", 5),
             ),
             'startLine' => 6,
             'endLine' => 6,
@@ -105,60 +141,8 @@ EOC;
      */
     public function testInvalidToken() {
         $lexer = new InvalidTokenLexer;
-        $parser = $this->getParser($lexer);
+        $parser = new Parser($lexer);
         $parser->parse('dummy');
-    }
-
-    /**
-     * @dataProvider provideTestKindAttributes
-     */
-    public function testKindAttributes($code, $expectedAttributes) {
-        $parser = $this->getParser(new Lexer);
-        $stmts = $parser->parse("<?php $code;");
-        $attributes = $stmts[0]->getAttributes();
-        foreach ($expectedAttributes as $name => $value) {
-            $this->assertSame($value, $attributes[$name]);
-        }
-    }
-
-    public function provideTestKindAttributes() {
-        return array(
-            array('0', ['kind' => Scalar\LNumber::KIND_DEC]),
-            array('9', ['kind' => Scalar\LNumber::KIND_DEC]),
-            array('07', ['kind' => Scalar\LNumber::KIND_OCT]),
-            array('0xf', ['kind' => Scalar\LNumber::KIND_HEX]),
-            array('0XF', ['kind' => Scalar\LNumber::KIND_HEX]),
-            array('0b1', ['kind' => Scalar\LNumber::KIND_BIN]),
-            array('0B1', ['kind' => Scalar\LNumber::KIND_BIN]),
-            array('[]', ['kind' => Expr\Array_::KIND_SHORT]),
-            array('array()', ['kind' => Expr\Array_::KIND_LONG]),
-            array("'foo'", ['kind' => String_::KIND_SINGLE_QUOTED]),
-            array("b'foo'", ['kind' => String_::KIND_SINGLE_QUOTED]),
-            array("B'foo'", ['kind' => String_::KIND_SINGLE_QUOTED]),
-            array('"foo"', ['kind' => String_::KIND_DOUBLE_QUOTED]),
-            array('b"foo"', ['kind' => String_::KIND_DOUBLE_QUOTED]),
-            array('B"foo"', ['kind' => String_::KIND_DOUBLE_QUOTED]),
-            array('"foo$bar"', ['kind' => String_::KIND_DOUBLE_QUOTED]),
-            array('b"foo$bar"', ['kind' => String_::KIND_DOUBLE_QUOTED]),
-            array('B"foo$bar"', ['kind' => String_::KIND_DOUBLE_QUOTED]),
-            array("<<<'STR'\nSTR\n", ['kind' => String_::KIND_NOWDOC, 'docLabel' => 'STR']),
-            array("<<<STR\nSTR\n", ['kind' => String_::KIND_HEREDOC, 'docLabel' => 'STR']),
-            array("<<<\"STR\"\nSTR\n", ['kind' => String_::KIND_HEREDOC, 'docLabel' => 'STR']),
-            array("b<<<'STR'\nSTR\n", ['kind' => String_::KIND_NOWDOC, 'docLabel' => 'STR']),
-            array("B<<<'STR'\nSTR\n", ['kind' => String_::KIND_NOWDOC, 'docLabel' => 'STR']),
-            array("<<< \t 'STR'\nSTR\n", ['kind' => String_::KIND_NOWDOC, 'docLabel' => 'STR']),
-            // HHVM doesn't support this due to a lexer bug
-            // (https://github.com/facebook/hhvm/issues/6970)
-            // array("<<<'\xff'\n\xff\n", ['kind' => String_::KIND_NOWDOC, 'docLabel' => "\xff"]),
-            array("<<<\"STR\"\n\$a\nSTR\n", ['kind' => String_::KIND_HEREDOC, 'docLabel' => 'STR']),
-            array("b<<<\"STR\"\n\$a\nSTR\n", ['kind' => String_::KIND_HEREDOC, 'docLabel' => 'STR']),
-            array("B<<<\"STR\"\n\$a\nSTR\n", ['kind' => String_::KIND_HEREDOC, 'docLabel' => 'STR']),
-            array("<<< \t \"STR\"\n\$a\nSTR\n", ['kind' => String_::KIND_HEREDOC, 'docLabel' => 'STR']),
-            array("die", ['kind' => Expr\Exit_::KIND_DIE]),
-            array("die('done')", ['kind' => Expr\Exit_::KIND_DIE]),
-            array("exit", ['kind' => Expr\Exit_::KIND_EXIT]),
-            array("exit(1)", ['kind' => Expr\Exit_::KIND_EXIT]),
-        );
     }
 }
 

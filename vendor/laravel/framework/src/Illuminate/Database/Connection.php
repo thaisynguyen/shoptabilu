@@ -10,6 +10,7 @@ use LogicException;
 use RuntimeException;
 use DateTimeInterface;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Query\Processors\Processor;
@@ -20,8 +21,6 @@ use Illuminate\Database\Query\Grammars\Grammar as QueryGrammar;
 
 class Connection implements ConnectionInterface
 {
-    use DetectsLostConnections;
-
     /**
      * The active PDO connection.
      *
@@ -246,19 +245,11 @@ class Connection implements ConnectionInterface
      */
     public function table($table)
     {
-        return $this->query()->from($table);
-    }
+        $processor = $this->getPostProcessor();
 
-    /**
-     * Get a new query builder instance.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
-    public function query()
-    {
-        return new QueryBuilder(
-            $this, $this->getQueryGrammar(), $this->getPostProcessor()
-        );
+        $query = new QueryBuilder($this, $this->getQueryGrammar(), $processor);
+
+        return $query->from($table);
     }
 
     /**
@@ -498,24 +489,13 @@ class Connection implements ConnectionInterface
      * Start a new database transaction.
      *
      * @return void
-     * @throws Exception
      */
     public function beginTransaction()
     {
         ++$this->transactions;
 
         if ($this->transactions == 1) {
-            try {
-                $this->pdo->beginTransaction();
-            } catch (Exception $e) {
-                --$this->transactions;
-
-                throw $e;
-            }
-        } elseif ($this->transactions > 1 && $this->queryGrammar->supportsSavepoints()) {
-            $this->pdo->exec(
-                $this->queryGrammar->compileSavepoint('trans'.$this->transactions)
-            );
+            $this->pdo->beginTransaction();
         }
 
         $this->fireConnectionEvent('beganTransaction');
@@ -545,14 +525,12 @@ class Connection implements ConnectionInterface
     public function rollBack()
     {
         if ($this->transactions == 1) {
-            $this->pdo->rollBack();
-        } elseif ($this->transactions > 1 && $this->queryGrammar->supportsSavepoints()) {
-            $this->pdo->exec(
-                $this->queryGrammar->compileSavepointRollBack('trans'.$this->transactions)
-            );
-        }
+            $this->transactions = 0;
 
-        $this->transactions = max(0, $this->transactions - 1);
+            $this->pdo->rollBack();
+        } else {
+            --$this->transactions;
+        }
 
         $this->fireConnectionEvent('rollingBack');
     }
@@ -617,10 +595,6 @@ class Connection implements ConnectionInterface
         try {
             $result = $this->runQueryCallback($query, $bindings, $callback);
         } catch (QueryException $e) {
-            if ($this->transactions >= 1) {
-                throw $e;
-            }
-
             $result = $this->tryAgainIfCausedByLostConnection(
                 $e, $query, $bindings, $callback
             );
@@ -680,13 +654,31 @@ class Connection implements ConnectionInterface
      */
     protected function tryAgainIfCausedByLostConnection(QueryException $e, $query, $bindings, Closure $callback)
     {
-        if ($this->causedByLostConnection($e->getPrevious())) {
+        if ($this->causedByLostConnection($e)) {
             $this->reconnect();
 
             return $this->runQueryCallback($query, $bindings, $callback);
         }
 
         throw $e;
+    }
+
+    /**
+     * Determine if the given exception was caused by a lost connection.
+     *
+     * @param  \Illuminate\Database\QueryException  $e
+     * @return bool
+     */
+    protected function causedByLostConnection(QueryException $e)
+    {
+        $message = $e->getPrevious()->getMessage();
+
+        return Str::contains($message, [
+            'server has gone away',
+            'no connection to the server',
+            'Lost connection',
+            'is dead or not enabled',
+        ]);
     }
 
     /**

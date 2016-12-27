@@ -1,24 +1,17 @@
-<?php namespace Cviebrock\EloquentSluggable\Tests\Models;
+<?php
 
-use Cviebrock\EloquentSluggable\Sluggable;
+use Cviebrock\EloquentSluggable\SluggableInterface;
+use Cviebrock\EloquentSluggable\SluggableTrait;
 use Illuminate\Database\Eloquent\Model;
+
 
 /**
  * Class Post
- *
- * @package Cviebrock\EloquentSluggable\Tests\Models
- *
- * @property integer id
- * @property string title
- * @property string|null subtitle
- * @property string|null slug
- * @property string|null dummy
- * @property integer author_id
  */
-class Post extends Model
+class Post extends Model implements SluggableInterface
 {
 
-    use Sluggable;
+    use SluggableTrait;
 
     /**
      * The table associated with the model.
@@ -39,7 +32,29 @@ class Post extends Model
      *
      * @var array
      */
-    protected $fillable = ['title', 'subtitle', 'slug', 'dummy', 'author_id'];
+    protected $fillable = ['title', 'subtitle'];
+
+    /**
+     * Sluggable configuration.
+     *
+     * @var array
+     */
+    protected $sluggable = [
+      'build_from' => 'title',
+      'save_to' => 'slug',
+    ];
+
+    /**
+     * Helper to set slug options for tests.
+     *
+     * @param array $array Array of new slug options
+     */
+    public function setSlugConfig($array)
+    {
+        foreach ($array as $key => $value) {
+            $this->sluggable[$key] = $value;
+        }
+    }
 
     /**
      * Convert the model to its string representation.
@@ -49,19 +64,5 @@ class Post extends Model
     public function __toString()
     {
         return $this->title;
-    }
-
-    /**
-     * Return the sluggable configuration array for this model.
-     *
-     * @return array
-     */
-    public function sluggable()
-    {
-        return [
-            'slug' => [
-                'source' => 'title'
-            ]
-        ];
     }
 }

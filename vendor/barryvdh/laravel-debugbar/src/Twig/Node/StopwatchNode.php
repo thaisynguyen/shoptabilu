@@ -14,7 +14,7 @@ class StopwatchNode extends \Twig_Node
         $lineno = 0,
         $tag = null
     ) {
-        parent::__construct(['body' => $body, 'name' => $name, 'var' => $var], [], $lineno, $tag);
+        parent::__construct(array('body' => $body, 'name' => $name, 'var' => $var), array(), $lineno, $tag);
     }
 
     public function compile(\Twig_Compiler $compiler)

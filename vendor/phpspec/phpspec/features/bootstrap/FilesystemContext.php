@@ -1,14 +1,18 @@
 <?php
 
+use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
-use Symfony\Component\Filesystem\Exception\IOException;
+use Behat\Gherkin\Node\TableNode;
+use Matcher\FileExistsMatcher;
+use Matcher\FileHasContentsMatcher;
+use PhpSpec\Matcher\MatchersProviderInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Defines application features from the specific context.
  */
-class FilesystemContext implements Context
+class FilesystemContext implements Context, MatchersProviderInterface
 {
     /**
      * @var string
@@ -47,11 +51,7 @@ class FilesystemContext implements Context
      */
     public function removeWorkingDirectory()
     {
-        try {
-            $this->filesystem->remove($this->workingDirectory);
-        } catch (IOException $e) {
-            //ignoring exception
-        }
+        $this->filesystem->remove($this->workingDirectory);
     }
 
     /**
@@ -64,20 +64,13 @@ class FilesystemContext implements Context
 
     /**
      * @Given the class file :file contains:
+     * @Given the spec file :file contains:
      * @Given the trait file :file contains:
      */
-    public function theClassOrTraitFileContains($file, PyStringNode $contents)
+    public function theClassOrTraitOrSpecFileContains($file, PyStringNode $contents)
     {
         $this->theFileContains($file, $contents);
         require_once($file);
-    }
-
-    /**
-     * @Given the spec file :file contains:
-     */
-    public function theSpecFileContains($file, PyStringNode $contents)
-    {
-        $this->theFileContains($file, $contents);
     }
 
     /**
@@ -93,12 +86,8 @@ class FilesystemContext implements Context
      */
     public function thereIsNoFile($file)
     {
-        if (file_exists($file)) {
-            throw new \Exception(sprintf(
-                "File unexpectedly exists at path '%s'",
-                $file
-            ));
-        }
+        expect($file)->toNotExist();
+        expect(file_exists($file))->toBe(false);
     }
 
     /**
@@ -107,22 +96,8 @@ class FilesystemContext implements Context
      */
     public function theFileShouldContain($file, PyStringNode $contents)
     {
-        if (!file_exists($file)) {
-            throw new \Exception(sprintf(
-                "File did not exist at path '%s'",
-                $file
-            ));
-        }
-
-        $expectedContents = (string)$contents;
-        if ($expectedContents != file_get_contents($file)) {
-            throw new \Exception(sprintf(
-                "File at '%s' did not contain expected contents.\nExpected: '%s'\nActual: '%s'",
-                $file,
-                $expectedContents,
-                file_get_contents($file)
-            ));
-        }
+        expect($file)->toExist();
+        expect($file)->toHaveContents($contents);
     }
 
     /**
@@ -139,5 +114,16 @@ class FilesystemContext implements Context
     public function iHaveNotConfiguredAnAutoloader()
     {
         $this->filesystem->remove($this->workingDirectory . '/vendor/autoload.php');
+    }
+
+    /**
+     * @return array
+     */
+    public function getMatchers()
+    {
+        return array(
+            new FileExistsMatcher(),
+            new FileHasContentsMatcher()
+        );
     }
 }

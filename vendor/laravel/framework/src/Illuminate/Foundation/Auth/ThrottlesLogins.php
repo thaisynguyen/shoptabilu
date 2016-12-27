@@ -17,7 +17,7 @@ trait ThrottlesLogins
     protected function hasTooManyLoginAttempts(Request $request)
     {
         return app(RateLimiter::class)->tooManyAttempts(
-            $this->getThrottleKey($request),
+            $request->input($this->loginUsername()).$request->ip(),
             $this->maxLoginAttempts(), $this->lockoutTime() / 60
         );
     }
@@ -31,23 +31,8 @@ trait ThrottlesLogins
     protected function incrementLoginAttempts(Request $request)
     {
         app(RateLimiter::class)->hit(
-            $this->getThrottleKey($request)
+            $request->input($this->loginUsername()).$request->ip()
         );
-    }
-
-    /**
-     * Determine how many retries are left for the user.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return int
-     */
-    protected function retriesLeft(Request $request)
-    {
-        $attempts = app(RateLimiter::class)->attempts(
-            $this->getThrottleKey($request)
-        );
-
-        return $this->maxLoginAttempts() - $attempts + 1;
     }
 
     /**
@@ -59,10 +44,10 @@ trait ThrottlesLogins
     protected function sendLockoutResponse(Request $request)
     {
         $seconds = app(RateLimiter::class)->availableIn(
-            $this->getThrottleKey($request)
+            $request->input($this->loginUsername()).$request->ip()
         );
 
-        return redirect()->back()
+        return redirect($this->loginPath())
             ->withInput($request->only($this->loginUsername(), 'remember'))
             ->withErrors([
                 $this->loginUsername() => $this->getLockoutErrorMessage($seconds),
@@ -91,19 +76,8 @@ trait ThrottlesLogins
     protected function clearLoginAttempts(Request $request)
     {
         app(RateLimiter::class)->clear(
-            $this->getThrottleKey($request)
+            $request->input($this->loginUsername()).$request->ip()
         );
-    }
-
-    /**
-     * Get the throttle key for the given request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return string
-     */
-    protected function getThrottleKey(Request $request)
-    {
-        return mb_strtolower($request->input($this->loginUsername())).'|'.$request->ip();
     }
 
     /**

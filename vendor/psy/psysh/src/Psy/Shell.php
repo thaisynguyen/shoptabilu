@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2015 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -41,7 +41,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class Shell extends Application
 {
-    const VERSION = 'v0.7.2';
+    const VERSION = 'v0.5.2';
 
     const PROMPT      = '>>> ';
     const BUFF_PROMPT = '... ';
@@ -80,6 +80,18 @@ class Shell extends Application
         parent::__construct('Psy Shell', self::VERSION);
 
         $this->config->setShell($this);
+        // auto completer needs shell to be linked to configuration because of the context aware matchers
+        if ($this->config->getTabCompletion()) {
+            $this->completion = $this->config->getAutoCompleter();
+            $this->addTabCompletionMatchers($this->config->getTabCompletionMatchers());
+            foreach ($this->getTabCompletionMatchers() as $matcher) {
+                if ($matcher instanceof ContextAware) {
+                    $matcher->setContext($this->context);
+                }
+                $this->completion->addMatcher($matcher);
+            }
+            $this->completion->activate();
+        }
     }
 
     /**
@@ -146,7 +158,7 @@ class Shell extends Application
     /**
      * Adds a command object.
      *
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @param BaseCommand $command A Symfony Console Command object
      *
@@ -195,9 +207,9 @@ class Shell extends Application
             new Command\ListCommand(),
             new Command\DumpCommand(),
             new Command\DocCommand(),
-            new Command\ShowCommand($this->config->colorMode()),
+            new Command\ShowCommand(),
             new Command\WtfCommand(),
-            new Command\WhereamiCommand($this->config->colorMode()),
+            new Command\WhereamiCommand(),
             new Command\ThrowUpCommand(),
             new Command\TraceCommand(),
             new Command\BufferCommand(),
@@ -259,8 +271,6 @@ class Shell extends Application
      */
     public function run(InputInterface $input = null, OutputInterface $output = null)
     {
-        $this->initializeTabCompletion();
-
         if ($input === null && !isset($_SERVER['argv'])) {
             $input = new ArgvInput(array());
         }
@@ -269,11 +279,7 @@ class Shell extends Application
             $output = $this->config->getOutput();
         }
 
-        try {
-            return parent::run($input, $output);
-        } catch (\Exception $e) {
-            $this->writeException($e);
-        }
+        return parent::run($input, $output);
     }
 
     /**
@@ -293,7 +299,7 @@ class Shell extends Application
         $this->resetCodeBuffer();
 
         $this->setAutoExit(false);
-        $this->setCatchExceptions(false);
+        $this->setCatchExceptions(true);
 
         $this->readline->readHistory();
 
@@ -306,6 +312,8 @@ class Shell extends Application
         try {
             $this->loop->run($this);
         } catch (ThrowUpException $e) {
+            $this->setCatchExceptions(false);
+
             throw $e->getPrevious();
         }
     }
@@ -604,14 +612,14 @@ class Shell extends Application
         }
 
         // Incremental flush
-        if ($out !== '' && !$isCleaning) {
+        if (!empty($out) && !$isCleaning) {
             $this->output->write($out, false, ShellOutput::OUTPUT_RAW);
             $this->outputWantsNewline = (substr($out, -1) !== "\n");
         }
 
         // Output buffering is done!
         if ($this->outputWantsNewline && $phase & PHP_OUTPUT_HANDLER_END) {
-            $this->output->writeln(sprintf('<aside>%s</aside>', $this->config->useUnicode() ? '⏎' : '\\n'));
+            $this->output->writeln('<aside>⏎</aside>');
             $this->outputWantsNewline = false;
         }
     }
@@ -636,6 +644,18 @@ class Shell extends Application
     }
 
     /**
+     * Write a caught Exception to stdout.
+     *
+     * @see self::renderException
+     *
+     * @param \Exception $e
+     */
+    public function writeException(\Exception $e)
+    {
+        $this->renderException($e, $this->output);
+    }
+
+    /**
      * Renders a caught Exception.
      *
      * Exceptions are formatted according to severity. ErrorExceptions which were
@@ -646,7 +666,7 @@ class Shell extends Application
      * @param \Exception      $e      An exception instance
      * @param OutputInterface $output An OutputInterface instance
      */
-    public function writeException(\Exception $e)
+    public function renderException($e, $output)
     {
         $this->context->setLastException($e);
 
@@ -656,7 +676,7 @@ class Shell extends Application
         }
 
         $severity = ($e instanceof \ErrorException) ? $this->getSeverity($e) : 'error';
-        $this->output->writeln(sprintf('<%s>%s</%s>', $severity, OutputFormatter::escape($message), $severity));
+        $output->writeln(sprintf('<%s>%s</%s>', $severity, OutputFormatter::escape($message), $severity));
 
         $this->resetCodeBuffer();
     }
@@ -704,13 +724,8 @@ class Shell extends Application
      * threshold. This should probably only be used in the inner execution loop
      * of the shell, as most of the time a thrown exception is much more useful.
      *
-     * If the error type matches the `errorLoggingLevel` config, it will be
-     * logged as well, regardless of the `error_reporting` level.
-     *
      * @see \Psy\Exception\ErrorException::throwException
      * @see \Psy\Shell::writeException
-     *
-     * @throws \Psy\Exception\ErrorException depending on the current error_reporting level.
      *
      * @param int    $errno   Error type
      * @param string $errstr  Message
@@ -721,7 +736,7 @@ class Shell extends Application
     {
         if ($errno & error_reporting()) {
             ErrorException::throwException($errno, $errstr, $errfile, $errline);
-        } elseif ($errno & $this->config->errorLoggingLevel()) {
+        } else {
             // log it and continue...
             $this->writeException(new ErrorException($errstr, 0, $errno, $errfile, $errline));
         }
@@ -823,9 +838,7 @@ class Shell extends Application
      */
     public function getVersion()
     {
-        $separator = $this->config->useUnicode() ? '—' : '-';
-
-        return sprintf('Psy Shell %s (PHP %s %s %s)', self::VERSION, phpversion(), $separator, php_sapi_name());
+        return sprintf('Psy Shell %s (PHP %s — %s)', self::VERSION, phpversion(), php_sapi_name());
     }
 
     /**
@@ -860,28 +873,6 @@ class Shell extends Application
         $firstChar = substr($info['line_buffer'], max(0, $info['end'] - strlen($text) - 1), 1);
         if ($firstChar === '$') {
             return $this->getScopeVariableNames();
-        }
-    }
-
-    /**
-     * Initialize tab completion matchers.
-     *
-     * If tab completion is enabled this adds tab completion matchers to the
-     * auto completer and sets context if needed.
-     */
-    protected function initializeTabCompletion()
-    {
-        // auto completer needs shell to be linked to configuration because of the context aware matchers
-        if ($this->config->getTabCompletion()) {
-            $this->completion = $this->config->getAutoCompleter();
-            $this->addTabCompletionMatchers($this->config->getTabCompletionMatchers());
-            foreach ($this->getTabCompletionMatchers() as $matcher) {
-                if ($matcher instanceof ContextAware) {
-                    $matcher->setContext($this->context);
-                }
-                $this->completion->addMatcher($matcher);
-            }
-            $this->completion->activate();
         }
     }
 }

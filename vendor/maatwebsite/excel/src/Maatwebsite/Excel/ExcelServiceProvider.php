@@ -4,16 +4,15 @@ use PHPExcel_Settings;
 use PHPExcel_Shared_Font;
 use Maatwebsite\Excel\Readers\Html;
 use Maatwebsite\Excel\Classes\Cache;
+use Illuminate\Support\Facades\Config;
 use Maatwebsite\Excel\Classes\PHPExcel;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Response;
 use Maatwebsite\Excel\Parsers\CssParser;
 use Maatwebsite\Excel\Parsers\ViewParser;
 use Maatwebsite\Excel\Classes\FormatIdentifier;
 use Maatwebsite\Excel\Readers\LaravelExcelReader;
 use Maatwebsite\Excel\Writers\LaravelExcelWriter;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
-use Laravel\Lumen\Application as LumenApplication;
 
 /**
  *
@@ -42,13 +41,9 @@ class ExcelServiceProvider extends ServiceProvider {
 
     public function boot()
     {
-        if ($this->app instanceof LumenApplication) {
-            $this->app->configure('excel');
-        } else {
-            $this->publishes([
-                __DIR__ . '/../../config/excel.php' => config_path('excel.php'),
-            ]);
-        }
+        $this->publishes([
+            __DIR__ . '/../../config/excel.php' => config_path('excel.php'),
+        ]);
 
         $this->mergeConfigFrom(
             __DIR__ . '/../../config/excel.php', 'excel'
@@ -124,8 +119,7 @@ class ExcelServiceProvider extends ServiceProvider {
         {
             return new LaravelExcelReader(
                 $app['files'],
-                $app['excel.identifier'],
-                $app['Illuminate\Contracts\Bus\Dispatcher']
+                $app['excel.identifier']
             );
         });
 
@@ -163,7 +157,7 @@ class ExcelServiceProvider extends ServiceProvider {
         $this->app['excel.writer'] = $this->app->share(function ($app)
         {
             return new LaravelExcelWriter(
-                $app->make(Response::class),
+                $app->make('Response'),
                 $app['files'],
                 $app['excel.identifier']
             );
@@ -190,8 +184,6 @@ class ExcelServiceProvider extends ServiceProvider {
 
             return $excel;
         });
-        
-        $this->app->alias('phpexcel', PHPExcel::class);
     }
 
     /**
@@ -221,7 +213,7 @@ class ExcelServiceProvider extends ServiceProvider {
      */
     public function setLocale()
     {
-        $locale = config('app.locale', 'en_us');
+        $locale = Config::get('app.locale', 'en_us');
         PHPExcel_Settings::setLocale($locale);
     }
 
@@ -230,7 +222,7 @@ class ExcelServiceProvider extends ServiceProvider {
      */
     public function setAutoSizingSettings()
     {
-        $method = config('excel.export.autosize-method', PHPExcel_Shared_Font::AUTOSIZE_METHOD_APPROX);
+        $method = Config::get('excel.export.autosize-method', PHPExcel_Shared_Font::AUTOSIZE_METHOD_APPROX);
         PHPExcel_Shared_Font::setAutoSizeMethod($method);
     }
 

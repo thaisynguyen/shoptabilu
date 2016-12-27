@@ -1,9 +1,8 @@
 <?php
 
-namespace Cocur\Slugify\Tests\Bridge\Nette;
+namespace Cocur\Slugify\Bridge\Nette;
 
-use Cocur\Slugify\Bridge\Nette\SlugifyExtension;
-use Mockery as m;
+use \Mockery as m;
 
 /**
  * SlugifyExtensionTest
@@ -17,7 +16,7 @@ use Mockery as m;
  */
 class SlugifyExtensionTest extends \PHPUnit_Framework_TestCase
 {
-    protected function setUp()
+    public function setUp()
     {
         $this->extension = new SlugifyExtension();
     }
@@ -47,7 +46,7 @@ class SlugifyExtensionTest extends \PHPUnit_Framework_TestCase
             ->once()
             ->andReturn($helper);
         $helper
-            ->shouldReceive('setAutowired')
+            ->shouldReceive('setInject')
             ->with(false)
             ->once()
             ->andReturn($helper);
@@ -83,14 +82,14 @@ class SlugifyExtensionTest extends \PHPUnit_Framework_TestCase
         $latteFactory = m::mock('Nette\DI\ServiceDefinition');
         $latteFactory
             ->shouldReceive('addSetup')
-            ->with('addFilter', ['slugify', ['@slugify.helper', 'slugify']])
+            ->with('addFilter', array('slugify', array('@slugify.helper', 'slugify')))
             ->once()
             ->andReturn($latteFactory);
 
         $latte = m::mock('Nette\DI\ServiceDefinition');
         $latte
             ->shouldReceive('addSetup')
-            ->with('addFilter', ['slugify', ['@slugify.helper', 'slugify']])
+            ->with('addFilter', array('slugify', array('@slugify.helper', 'slugify')))
             ->once()
             ->andReturn($latte);
 

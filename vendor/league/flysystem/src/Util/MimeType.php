@@ -12,13 +12,13 @@ class MimeType
     /**
      * Detects MIME Type based on given content.
      *
-     * @param mixed $content
+     * @param string $content
      *
      * @return string|null MIME Type or NULL if no mime type detected
      */
     public static function detectByContent($content)
     {
-        if ( ! class_exists('Finfo') || ! is_string($content)) {
+        if (! class_exists('Finfo')) {
             return;
         }
 
@@ -46,20 +46,6 @@ class MimeType
         if (isset($extensionToMimeTypeMap[$extension])) {
             return $extensionToMimeTypeMap[$extension];
         }
-
-        return 'text/plain';
-    }
-
-    /**
-     * @param string $filename
-     *
-     * @return string
-     */
-    public static function detectByFilename($filename)
-    {
-        $extension = pathinfo($filename, PATHINFO_EXTENSION);
-
-        return empty($extension) ? 'text/plain' : static::detectByFileExtension($extension);
     }
 
     /**
@@ -138,7 +124,6 @@ class MimeType
             'bmp'   => 'image/bmp',
             'tiff'  => 'image/tiff',
             'tif'   => 'image/tiff',
-            'svg'   => 'image/svg+xml',
             'css'   => 'text/css',
             'html'  => 'text/html',
             'htm'   => 'text/html',

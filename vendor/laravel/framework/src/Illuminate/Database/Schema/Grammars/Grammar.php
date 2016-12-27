@@ -202,6 +202,7 @@ abstract class Grammar extends BaseGrammar
     {
         return array_map(function ($value) use ($prefix) {
             return $prefix.' '.$value;
+
         }, $values);
     }
 
@@ -408,8 +409,10 @@ abstract class Grammar extends BaseGrammar
         switch ($type) {
             case 'mediumText':
                 return 65535 + 1;
+
             case 'longText':
                 return 16777215 + 1;
+
             default:
                 return 255 + 1;
         }
@@ -419,7 +422,7 @@ abstract class Grammar extends BaseGrammar
      * Get the matching Doctrine option for a given Fluent attribute name.
      *
      * @param  string  $attribute
-     * @return string|null
+     * @return string
      */
     protected function mapFluentOptionToDoctrine($attribute)
     {
@@ -427,12 +430,16 @@ abstract class Grammar extends BaseGrammar
             case 'type':
             case 'name':
                 return;
+
             case 'nullable':
                 return 'notnull';
+
             case 'total':
                 return 'precision';
+
             case 'places':
                 return 'scale';
+
             default:
                 return $attribute;
         }

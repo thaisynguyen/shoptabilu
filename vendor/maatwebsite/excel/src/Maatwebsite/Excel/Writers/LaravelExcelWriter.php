@@ -4,11 +4,11 @@ use Closure;
 use Carbon\Carbon;
 use PHPExcel_IOFactory;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Response;
 use Maatwebsite\Excel\Classes\FormatIdentifier;
 use Maatwebsite\Excel\Classes\LaravelExcelWorksheet;
 use Maatwebsite\Excel\Exceptions\LaravelExcelException;
-use Symfony\Component\Finder\Exception\AccessDeniedException;
 
 /**
  *
@@ -224,7 +224,7 @@ class LaravelExcelWriter {
 
         // Autosize columns when no user didn't change anything about column sizing
         if (!$this->sheet->hasFixedSizeColumns())
-            $this->sheet->setAutosize(config('excel.export.autosize', false));
+            $this->sheet->setAutosize(Config::get('excel.export.autosize', false));
 
         // Parse the sheet
         $this->sheet->parsed();
@@ -389,7 +389,7 @@ class LaravelExcelWriter {
      */
     public function returnInfo($returnInfo = false)
     {
-        return $returnInfo ? $returnInfo : config('excel.export.store.returnInfo', false);
+        return $returnInfo ? $returnInfo : Config::get('excel.export.store.returnInfo', false);
     }
 
     /**
@@ -411,17 +411,6 @@ class LaravelExcelWriter {
      */
     protected function _render()
     {
-        //Fix borders for merged cells
-        foreach($this->getAllSheets() as $sheet){
-
-            foreach($sheet->getMergeCells() as $cells){
-
-                $style = $sheet->getStyle(explode(':', $cells)[0]);
-
-                $sheet->duplicateStyle($style, $cells);
-            }
-        }
-
         // There should be enough sheets to continue rendering
         if ($this->excel->getSheetCount() < 0)
             throw new LaravelExcelException('[ERROR] Aborting spreadsheet render: no sheets were created.');
@@ -465,18 +454,6 @@ class LaravelExcelWriter {
     public function getSheet()
     {
         return $this->sheet;
-    }
-    
-    /**
-     * Set the active sheet index
-     * @param integer $index
-     * @return LaravelExcelWriter
-     */
-    public function setActiveSheetIndex($index)
-    {
-        $this->sheet = $this->excel->setActiveSheetIndex($index);
-
-        return $this;
     }
 
     /**
@@ -531,10 +508,9 @@ class LaravelExcelWriter {
         // Set CSV delimiter
         if ($this->format == 'CSV')
         {
-            $this->writer->setDelimiter(config('excel.csv.delimiter', ','));
-            $this->writer->setEnclosure(config('excel.csv.enclosure', '"'));
-            $this->writer->setLineEnding(config('excel::csv.line_ending', "\r\n"));
-            $this->writer->setUseBOM(config('excel.csv.use_bom', false));
+            $this->writer->setDelimiter(Config::get('excel.csv.delimiter', ','));
+            $this->writer->setEnclosure(Config::get('excel.csv.enclosure', '"'));
+            $this->writer->setLineEnding(Config::get('excel::csv.line_ending', "\r\n"));
         }
 
         // Set CSV delimiter
@@ -544,10 +520,10 @@ class LaravelExcelWriter {
         }
 
         // Calculation settings
-        $this->writer->setPreCalculateFormulas(config('excel.export.calculate', false));
+        $this->writer->setPreCalculateFormulas(Config::get('excel.export.calculate', false));
 
         // Include Charts
-        $this->writer->setIncludeCharts(config('excel.export.includeCharts', false));
+        $this->writer->setIncludeCharts(Config::get('excel.export.includeCharts', false));
 
         return $this->writer;
     }
@@ -559,13 +535,11 @@ class LaravelExcelWriter {
     protected function setPdfRenderer()
     {
         // Get the driver name
-        $driver = config('excel.export.pdf.driver');
-        $path = config('excel.export.pdf.drivers.' . $driver . '.path');
+        $driver = Config::get('excel.export.pdf.driver');
+        $path = Config::get('excel.export.pdf.drivers.' . $driver . '.path');
 
         // Disable autoloading for dompdf
-        if(! defined("DOMPDF_ENABLE_AUTOLOAD")){
-            define("DOMPDF_ENABLE_AUTOLOAD", false);
-        }
+        define("DOMPDF_ENABLE_AUTOLOAD", false);
 
         // Set the pdf renderer
         if (!\PHPExcel_Settings::setPdfRenderer($driver, $path))
@@ -598,19 +572,14 @@ class LaravelExcelWriter {
     protected function _setStoragePath($path = false)
     {
         // Get the default path
-        $path = $path ? $path : config('excel.export.store.path', storage_path($this->storagePath));
+        $path = $path ? $path : Config::get('excel.export.store.path', storage_path($this->storagePath));
 
         // Trim of slashes, to makes sure we won't add them double
         $this->storagePath = rtrim($path, '/');
 
         // Make sure the storage path exists
-        if (!$this->filesystem->exists($this->storagePath)) {
+        if (!$this->filesystem->isWritable($this->storagePath))
             $this->filesystem->makeDirectory($this->storagePath, 0777, true);
-        }
-
-        if (!$this->filesystem->isWritable($this->storagePath)) {
-            throw new LaravelExcelException("Permission denied to the storage path");
-        }
     }
 
     /**

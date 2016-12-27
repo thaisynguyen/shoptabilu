@@ -15,12 +15,6 @@
  */
 class Swift_Mime_SimpleMessage extends Swift_Mime_MimePart implements Swift_Mime_Message
 {
-    const PRIORITY_HIGHEST = 1;
-    const PRIORITY_HIGH = 2;
-    const PRIORITY_NORMAL = 3;
-    const PRIORITY_LOW = 4;
-    const PRIORITY_LOWEST = 5;
-
     /**
      * Create a new SimpleMessage with $headers, $encoder and $cache.
      *
@@ -259,7 +253,7 @@ class Swift_Mime_SimpleMessage extends Swift_Mime_MimePart implements Swift_Mime
      * If $name is passed and the first parameter is a string, this name will be
      * associated with the address.
      *
-     * @param mixed  $addresses
+     * @param string $addresses
      * @param string $name      optional
      *
      * @return Swift_Mime_SimpleMessage
@@ -458,11 +452,11 @@ class Swift_Mime_SimpleMessage extends Swift_Mime_MimePart implements Swift_Mime
     public function setPriority($priority)
     {
         $priorityMap = array(
-            self::PRIORITY_HIGHEST => 'Highest',
-            self::PRIORITY_HIGH => 'High',
-            self::PRIORITY_NORMAL => 'Normal',
-            self::PRIORITY_LOW => 'Low',
-            self::PRIORITY_LOWEST => 'Lowest',
+            1 => 'Highest',
+            2 => 'High',
+            3 => 'Normal',
+            4 => 'Low',
+            5 => 'Lowest',
             );
         $pMapKeys = array_keys($priorityMap);
         if ($priority > max($pMapKeys)) {

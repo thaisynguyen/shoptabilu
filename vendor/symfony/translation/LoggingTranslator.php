@@ -66,6 +66,8 @@ class LoggingTranslator implements TranslatorInterface, TranslatorBagInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @api
      */
     public function setLocale($locale)
     {
@@ -74,6 +76,8 @@ class LoggingTranslator implements TranslatorInterface, TranslatorBagInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @api
      */
     public function getLocale()
     {
@@ -86,20 +90,6 @@ class LoggingTranslator implements TranslatorInterface, TranslatorBagInterface
     public function getCatalogue($locale = null)
     {
         return $this->translator->getCatalogue($locale);
-    }
-
-    /**
-     * Gets the fallback locales.
-     *
-     * @return array $locales The fallback locales
-     */
-    public function getFallbackLocales()
-    {
-        if ($this->translator instanceof Translator) {
-            return $this->translator->getFallbackLocales();
-        }
-
-        return array();
     }
 
     /**

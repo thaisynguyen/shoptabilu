@@ -291,7 +291,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
             }});
 
             this.$list.$el.appendTo(this.$el);
-            this.$toolbar = $('<div><i class="phpdebugbar-fa phpdebugbar-fa-search"></i></div>').addClass(csscls('toolbar')).appendTo(this.$el);
+            this.$toolbar = $('<div><i class="fa fa-search"></i></div>').addClass(csscls('toolbar')).appendTo(this.$el);
 
             $('<input type="text" />')
                 .on('change', function() { self.set('search', this.value); })
@@ -307,7 +307,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                         continue;
                     }
                     filters.push(data[i].label);
-                    $('<a />')
+                    $('<a href="javascript:" />')
                         .addClass(csscls('filter'))
                         .text(data[i].label)
                         .attr('rel', data[i].label)
@@ -318,19 +318,12 @@ if (typeof(PhpDebugBar) == 'undefined') {
 
             this.bindAttr(['exclude', 'search'], function() {
                 var data = this.get('data'),
-                    exclude = this.get('exclude'),
+                    exclude = this.get('exclude'), 
                     search = this.get('search'),
-                    caseless = false,
                     fdata = [];
 
-                if (search && search === search.toLowerCase()) {
-                    caseless = true;
-                }
-
                 for (var i = 0; i < data.length; i++) {
-                    var message = caseless ? data[i].message.toLowerCase() : data[i].message;
-
-                    if ((!data[i].label || $.inArray(data[i].label, exclude) === -1) && (!search || message.indexOf(search) > -1)) {
+                    if ((!data[i].label || $.inArray(data[i].label, exclude) === -1) && (!search || data[i].message.indexOf(search) > -1)) {
                         fdata.push(data[i]);
                     }
                 }
@@ -374,8 +367,8 @@ if (typeof(PhpDebugBar) == 'undefined') {
                         var measure = data.measures[i];
                         var m = $('<div />').addClass(csscls('measure')),
                             li = $('<li />'),
-                            left = (measure.relative_start * 100 / data.duration).toFixed(2),
-                            width = Math.min((measure.duration * 100 / data.duration).toFixed(2), 100 - left);
+                            left = Math.round(measure.relative_start * 100 / data.duration),
+                            width = Math.min(Math.round(measure.duration * 100 / data.duration), 100 - left);
 
                         m.append($('<span />').addClass(csscls('value')).css({
                             left: left + "%",

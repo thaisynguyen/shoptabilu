@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the Symfony package.
- *
- * (c) Fabien Potencier <fabien@symfony.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Symfony\Component\Console\Tests\Style;
 
 use PHPUnit_Framework_TestCase;
@@ -54,20 +45,20 @@ class SymfonyStyleTest extends PHPUnit_Framework_TestCase
 
         return array_map(null, glob($baseDir.'/command/command_*.php'), glob($baseDir.'/output/output_*.txt'));
     }
-}
 
-/**
- * Use this class in tests to force the line length
- * and ensure a consistent output for expectations.
- */
-class SymfonyStyleWithForcedLineLength extends SymfonyStyle
-{
-    public function __construct(InputInterface $input, OutputInterface $output)
+    public function testLongWordsBlockWrapping()
     {
-        parent::__construct($input, $output);
+        $word = 'Lopadotemachoselachogaleokranioleipsanodrimhypotrimmatosilphioparaomelitokatakechymenokichlepikossyphophattoperisteralektryonoptekephalliokigklopeleiolagoiosiraiobaphetraganopterygon';
+        $wordLength = strlen($word);
+        $maxLineLength = SymfonyStyle::MAX_LINE_LENGTH - 3;
 
-        $ref = new \ReflectionProperty(get_parent_class($this), 'lineLength');
-        $ref->setAccessible(true);
-        $ref->setValue($this, 120);
+        $this->command->setCode(function (InputInterface $input, OutputInterface $output) use ($word) {
+            $sfStyle = new SymfonyStyle($input, $output);
+            $sfStyle->block($word, 'CUSTOM', 'fg=white;bg=blue', ' § ', false);
+        });
+
+        $this->tester->execute(array(), array('interactive' => false, 'decorated' => false));
+        $expectedCount = (int) ceil($wordLength / ($maxLineLength)) + (int) ($wordLength > $maxLineLength - 5);
+        $this->assertSame($expectedCount, substr_count($this->tester->getDisplay(true), ' § '));
     }
 }

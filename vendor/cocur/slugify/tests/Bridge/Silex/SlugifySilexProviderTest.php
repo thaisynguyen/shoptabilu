@@ -9,11 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Cocur\Slugify\Tests\Bridge\Silex;
+namespace Cocur\Slugify\Bridge\Silex;
 
 use Cocur\Slugify\Bridge\Silex\SlugifyServiceProvider;
-use Silex\Application;
-use Silex\Provider\TwigServiceProvider;
 
 /**
  * SlugifyServiceProviderTest
@@ -26,34 +24,38 @@ use Silex\Provider\TwigServiceProvider;
  * @license    http://www.opensource.org/licenses/MIT The MIT License
  * @group      unit
  */
-class SlugifySilexProviderTest extends \PHPUnit_Framework_TestCase
+class SlugifyServiceProviderTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @test
-     * @covers Cocur\Slugify\Bridge\Silex\SlugifyServiceProvider
-     */
-    public function register()
-    {
-        // it seems like Application is not mockable.
-        $app = new Application();
-        $app->register(new SlugifyServiceProvider());
-        $app->boot();
+    /** @var SlugifyServiceProvider */
+    private $provider;
 
-        $this->assertArrayHasKey('slugify', $app);
-        $this->assertArrayHasKey('slugify.provider', $app);
-        $this->assertArrayHasKey('slugify.options', $app);
-        $this->assertInstanceOf('Cocur\Slugify\Slugify', $app['slugify']);
+    public function setUp()
+    {
+        $this->provider = new SlugifyServiceProvider();
     }
 
     /**
      * @test
+     * @covers Cocur\Slugify\Bridge\Silex\SlugifyServiceProvider::boot()
      */
-    public function registerWithTwig()
+    public function boot()
     {
-        $app = new Application();
-        $app->register(new TwigServiceProvider());
-        $app->register(new SlugifyServiceProvider());
+        // it seems like Application is not mockable.
+        $app = new \Silex\Application();
+        $this->provider->boot($app);
+    }
 
-        $this->assertTrue($app['twig']->hasExtension('slugify_extension'));
+    /**
+     * @test
+     * @covers Cocur\Slugify\Bridge\Silex\SlugifyServiceProvider::register()
+     */
+    public function register()
+    {
+        // it seems like Application is not mockable.
+        $app = new \Silex\Application();
+        $this->provider->register($app);
+
+        $this->assertArrayHasKey('slugify', $app);
+        $this->assertInstanceOf('Cocur\Slugify\Slugify', $app['slugify']);
     }
 }

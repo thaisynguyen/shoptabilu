@@ -5,7 +5,6 @@ namespace Illuminate\Foundation\Exceptions;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Illuminate\Http\Response;
-use Illuminate\Auth\Access\UnauthorizedException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\Debug\ExceptionHandler as SymfonyDisplayer;
@@ -88,10 +87,6 @@ class Handler implements ExceptionHandlerContract
      */
     public function render($request, Exception $e)
     {
-        if ($this->isUnauthorizedException($e)) {
-            $e = new HttpException(403, $e->getMessage());
-        }
-
         if ($this->isHttpException($e)) {
             return $this->toIlluminateResponse($this->renderHttpException($e), $e);
         } else {
@@ -153,17 +148,6 @@ class Handler implements ExceptionHandlerContract
     protected function convertExceptionToResponse(Exception $e)
     {
         return (new SymfonyDisplayer(config('app.debug')))->createResponse($e);
-    }
-
-    /**
-     * Determine if the given exception is an access unauthorized exception.
-     *
-     * @param  \Exception  $e
-     * @return bool
-     */
-    protected function isUnauthorizedException(Exception $e)
-    {
-        return $e instanceof UnauthorizedException;
     }
 
     /**
