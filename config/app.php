@@ -147,6 +147,8 @@ return [
         'App\Providers\EventServiceProvider',
         'App\Providers\RouteServiceProvider',
 
+		'Intervention\Image\ImageServiceProvider',
+
 	],
 
 	/*
@@ -199,6 +201,7 @@ return [
         'Excel'         => 'Maatwebsite\Excel\Facades\Excel',
         'CommonUtils'   => 'App\Utils\commonUtils::commonUtils',
         'ExcelUtils'    => 'App\Utils\Convenient::excelUtils',
+		'Image' 		=> 'Intervention\Image\Facades\Image',
     ],
         
         

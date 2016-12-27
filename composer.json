@@ -12,7 +12,9 @@
         "laravelcollective/html": "5.1.*",
         "cviebrock/eloquent-sluggable": "dev-master",
         "maatwebsite/excel": "~2.0",
-        "strebl/l5-ldap-auth": "2.1.*"
+        "strebl/l5-ldap-auth": "2.1.*",
+        "illuminate/html": "5.*",
+        "intervention/image": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
